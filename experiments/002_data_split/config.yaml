@@ -1,0 +1,20 @@
+# EXP-002 parameters, read by build_manifests.py.
+# Everything that determines the manifest bytes lives here, so dataset_v001 can be
+# rebuilt byte-for-byte from this file plus the corpus.
+
+corpus:
+  id: iisc_mile_ta
+  root: data/raw/iisc_mile_ta/mile_tamil_asr_corpus
+  license: CC BY 2.0
+  source: https://www.openslr.org/127/
+
+split:
+  dataset_version: v001
+  seed: 20261003
+  ratios:
+    train: 0.90
+    dev: 0.05
+    test: 0.05
+
+output:
+  manifest_dir: data/manifests/dataset_v001
