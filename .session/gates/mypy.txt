@@ -1,0 +1,1 @@
+exit=0 | Success: no issues found in 26 source files

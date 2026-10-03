@@ -9,6 +9,37 @@ what changed.
 
 ## [Unreleased]
 
+### Session memory
+
+- `../AGENTS.md` and `../START-HERE.md` — the workspace-root entry points. The first
+  is loaded automatically by opencode when a session starts one folder up, so a new
+  agent is told to read `MEMORY.md` and `git log` before doing anything.
+- `../scripts/update-status.ps1` — regenerates the `AUTO-STATUS` block in both entry
+  files from live git output: last commit, branch, ahead/behind `origin/main`,
+  working-tree entries, recent commits, last recorded gate results. It also mirrors
+  both entry files into `.session/` with the workspace path replaced by
+  `<workspace>` so nothing machine-specific is committed.
+- `../scripts/run-gates.ps1` — runs pytest, ruff and mypy inside the repo virtual
+  environment and records the real result of each to `.session/gates/*.txt`.
+- `../scripts/install-hooks.ps1` and `../scripts/hooks/post-commit` — installs the
+  git `post-commit` hook that refreshes the status block after every commit. Hooks
+  live in `.git` and are not tracked, so they must be reinstalled after a fresh clone.
+- `MEMORY.md` section 11 documents the whole mechanism and its accepted failure modes.
+
+### Uncommitted: Phase 02 data layer
+
+Written and gate-clean, but not committed and never executed. No `dataset_v001`
+manifest exists on disk yet.
+
+- `src/tamil_voice/data/corpus.py` — `Utterance`, `parse_iisc_mile_name`,
+  `read_transcript`, `discover_iisc_mile`, `CorpusError`.
+- `src/tamil_voice/data/manifest.py` — `ManifestRecord`, `build_records`,
+  `write_manifest`, `read_manifest`.
+- `src/tamil_voice/data/splits.py` — `SplitRatios`, `SplitConfig`,
+  `plan_speaker_split`, `SpeakerSplitPlan`, `check_speaker_disjoint`, `SplitError`.
+- `experiments/002_data_split/build_manifests.py` and `config.yaml`.
+- `tests/unit/test_data_corpus.py`, `test_data_manifest.py`, `test_data_splits.py`.
+
 Phase 01 / EXP-001, complete and verified. `verify_criteria.py` reported 8 pass,
 0 fail, 0 pending: criteria 1-6 and 8 on synthetic fixtures with known ground
 truth, criterion 7 and the `real_recording` section on the supplied real Tamil
