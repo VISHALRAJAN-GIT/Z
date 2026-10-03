@@ -10,22 +10,31 @@ This file is authoritative. Frolic telemetry is secondary and may be rotated.
 
 ## 1. Current status
 
-**Phase 00 — Project Engineering — complete and committed.**
+**Phase 00 — complete and committed at `35765c4`.
+Phase 01 / EXP-001 — in progress.**
 
-Nothing is implemented beyond shared infrastructure. No audio module exists. No
-dataset has been downloaded. No model has been trained. No benchmark has been
-measured. Any statement to the contrary is false.
+Implemented so far this phase: `audio/io.py` (loading, canonical conversion, real
+validation) and `audio/resampling.py` (8/22.05/44.1/48 kHz -> 16 kHz, with a
+no-op for already-16-kHz input). Both are tested. Nothing is benchmarked yet and
+no acceptance criterion in `experiments/001_audio_pipeline/README.md` is measured.
 
-Verification for the commit below, run in `.venv` on Python 3.11.9:
+No dataset has been downloaded. No model has been trained. Any statement to the
+contrary is false.
+
+Verification, run in `.venv` on Python 3.11.9, after adding io.py and
+resampling.py:
 
 ```text
-pytest   46 passed
+pytest   91 passed
 ruff     All checks passed
-mypy     Success: no issues found in 15 source files
+mypy     Success: no issues found in 17 source files
 ```
 
-torch is **not installed**. Phase 01 needs it and the wheel index must be chosen
-deliberately: CPU for development, cu124 for the RTX 2050.
+torch is **installed**: `torch 2.14.1+cpu`, `torchaudio 2.11.0+cpu`, from the
+explicitly chosen CPU wheel index `https://download.pytorch.org/whl/cpu`. CUDA is
+unavailable in this environment and `seed_everything` reports
+`fully_deterministic=True` honestly because of that. The RTX 2050 still requires a
+separate cu124 install when training starts.
 
 ## 2. The project
 
@@ -58,19 +67,25 @@ Empty directories are preserved with `.gitkeep`. `.venv`, caches, `checkpoints/`
 
 ## 4. What exists in code
 
-Only `src/tamil_voice/common/`. Every other package is an empty namespace
-declaration.
-
 | Module | Purpose |
 | --- | --- |
 | `common/config.py` | project root, directory resolution with `TVF_*` overrides, YAML loading with real type errors, `AudioSpec`, canonical audio constants |
 | `common/logging.py` | JSON-lines logging on stderr, one logger, idempotent setup, level from `TVF_LOG_LEVEL` |
 | `common/seed.py` | `seed_everything` across Python/NumPy/torch, DataLoader worker init, `SeedReport` |
+| `audio/io.py` | `AudioData` container, `load_audio` (no resampling), `audio_info` header probe, `validate_audio` / `ValidationReport` / `ValidationLimits`, `AudioLoadError` / `AudioValidationError` |
+| `audio/resampling.py` | `resample_waveform`, `resample_audio`, `resample_to_canonical`; identical-rate input is returned untouched |
 
-Tests: `tests/unit/test_config.py`, `test_common.py`, `test_package.py`.
+Tests: `tests/unit/test_config.py`, `test_common.py`, `test_package.py`,
+`test_audio_io.py`, `test_audio_resampling.py`.
 
 Canonical audio: mono, 16 kHz, float32 — defined once in `config.py` and imported
-everywhere else.
+everywhere else (`CANONICAL_SAMPLE_RATE`, re-exported by `audio/io.py`).
+
+`load_audio` does not resample: it reads at the file's native rate. Converting to
+16 kHz is `resampling.py`'s job, and it is skipped when the input is already 16
+kHz. Validation reports problems (empty, NaN/Inf, unsupported rate, too long,
+clipping, low amplitude, silence, DC offset) as typed issues; clipping is a
+warning and does not prevent loading, while the rest are errors.
 
 ## 5. Decisions made
 
@@ -79,6 +94,15 @@ everywhere else.
 - **Repo in a subfolder.** `GUIDE.MD` stays outside the repo, unmodified.
 - **CPU-first.** torch is an optional extra so the audio foundation can be built
   without a multi-gigabyte install. CUDA is deferred until training needs it.
+- **torch wheel index is explicit.** Installed from
+  `https://download.pytorch.org/whl/cpu` (`torch 2.14.1+cpu`,
+  `torchaudio 2.11.0+cpu`). Never the default PyPI index, which would pull a CUDA
+  build. cu124 is a separate, later install for the RTX 2050.
+- **Loading and resampling are separate modules.** `io.py` never changes the
+  sample rate; `resampling.py` never repairs defects. This keeps "what the file
+  contained" separable from "what we did to it".
+- **Resampling is skipped at 16 kHz.** An already-canonical waveform is returned
+  as the same object rather than passed through the interpolator again.
 - **Peak normalization is not automatic.** Loudness carries information. Silence,
   clipping and near-silence are detected and reported instead.
 - **Progressive implementation.** Directories now, files when their phase starts.
@@ -101,16 +125,15 @@ everywhere else.
 
 ## 7. Next actions
 
-Phase 00 is closed. The next work is Phase 01 / EXP-001, in this order:
+Phase 01 / EXP-001 continues. Done: torch installed (CPU), `audio/io.py`,
+`audio/resampling.py`, each with tests. Next, in this order:
 
-1. Install torch. Choose the wheel index explicitly and record the choice.
-2. `src/tamil_voice/audio/io.py` — load any format, validate, convert to canonical.
-   With tests.
-3. `src/tamil_voice/audio/resampling.py`. With tests.
-4. `audio/normalization.py`, `audio/quality.py`.
-5. `audio/features.py` — mel filterbank, log-mel, 80 bins.
-6. `vad/detector.py`, `vad/postprocess.py`.
-7. Run all eight acceptance criteria in
+1. `audio/normalization.py` — report-only loudness tooling; no automatic peak
+   normalization.
+2. `audio/quality.py` — SNR / degradation metrics for the EXP-001 criteria.
+3. `audio/features.py` — mel filterbank, log-mel, 80 bins, built on tensor ops.
+4. `vad/detector.py`, `vad/postprocess.py`.
+5. Run all eight acceptance criteria in
    `experiments/001_audio_pipeline/README.md`, record measured numbers in
    `results.json`, and update this file.
 

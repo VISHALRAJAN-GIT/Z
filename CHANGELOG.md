@@ -9,8 +9,24 @@ what changed.
 
 ## [Unreleased]
 
-Nothing implemented. No dataset downloaded. No model trained. No benchmark
-measured.
+Phase 01 / EXP-001, in progress. No acceptance criterion has been measured yet.
+
+### Added
+
+- `src/tamil_voice/audio/io.py` — `AudioData` container; `load_audio` (reads at
+  the file's native rate, never resamples); `audio_info` header probe;
+  `validate_audio` with `ValidationReport` / `ValidationLimits` and typed issues
+  (empty, NaN, infinite, unsupported rate, too long, clipped, low amplitude,
+  silent, DC offset); `AudioLoadError` / `AudioValidationError`.
+- `src/tamil_voice/audio/resampling.py` — `resample_waveform`, `resample_audio`,
+  `resample_to_canonical`. Converts 8/22.05/44.1/48 kHz to 16 kHz; already-16-kHz
+  input is returned untouched.
+- Tests: `test_audio_io.py` (28) and `test_audio_resampling.py` (17).
+
+### Fixed
+
+- `validate_audio` raised `ZeroDivisionError` on a non-positive sample rate; it
+  now returns the rate error before computing any rate-dependent metric.
 
 ## [0.1.0] — Phase 00, Project Engineering
 
