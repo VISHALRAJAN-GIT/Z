@@ -1,0 +1,19 @@
+# EXP-001 parameters actually read by verify_criteria.py.
+# Tolerances live here, not hardcoded in the harness, so a pass/fail line in
+# results.json is reproducible from this file.
+fixture:
+  tone_hz: 440.0
+  amplitude: 0.4
+  duration_seconds: 2.0
+
+criterion_1:
+  max_frame_difference: 1
+  max_relative_waveform_difference: 0.01
+  max_frequency_difference_hz: 1.0
+
+criterion_3:
+  max_frequency_error_hz: 1.0
+
+criterion_6:
+  coverage_min: 0.90
+  leakage_beyond_margin_max: 0.10

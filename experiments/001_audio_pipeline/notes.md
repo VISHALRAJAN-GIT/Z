@@ -52,12 +52,29 @@ path changes the sample rate, so "what the file contained" stays separable from
 "what we did to it". This is also what lets the 16 kHz no-op be a hard guarantee
 rather than a hope.
 
+## EXP-001 acceptance run (synthetic)
+
+`verify_criteria.py` executed the criteria on synthetic fixtures, since no real
+Tamil recording exists. Result: **7 pass, 0 fail, 1 pending** (`results.json`).
+
+- Criterion 1: 48 kHz stereo and 22.05 kHz mono both landed on 16 kHz mono with
+  32 000 frames each, sharing a 440 Hz peak. The two resampled waveforms differ by
+  0.6% sample-wise, which is the difference between the soxr filters at 48k->16k and
+  22.05k->16k, not a defect. The first run failed here because a 1e-4 *absolute*
+  tolerance was unreasonable; the check is now 1% *relative* plus a frequency check.
+- Criterion 6: VAD covered 100% of the speech bursts. Raw "leakage" was 0.43
+  because the configured 50 ms padding and 150 ms hangover intentionally extend
+  every segment and the 0.20 s merge gap bridges short pauses; judged against that
+  stated 0.20 s margin, false positives beyond it were 1.7%.
+- Criterion 7 is pending: it needs one real Tamil recording. Criteria 1-6 and 8
+  must be re-run on real speech before EXP-001 is accepted.
+
 ## What should be tested next
 
-All modules of EXP-001 now exist. Next is to run the eight acceptance criteria in
-`README.md` and record the measured numbers in `results.json`; criterion 7 needs
-one real Tamil recording. Do not start EXP-002 until every criterion is measured
-and recorded.
+The synthetic criteria run is done (7 pass, 0 fail, 1 pending). What remains is to
+place one real Tamil recording in `data/raw/speech/`, re-run `verify_criteria.py`
+on it, produce the criterion-7 plots, and confirm the criteria still hold on real
+speech. Do not start EXP-002 or Phase 02 until that run is measured and recorded.
 
 ## Note on ordering
 

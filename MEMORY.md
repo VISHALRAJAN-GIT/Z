@@ -20,9 +20,11 @@ analysis and classification, plus opt-in gain), `audio/features.py` (STFT wrappe
 on torch, mel filterbank, log-mel), `audio/quality.py` (aggregate diagnostic
 report), and `vad/detector.py` + `vad/postprocess.py` (non-neural energy +
 spectral-flatness VAD, and segment cleanup). All are tested, and an end-to-end
-load -> resample -> quality smoke run returns sane numbers. Nothing is
-benchmarked yet and no acceptance criterion in
-`experiments/001_audio_pipeline/README.md` is measured.
+load -> resample -> quality -> mel -> VAD smoke run returns sane numbers. The eight
+EXP-001 acceptance criteria were run on **synthetic fixtures** by
+`experiments/001_audio_pipeline/verify_criteria.py`: **7 pass, 0 fail, 1 pending**
+(criterion 7 needs one real Tamil recording). The criteria have *not* been verified
+on real speech, so EXP-001 is not yet accepted.
 
 No dataset has been downloaded. No model has been trained. Any statement to the
 contrary is false.
@@ -137,6 +139,11 @@ warning and does not prevent loading, while the rest are errors.
   floor estimated at the signal level, so it yields little or no speech. Real
   speech contains pauses; this is acceptable for the first VAD and is a candidate
   improvement, not a silent bug.
+- **Acceptance is not claimed on synthetic fixtures.** `verify_criteria.py` runs
+  criteria 1-6 and 8 on synthetic signals and writes measured numbers to
+  `results.json`, but the README requires the criteria be met on a real Tamil
+  recording. Criterion 7 is recorded as `pending`, and EXP-001 stays unaccepted
+  until that run happens.
 - **Peak normalization is not automatic.** Loudness carries information. Silence,
   clipping and near-silence are detected and reported instead.
 - **Progressive implementation.** Directories now, files when their phase starts.
@@ -161,15 +168,14 @@ warning and does not prevent loading, while the rest are errors.
 
 Phase 01 / EXP-001 continues. Done: torch installed (CPU), `audio/io.py`,
 `audio/resampling.py`, `audio/normalization.py`, `audio/features.py`,
-`audio/quality.py`, `vad/detector.py`, `vad/postprocess.py`, each with tests.
-Next, in this order:
+`audio/quality.py`, `vad/detector.py`, `vad/postprocess.py`, each with tests, plus
+`experiments/001_audio_pipeline/verify_criteria.py` which measured 7 of 8 criteria
+on synthetic fixtures (7 pass, 0 fail, 1 pending). Next:
 
-1. Run all eight acceptance criteria in
-   `experiments/001_audio_pipeline/README.md`, record measured numbers in
-   `results.json`, and update this file. Criterion 7 needs one real Tamil
-   recording in `data/raw/speech/` (see section 6).
+1. Place one real Tamil recording in `data/raw/speech/` (see section 6), re-run
+   `verify_criteria.py` on it, add the criterion-7 plots, and update this file.
 
-Do not start EXP-002 or Phase 02 until every EXP-001 criterion is measured.
+Do not start EXP-002 or Phase 02 until the criteria are measured on real speech.
 
 ## 8. Rules that must survive every session
 

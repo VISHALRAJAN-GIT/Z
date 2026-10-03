@@ -1,6 +1,9 @@
 # EXP-001 — Audio Pipeline Foundation
 
-**Status:** not started. No code, no data, no results.
+**Status:** all modules implemented. 7 of 8 criteria measured on synthetic fixtures
+(7 pass, 0 fail, 1 pending). Criterion 7 needs one real Tamil recording, which does
+not exist yet; until then the criteria have **not** been verified on real speech
+and EXP-001 is **not** accepted.
 
 ## Hypothesis
 
@@ -66,12 +69,15 @@ Which corpus to draw that first recording from is still open — see
 ## Files
 
 ```text
-README.md      this file
-config.yaml    parameters, once the criteria above are met
-results.json   written only when the experiment is actually executed
-notes.md       what worked, what failed, why, what to test next
+README.md            this file
+config.yaml          fixture and tolerance parameters, read by verify_criteria.py
+verify_criteria.py   runs the criteria and writes results.json
+results.json         measured 2026-10-03 on synthetic fixtures; criterion 7 pending
+notes.md             what worked, what failed, why, what to test next
 ```
 
-`results.json` does not exist yet because no measurement has been made. Creating
-it now would be exactly the fabricated-benchmark failure that GUIDE rule 15
-forbids.
+`results.json` records only what was measured. Criteria 1-6 and 8 were executed on
+synthetic fixtures by `verify_criteria.py`; criterion 7 is marked `pending` because
+it needs a real Tamil recording. Every number in the file came from that run — none
+is a placeholder. The criteria must be re-run on real speech before EXP-001 is
+accepted.

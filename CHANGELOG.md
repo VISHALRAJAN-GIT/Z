@@ -9,7 +9,9 @@ what changed.
 
 ## [Unreleased]
 
-Phase 01 / EXP-001, in progress. No acceptance criterion has been measured yet.
+Phase 01 / EXP-001, in progress. The eight acceptance criteria were measured on
+synthetic fixtures by `verify_criteria.py`: 7 pass, 0 fail, 1 pending (criterion 7
+needs one real Tamil recording). The criteria have not been verified on real speech.
 
 ### Added
 
@@ -45,6 +47,10 @@ Phase 01 / EXP-001, in progress. No acceptance criterion has been measured yet.
   `test_audio_normalization.py` (25), `test_audio_features.py` (30),
   `test_audio_quality.py` (14), `test_vad_detector.py` (19) and
   `test_vad_postprocess.py` (14).
+- `experiments/001_audio_pipeline/verify_criteria.py` — runs the EXP-001
+  acceptance criteria on synthetic fixtures and writes measured numbers to
+  `results.json`; `config.yaml` holds the fixture and tolerance parameters.
+  First run: 7 pass, 0 fail, 1 pending (criterion 7 needs a real Tamil recording).
 
 ### Fixed
 

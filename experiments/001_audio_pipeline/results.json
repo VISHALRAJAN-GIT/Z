@@ -1,0 +1,213 @@
+{
+  "experiment": "EXP-001",
+  "title": "Audio Pipeline Foundation",
+  "executed_at": "2026-10-03T10:42:33.007430+00:00",
+  "environment": {
+    "python": "3.11.9",
+    "platform": "Windows-10-10.0.26200-SP0"
+  },
+  "input": "synthetic fixtures only",
+  "real_recording_required": true,
+  "criteria": [
+    {
+      "status": "pass",
+      "tolerance": "same 16 kHz mono; frame diff <=1; relative diff <=0.01; dominant freq within 1.0 Hz",
+      "measured": {
+        "sr48k_result": {
+          "sample_rate": 16000,
+          "channels": 1,
+          "frames": 32000
+        },
+        "sr22k_result": {
+          "sample_rate": 16000,
+          "channels": 1,
+          "frames": 32000
+        },
+        "max_waveform_difference": 0.0023841233924031258,
+        "relative_waveform_difference": 0.0059603070599598745,
+        "dominant_hz": [
+          440.0,
+          440.0
+        ]
+      },
+      "id": 1,
+      "description": "48 kHz stereo and 22.05 kHz mono converge on 16 kHz mono"
+    },
+    {
+      "status": "pass",
+      "tolerance": "exact 16 kHz; identity on passthrough",
+      "measured": {
+        "8000": {
+          "sample_rate": 16000,
+          "frames": 16000
+        },
+        "22050": {
+          "sample_rate": 16000,
+          "frames": 16000
+        },
+        "44100": {
+          "sample_rate": 16000,
+          "frames": 16000
+        },
+        "48000": {
+          "sample_rate": 16000,
+          "frames": 16000
+        },
+        "passthrough_is_same_object": true
+      },
+      "id": 2,
+      "description": "8/22.05/44.1/48 kHz resample; 16 kHz passes through untouched"
+    },
+    {
+      "status": "pass",
+      "tolerance": "<= 1.0 Hz",
+      "measured": {
+        "8000": {
+          "dominant_hz": 440.0,
+          "error_hz": 0.0
+        },
+        "22050": {
+          "dominant_hz": 440.0,
+          "error_hz": 0.0
+        },
+        "44100": {
+          "dominant_hz": 440.0,
+          "error_hz": 0.0
+        },
+        "48000": {
+          "dominant_hz": 440.0,
+          "error_hz": 0.0
+        }
+      },
+      "id": 3,
+      "description": "resampling preserves the dominant frequency"
+    },
+    {
+      "status": "pass",
+      "tolerance": "expected issue code present",
+      "measured": {
+        "corrupt": {
+          "raised": "AudioLoadError",
+          "codes": []
+        },
+        "empty_file": {
+          "raised": "AudioLoadError",
+          "codes": []
+        },
+        "nan": {
+          "raised": "AudioValidationError",
+          "codes": [
+            "nan"
+          ]
+        },
+        "infinite": {
+          "raised": "AudioValidationError",
+          "codes": [
+            "infinite"
+          ]
+        },
+        "clipped": {
+          "raised": null,
+          "codes": [
+            "clipped"
+          ]
+        },
+        "near_silent": {
+          "raised": null,
+          "codes": [
+            "low_amplitude"
+          ]
+        },
+        "silent": {
+          "raised": "AudioValidationError",
+          "codes": [
+            "silent"
+          ]
+        }
+      },
+      "id": 4,
+      "description": "corrupt/empty/NaN/Inf/clipped/near-silent are reported"
+    },
+    {
+      "status": "pass",
+      "tolerance": "n_frames == 1 + N//hop",
+      "measured": {
+        "shape": [
+          201,
+          80
+        ],
+        "n_mels": 80,
+        "expected_n_frames": 201,
+        "win_length": 400,
+        "hop_length": 160
+      },
+      "id": 5,
+      "description": "mel features are (n_frames, 80) with 25 ms/10 ms geometry"
+    },
+    {
+      "status": "pass",
+      "tolerance": "coverage >=0.9; beyond configured pad+hangover margin, <=0.1 false positive",
+      "measured": {
+        "num_segments": 2,
+        "segments": [
+          {
+            "start": 0.44,
+            "end": 1.935
+          },
+          {
+            "start": 2.04,
+            "end": 2.635
+          }
+        ],
+        "ground_truth": [
+          {
+            "start": 0.5,
+            "end": 0.9
+          },
+          {
+            "start": 1.2,
+            "end": 1.7
+          },
+          {
+            "start": 2.1,
+            "end": 2.4
+          }
+        ],
+        "coverage": 1.0,
+        "leakage_raw": 0.4258,
+        "edge_margin_seconds": 0.2,
+        "leakage_beyond_margin": 0.0167
+      },
+      "id": 6,
+      "description": "VAD segments cover speech and nothing else, to tolerance"
+    },
+    {
+      "id": 7,
+      "description": "waveform/spectrogram/mel/VAD regions are plotted",
+      "status": "pending",
+      "tolerance": null,
+      "measured": null,
+      "reason": "requires one real Tamil recording in data/raw/speech/, which does not exist yet"
+    },
+    {
+      "status": "pass",
+      "tolerance": "all three gates exit 0",
+      "measured": {
+        "pytest_exit": 0,
+        "pytest_passed": 193,
+        "ruff_exit": 0,
+        "ruff_tail": "All checks passed!",
+        "mypy_exit": 0,
+        "mypy_tail": "Success: no issues found in 22 source files"
+      },
+      "id": 8,
+      "description": "unit tests exist and pytest/ruff/mypy all pass"
+    }
+  ],
+  "summary": {
+    "passed": 7,
+    "failed": 0,
+    "pending": 1
+  },
+  "honesty_note": "Criterion 7 is pending and the README specifies the criteria be measured on a real Tamil recording. Criteria 1-6 and 8 are measured on synthetic fixtures only and must be re-run on the real recording before EXP-001 is accepted. No value here is fabricated; every number was produced by this run."
+}
