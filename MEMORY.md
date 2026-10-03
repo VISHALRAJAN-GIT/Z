@@ -33,8 +33,13 @@ RMS -35.2 dBFS, est. SNR 23.3 dB, 24.6 % silence, no clipping), log-Mel
 is a behaviour check with statistics — there is no reference transcript or VAD
 annotation, so no accuracy figure is claimed.
 
-No dataset has been downloaded. No model has been trained. Any statement to the
-contrary is false.
+One dataset has been **obtained**: the **IISc-MILE Tamil ASR Corpus** (OpenSLR
+SLR127, **CC BY 2.0**), at `data/raw/iisc_mile_ta/mile_tamil_asr_corpus/` —
+89,401 utterances (77,314 train / 12,087 test), ~150 h read speech, 16 kHz mono
+PCM, 16.125 GB on disk. License and source are recorded in
+`docs/02_data/licensing.md` and `docs/02_data/dataset_sources.md`. No manifest,
+no speaker-disjoint split, and no model exist yet. Any statement to the contrary
+is false.
 
 Verification, run in `.venv` on Python 3.11.9, after adding io.py, resampling.py,
 normalization.py, features.py, quality.py, vad/detector.py and vad/postprocess.py:
@@ -172,27 +177,29 @@ warning and does not prevent loading, while the rest are errors.
    segments) are sanity-checked, not scored. Getting even one annotated/timestamped
    Tamil recording would turn criterion 6/7 on real audio into a precision/recall
    measurement. Open, not blocking.
-2. **First ASR corpus.** Candidates are Common Voice Tamil, OpenSLR, AI4Bharat
-   ASR. Requires a licensing decision recorded in `docs/02_data/licensing.md`
+2. **Diversity corpora.** IISc-MILE Tamil (CC BY 2.0) is obtained and recorded. It
+   is read, studio-clean speech, so it cannot cover colloquial, code-switched or
+   noisy audio on its own. AI4Bharat IndicVoices (Tamil, CC BY 4.0) and Kathbath
+   (Tamil, conversational) are the planned additions; each license must be recorded
    before use. Undecided.
 3. **Tokenizer.** Word-level for the first CTC baseline, then decide on
    subword from measured results, not preference. No commitment yet.
 
 ## 7. Next actions
 
-Phase 01 / EXP-001 is **complete**. Done: torch installed (CPU), `audio/io.py`,
-`audio/resampling.py`, `audio/normalization.py`, `audio/features.py`,
-`audio/quality.py`, `vad/detector.py`, `vad/postprocess.py`, each with tests, plus
-`experiments/001_audio_pipeline/verify_criteria.py`, which now runs all 8 criteria
-(8 pass, 0 fail) including the criterion-7 plots and the real-recording section on
-`data/raw/speech/Tamil voice sample.mp3`. Next, pending human decision:
+Phase 01 / EXP-001 is **complete** (8 pass, 0 fail). The first corpus is in place:
+IISc-MILE Tamil (CC BY 2.0) at `data/raw/iisc_mile_ta/`, recorded in
+`docs/02_data/`. Next, pending human approval of the design:
 
-1. Plan Phase 02 (Tiny CTC ASR): pick the first corpus and record its license in
-   `docs/02_data/licensing.md` (section 6, item 2), then define the tokenizer and
-   the tiny CTC baseline as its own experiment. Per GUIDE section 31, the first
-   real milestone is overfitting 10-30 minutes of speech.
+1. Build the Phase 02 data layer: derive speaker IDs from the IISc-MILE filenames,
+   produce a **speaker-disjoint** train/dev/test split, and write JSONL manifests
+   under `data/` as `dataset_v001`. Splitting by speaker, not by recording, is
+   mandatory or the test numbers are worthless.
+2. Then define the tokenizer and the tiny CTC baseline as its own experiment
+   (`experiments/002_*`). Per GUIDE section 31, the first real milestone is
+   overfitting 10-30 minutes of speech.
 
-Do not start Phase 02 code until the corpus/licensing decision is made.
+Do not start Phase 02 training code until the split/manifest plan is approved.
 
 ## 8. Rules that must survive every session
 

@@ -14,6 +14,17 @@ Phase 01 / EXP-001, complete and verified. `verify_criteria.py` reported 8 pass,
 truth, criterion 7 and the `real_recording` section on the supplied real Tamil
 recording `data/raw/speech/Tamil voice sample.mp3` (48 kHz stereo, 47.49 s).
 
+### Data
+
+- Obtained the first ASR corpus: **IISc-MILE Tamil ASR Corpus** (OpenSLR SLR127,
+  **CC BY 2.0**) — 89,401 utterances (77,314 train / 12,087 test), ~150 h read
+  speech, 16 kHz mono PCM, 531 speakers. Stored at `data/raw/iisc_mile_ta/`
+  (outside git, 16.125 GB). No manifest or speaker-disjoint split exists yet.
+- `docs/02_data/licensing.md` — the dataset licensing register, first entry
+  `iisc-mile-ta` with license, source, retrieval date, permitted use and attribution.
+- `docs/02_data/dataset_sources.md` — where the corpus was obtained (Kaggle mirror)
+  and the authoritative OpenSLR SLR127 fallback.
+
 ### Added
 
 - `src/tamil_voice/audio/io.py` — `AudioData` container; `load_audio` (reads at
