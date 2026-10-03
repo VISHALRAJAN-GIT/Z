@@ -1,0 +1,75 @@
+# ---- Python ----
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# ---- Virtual environments ----
+.venv/
+venv/
+env/
+ENV/
+
+# ---- Tooling caches ----
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.ipynb_checkpoints/
+.coverage
+htmlcov/
+
+# ---- Secrets ----
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# ---- Frolic session telemetry ----
+# Local IDE telemetry backup (auto-written by the Frolic extension).
+# Kept on disk deliberately as a session memory aid, but not versioned:
+# it churns on every keystroke batch. Durable memory lives in MEMORY.md.
+.frolic-session.json
+.frolic/
+
+# ---- Editors / OS ----
+.vscode/
+.idea/
+*.swp
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# ---- Datasets: audio and other large binaries are never committed ----
+data/raw/**
+!data/raw/**/.gitkeep
+data/interim/**
+!data/interim/**/.gitkeep
+data/processed/**
+!data/processed/**/.gitkeep
+data/benchmarks/**
+!data/benchmarks/**/.gitkeep
+# Manifests ARE tracked - they are small JSONL metadata, not audio.
+!data/manifests/*.jsonl
+
+# ---- Model weights ----
+checkpoints/**
+!checkpoints/**/.gitkeep
+*.ckpt
+*.pt
+*.pth
+*.safetensors
+*.onnx
+*.bin
+
+# ---- Generated outputs ----
+artifacts/**
+!artifacts/**/.gitkeep
+
+# ---- Notebook execution state ----
+notebooks/.ipynb_checkpoints/

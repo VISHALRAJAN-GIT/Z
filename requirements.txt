@@ -1,0 +1,23 @@
+# Runtime dependencies for tamil-voice-foundation.
+# The authoritative list lives in pyproject.toml [project.dependencies].
+# This file exists for tools that expect a flat requirements list.
+
+numpy>=1.26,<3
+scipy>=1.11
+soundfile>=0.12
+librosa>=0.10
+PyYAML>=6.0
+pydantic>=2.5
+tqdm>=4.66
+matplotlib>=3.8
+
+# torch / torchaudio are intentionally NOT pinned here. On Windows the PyPI
+# wheels are CPU-only, so the index URL must be chosen deliberately:
+#
+#   CPU only  (development, unit tests, inference benchmarking)
+#   pip install torch torchaudio --index-url https://download.pytorch.org/whl/cpu
+#
+#   CUDA 12.4 (RTX 2050 Laptop, 4 GB VRAM)
+#   pip install torch torchaudio --index-url https://download.pytorch.org/whl/cu124
+#
+# Install with:  pip install -e .[torch]

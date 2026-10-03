@@ -1,0 +1,13 @@
+# Development and quality tooling.
+# Install with:  pip install -e .[dev]
+
+-r requirements.txt
+
+pytest>=8.0
+pytest-cov>=5.0
+ruff>=0.5
+mypy>=1.8
+
+# Type stubs for third-party libraries that ship none.
+types-PyYAML>=6.0
+soundfile>=0.12

@@ -1,0 +1,41 @@
+* text=auto eol=lf
+
+*.py text eol=lf
+*.pyi text eol=lf
+*.md text eol=lf
+*.yaml text eol=lf
+*.yml text eol=lf
+*.toml text eol=lf
+*.cfg text eol=lf
+*.txt text eol=lf
+*.json text eol=lf
+*.jsonl text eol=lf
+*.csv text eol=lf
+
+# Audio and model binaries must never be line-ending translated.
+*.wav binary
+*.flac binary
+*.mp3 binary
+*.ogg binary
+*.m4a binary
+*.npy binary
+*.npz binary
+*.pt binary
+*.pth binary
+*.ckpt binary
+*.safetensors binary
+*.onnx binary
+
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.pdf binary
+
+# Keep notebooks diffable but out of the default diff driver.
+*.ipynb text eol=lf
+*.ipynb linguist-generated
+
+# Windows scripts
+*.ps1 text eol=crlf
+*.bat text eol=crlf
+*.cmd text eol=crlf
