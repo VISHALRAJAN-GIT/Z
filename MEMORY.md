@@ -56,7 +56,11 @@ unmodified.
 C:\ANTI_GRAVITY\PROJECT Z\tamil-voice-foundation\
 ```
 
-git repository, branch `main`, initial commit only. Initialized 2026-10-03.
+git repository, branch `main`, remote `origin` =
+`https://github.com/VISHALRAJAN-GIT/Z.git`. Initialized 2026-10-03. Pushed:
+Phase 00 skeleton, the audio io/resampling work, and a non-destructive merge of
+GitHub's placeholder README (its commit remains an ancestor; the project README
+was kept).
 
 Structure: `src/tamil_voice/` (9 subpackages + `common`), `training/`,
 `evaluation/`, `data/`, `configs/`, `experiments/`, `checkpoints/`,
@@ -178,3 +182,5 @@ Before the end of every session:
   from the Frolic extension. Secondary. Outside this repository.
 - `C:\ANTI_GRAVITY\PROJECT Z\chrome-browser-agent\` — separate project, unrelated
   to this one. Not part of this repository.
+- GitHub remote `origin` — `https://github.com/VISHALRAJAN-GIT/Z.git`. The
+  published copy of this repository. Never force-push `main`.
