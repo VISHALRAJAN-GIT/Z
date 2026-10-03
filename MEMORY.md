@@ -14,20 +14,22 @@ This file is authoritative. Frolic telemetry is secondary and may be rotated.
 Phase 01 / EXP-001 — in progress.**
 
 Implemented so far this phase: `audio/io.py` (loading, canonical conversion, real
-validation) and `audio/resampling.py` (8/22.05/44.1/48 kHz -> 16 kHz, with a
-no-op for already-16-kHz input). Both are tested. Nothing is benchmarked yet and
-no acceptance criterion in `experiments/001_audio_pipeline/README.md` is measured.
+validation), `audio/resampling.py` (8/22.05/44.1/48 kHz -> 16 kHz, with a
+no-op for already-16-kHz input), and `audio/normalization.py` (read-only loudness
+analysis and classification, plus opt-in gain). All are tested. Nothing is
+benchmarked yet and no acceptance criterion in
+`experiments/001_audio_pipeline/README.md` is measured.
 
 No dataset has been downloaded. No model has been trained. Any statement to the
 contrary is false.
 
-Verification, run in `.venv` on Python 3.11.9, after adding io.py and
-resampling.py:
+Verification, run in `.venv` on Python 3.11.9, after adding io.py,
+resampling.py and normalization.py:
 
 ```text
-pytest   91 passed
+pytest   116 passed
 ruff     All checks passed
-mypy     Success: no issues found in 17 source files
+mypy     Success: no issues found in 18 source files
 ```
 
 torch is **installed**: `torch 2.14.1+cpu`, `torchaudio 2.11.0+cpu`, from the
@@ -78,9 +80,10 @@ Empty directories are preserved with `.gitkeep`. `.venv`, caches, `checkpoints/`
 | `common/seed.py` | `seed_everything` across Python/NumPy/torch, DataLoader worker init, `SeedReport` |
 | `audio/io.py` | `AudioData` container, `load_audio` (no resampling), `audio_info` header probe, `validate_audio` / `ValidationReport` / `ValidationLimits`, `AudioLoadError` / `AudioValidationError` |
 | `audio/resampling.py` | `resample_waveform`, `resample_audio`, `resample_to_canonical`; identical-rate input is returned untouched |
+| `audio/normalization.py` | `analyze_loudness` / `LoudnessReport` (peak, RMS, DC, crest, clipping, dBFS), classification too_quiet/normal/too_loud/clipped; opt-in `apply_gain`, `normalize_peak`, `normalize_rms` |
 
 Tests: `tests/unit/test_config.py`, `test_common.py`, `test_package.py`,
-`test_audio_io.py`, `test_audio_resampling.py`.
+`test_audio_io.py`, `test_audio_resampling.py`, `test_audio_normalization.py`.
 
 Canonical audio: mono, 16 kHz, float32 — defined once in `config.py` and imported
 everywhere else (`CANONICAL_SAMPLE_RATE`, re-exported by `audio/io.py`).
@@ -130,14 +133,13 @@ warning and does not prevent loading, while the rest are errors.
 ## 7. Next actions
 
 Phase 01 / EXP-001 continues. Done: torch installed (CPU), `audio/io.py`,
-`audio/resampling.py`, each with tests. Next, in this order:
+`audio/resampling.py`, `audio/normalization.py`, each with tests. Next, in this
+order:
 
-1. `audio/normalization.py` — report-only loudness tooling; no automatic peak
-   normalization.
-2. `audio/quality.py` — SNR / degradation metrics for the EXP-001 criteria.
-3. `audio/features.py` — mel filterbank, log-mel, 80 bins, built on tensor ops.
-4. `vad/detector.py`, `vad/postprocess.py`.
-5. Run all eight acceptance criteria in
+1. `audio/quality.py` — SNR / degradation metrics for the EXP-001 criteria.
+2. `audio/features.py` — mel filterbank, log-mel, 80 bins, built on tensor ops.
+3. `vad/detector.py`, `vad/postprocess.py`.
+4. Run all eight acceptance criteria in
    `experiments/001_audio_pipeline/README.md`, record measured numbers in
    `results.json`, and update this file.
 

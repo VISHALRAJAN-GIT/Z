@@ -21,7 +21,13 @@ Phase 01 / EXP-001, in progress. No acceptance criterion has been measured yet.
 - `src/tamil_voice/audio/resampling.py` — `resample_waveform`, `resample_audio`,
   `resample_to_canonical`. Converts 8/22.05/44.1/48 kHz to 16 kHz; already-16-kHz
   input is returned untouched.
-- Tests: `test_audio_io.py` (28) and `test_audio_resampling.py` (17).
+- `src/tamil_voice/audio/normalization.py` — `analyze_loudness` / `LoudnessReport`
+  (peak, RMS, DC offset, crest factor, clipping, in linear and dBFS) and the
+  too_quiet / normal / too_loud / clipped classification. Gain is opt-in:
+  `apply_gain`, `normalize_peak`, `normalize_rms`. Nothing is normalized
+  automatically.
+- Tests: `test_audio_io.py` (28), `test_audio_resampling.py` (17) and
+  `test_audio_normalization.py` (25).
 
 ### Fixed
 

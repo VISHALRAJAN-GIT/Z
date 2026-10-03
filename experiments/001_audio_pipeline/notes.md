@@ -9,8 +9,13 @@
 - `audio/resampling.py`: 8/22.05/44.1/48 kHz -> 16 kHz via `librosa.resample`
   (soxr). A 440 Hz tone survives every conversion to within a couple of Hz, and
   already-16-kHz input is returned as the same object with no re-filtering.
-- 45 new tests (91 total), covering mono/stereo, downmix, corrupt/missing/empty
-  files, NaN/Inf, clipping, near-silence, unsupported rates and over-long input.
+- `audio/normalization.py`: read-only `analyze_loudness` reporting peak, RMS, DC
+  offset, crest factor and clipping, in linear and dBFS units, and classifying the
+  recording as too_quiet / normal / too_loud / clipped. Gain is opt-in only
+  (`apply_gain`, `normalize_peak`, `normalize_rms`); nothing normalizes implicitly.
+- 70 new tests across the three modules (116 total), covering mono/stereo, downmix,
+  corrupt/missing/empty files, NaN/Inf, clipping, near-silence, unsupported rates,
+  over-long input, dBFS conversions, classification boundaries and gain.
 
 ## What failed
 
@@ -28,6 +33,6 @@ rather than a hope.
 
 ## What should be tested next
 
-`audio/normalization.py` (report-only loudness), then `audio/quality.py`. Then
-`audio/features.py`, `vad/`. Full acceptance criteria are in `README.md`. Do not
-start EXP-002 until every criterion is measured and recorded.
+`audio/quality.py` (SNR / degradation metrics), then `audio/features.py`, then
+`vad/`. Full acceptance criteria are in `README.md`. Do not start EXP-002 until
+every criterion is measured and recorded.
