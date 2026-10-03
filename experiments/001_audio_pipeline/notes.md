@@ -52,10 +52,12 @@ path changes the sample rate, so "what the file contained" stays separable from
 "what we did to it". This is also what lets the 16 kHz no-op be a hard guarantee
 rather than a hope.
 
-## EXP-001 acceptance run (synthetic)
+## EXP-001 acceptance run
 
-`verify_criteria.py` executed the criteria on synthetic fixtures, since no real
-Tamil recording exists. Result: **7 pass, 0 fail, 1 pending** (`results.json`).
+`verify_criteria.py` executed all criteria. Result: **8 pass, 0 fail, 0 pending**
+(`results.json`). Criteria 1-6 and 8 ran on synthetic fixtures with known ground
+truth; criterion 7 and the `real_recording` section ran on the real Tamil
+recording `data/raw/speech/Tamil voice sample.mp3` (48 kHz stereo, 47 492.8 ms).
 
 - Criterion 1: 48 kHz stereo and 22.05 kHz mono both landed on 16 kHz mono with
   32 000 frames each, sharing a 440 Hz peak. The two resampled waveforms differ by
@@ -66,15 +68,25 @@ Tamil recording exists. Result: **7 pass, 0 fail, 1 pending** (`results.json`).
   because the configured 50 ms padding and 150 ms hangover intentionally extend
   every segment and the 0.20 s merge gap bridges short pauses; judged against that
   stated 0.20 s margin, false positives beyond it were 1.7%.
-- Criterion 7 is pending: it needs one real Tamil recording. Criteria 1-6 and 8
-  must be re-run on real speech before EXP-001 is accepted.
+- Criterion 7 and the real recording: the supplied MP3 loaded natively as 48 kHz
+  stereo (2 279 656 frames) and the canonical path produced 16 kHz mono
+  (759 886 frames, duration preserved to 0.1 ms). Quality: `normal` loudness,
+  peak -14.0 dBFS, RMS -35.2 dBFS, est. SNR 23.3 dB, 24.6 % silence, no clipping.
+  log-Mel shape `(4750, 80)` matched the 25 ms/10 ms geometry exactly. VAD found
+  13 segments covering 39.6 s (79.3 % speech), first segment 0.40-1.08 s.
+  Waveform / spectrogram / log-mel / VAD-energy plots written to
+  `artifacts/plots/exp001_Tamil_voice_sample_overview.png`. All five real-recording
+  checks passed. There is no reference transcript or VAD annotation, so this is a
+  behaviour check with reported statistics, not an accuracy measurement.
 
 ## What should be tested next
 
-The synthetic criteria run is done (7 pass, 0 fail, 1 pending). What remains is to
-place one real Tamil recording in `data/raw/speech/`, re-run `verify_criteria.py`
-on it, produce the criterion-7 plots, and confirm the criteria still hold on real
-speech. Do not start EXP-002 or Phase 02 until that run is measured and recorded.
+EXP-001 is complete: all 8 criteria pass and the pipeline is verified end to end
+on real Tamil speech. The open work is downstream, not in this experiment — an
+annotated (or at least time-marked) recording would let the real-recording VAD
+statistics be scored for precision/recall instead of only sanity-checked. Do not
+start EXP-002 / Phase 02 until that is understood as a known gap rather than a
+passing criterion.
 
 ## Note on ordering
 

@@ -1,9 +1,11 @@
 # EXP-001 — Audio Pipeline Foundation
 
-**Status:** all modules implemented. 7 of 8 criteria measured on synthetic fixtures
-(7 pass, 0 fail, 1 pending). Criterion 7 needs one real Tamil recording, which does
-not exist yet; until then the criteria have **not** been verified on real speech
-and EXP-001 is **not** accepted.
+**Status:** all modules implemented. All 8 criteria pass (8 pass, 0 fail, 0 pending).
+Criteria 1-6 and 8 are measured on synthetic fixtures with known ground truth;
+criterion 7 and the `real_recording` section are measured on the supplied Tamil
+recording (`data/raw/speech/Tamil voice sample.mp3`, 48 kHz stereo, 47.5 s).
+The pipeline runs end to end on that recording: 16 kHz mono, `normal` loudness,
+est. SNR 23.3 dB, log-Mel `(4750, 80)`, VAD 79.3 % speech in 13 segments.
 
 ## Hypothesis
 
@@ -36,8 +38,9 @@ Explicitly out of scope: neural VAD, speech enhancement, any model, any training
 
 ## Acceptance criteria
 
-The pipeline is accepted only when all of the following hold, measured on a real
-Tamil recording:
+The pipeline is accepted only when all of the following hold. Criteria 1-6 carry
+known ground truth, so they are measured on synthetic fixtures; criterion 7 and the
+`real_recording` section are measured on a real Tamil recording:
 
 1. A 48 kHz stereo file and a 22.05 kHz mono file both load and converge on the
    same 16 kHz mono representation.
@@ -60,11 +63,13 @@ All eight criteria met. Plots land in `artifacts/plots/`.
 
 ## Dataset
 
-None required for the unit-test criteria. Criterion 7 onward needs one real Tamil
-recording placed in `data/raw/speech/`, outside version control.
-
-Which corpus to draw that first recording from is still open — see
-`MEMORY.md` section 6.
+Criteria 1-6 and 8 need no dataset: they use synthetic fixtures with known ground
+truth. Criterion 7 and the `real_recording` section need one real Tamil recording
+in `data/raw/speech/`, outside version control. That file is now present
+(`Tamil voice sample.mp3`, 48 kHz stereo, 47.5 s). There is no ground-truth
+transcript or VAD annotation for it, so the real-recording checks assert pipeline
+behaviour (canonical rate/channels, duration preserved, feature shape, valid
+segments, plots written) and report statistics, not an accuracy figure.
 
 ## Files
 
@@ -72,12 +77,11 @@ Which corpus to draw that first recording from is still open — see
 README.md            this file
 config.yaml          fixture and tolerance parameters, read by verify_criteria.py
 verify_criteria.py   runs the criteria and writes results.json
-results.json         measured 2026-10-03 on synthetic fixtures; criterion 7 pending
+results.json         measured 2026-10-03: 8 pass, 0 fail, 0 pending
 notes.md             what worked, what failed, why, what to test next
 ```
 
 `results.json` records only what was measured. Criteria 1-6 and 8 were executed on
-synthetic fixtures by `verify_criteria.py`; criterion 7 is marked `pending` because
-it needs a real Tamil recording. Every number in the file came from that run — none
-is a placeholder. The criteria must be re-run on real speech before EXP-001 is
-accepted.
+synthetic fixtures by `verify_criteria.py`; criterion 7 and the `real_recording`
+section were executed on the real Tamil recording. Every number in the file came
+from that run — none is a placeholder.

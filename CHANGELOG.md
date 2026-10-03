@@ -9,9 +9,10 @@ what changed.
 
 ## [Unreleased]
 
-Phase 01 / EXP-001, in progress. The eight acceptance criteria were measured on
-synthetic fixtures by `verify_criteria.py`: 7 pass, 0 fail, 1 pending (criterion 7
-needs one real Tamil recording). The criteria have not been verified on real speech.
+Phase 01 / EXP-001, complete and verified. `verify_criteria.py` reported 8 pass,
+0 fail, 0 pending: criteria 1-6 and 8 on synthetic fixtures with known ground
+truth, criterion 7 and the `real_recording` section on the supplied real Tamil
+recording `data/raw/speech/Tamil voice sample.mp3` (48 kHz stereo, 47.49 s).
 
 ### Added
 
@@ -48,9 +49,10 @@ needs one real Tamil recording). The criteria have not been verified on real spe
   `test_audio_quality.py` (14), `test_vad_detector.py` (19) and
   `test_vad_postprocess.py` (14).
 - `experiments/001_audio_pipeline/verify_criteria.py` — runs the EXP-001
-  acceptance criteria on synthetic fixtures and writes measured numbers to
-  `results.json`; `config.yaml` holds the fixture and tolerance parameters.
-  First run: 7 pass, 0 fail, 1 pending (criterion 7 needs a real Tamil recording).
+  acceptance criteria and writes measured numbers to `results.json`; `config.yaml`
+  holds the fixture and tolerance parameters. Criteria 1-6 and 8 use synthetic
+  fixtures; criterion 7 and the `real_recording` section use the real Tamil
+  recording. Current run: 8 pass, 0 fail, 0 pending.
 
 ### Fixed
 

@@ -24,13 +24,24 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+import matplotlib
+
+matplotlib.use("Agg")
+
+import matplotlib.pyplot as plt  # noqa: E402
 import numpy as np
 import soundfile as sf
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "src"))
 
-from tamil_voice.audio.features import DEFAULT_N_MELS, StftConfig, log_mel_spectrogram  # noqa: E402
+from tamil_voice.audio.features import (  # noqa: E402
+    DEFAULT_N_MELS,
+    StftConfig,
+    log_mel_spectrogram,
+    magnitude_spectrogram,
+    stft,
+)
 from tamil_voice.audio.io import (  # noqa: E402
     AudioLoadError,
     AudioValidationError,
@@ -42,12 +53,14 @@ from tamil_voice.audio.io import (  # noqa: E402
     ISSUE_SILENT,
     load_audio,
 )
+from tamil_voice.audio.quality import analyze_quality  # noqa: E402
 from tamil_voice.audio.resampling import resample_audio, resample_to_canonical  # noqa: E402
 from tamil_voice.common.config import load_yaml  # noqa: E402
 from tamil_voice.vad.detector import VadConfig, detect_speech  # noqa: E402
 from tamil_voice.vad.postprocess import SegmentConfig, build_segments  # noqa: E402
 
 FIXTURES = ROOT / "artifacts" / "exp001" / "fixtures"
+PLOTS = ROOT / "artifacts" / "plots"
 CANONICAL_SR = 16_000
 
 CONFIG = load_yaml(Path(__file__).parent / "config.yaml")
@@ -302,6 +315,144 @@ def criterion_8() -> dict[str, Any]:
     return {"status": "pass" if passed else "fail", "tolerance": "all three gates exit 0", "measured": measured}
 
 
+def find_real_recording() -> Path | None:
+    """Return the first non-empty audio file in data/raw/speech/, or None."""
+    directory = ROOT / "data" / "raw" / "speech"
+    if not directory.is_dir():
+        return None
+    for pattern in ("*.wav", "*.mp3", "*.flac", "*.m4a", "*.ogg"):
+        for candidate in sorted(directory.glob(pattern)):
+            if candidate.is_file() and candidate.stat().st_size > 0:
+                return candidate
+    return None
+
+
+def plot_overview(path: Path, canonical: Any, vad: Any, segments: list[Any]) -> Path:
+    """Criterion 7: plot waveform, spectrogram, log-mel and VAD regions."""
+    PLOTS.mkdir(parents=True, exist_ok=True)
+    sample_rate = canonical.sample_rate
+    waveform = canonical.waveform
+    time_axis = np.arange(waveform.size) / sample_rate
+
+    config = StftConfig()
+    spectrum = magnitude_spectrogram(stft(waveform, config)).numpy()
+    spectrum_db = 20.0 * np.log10(spectrum + 1e-6)
+    mel = log_mel_spectrogram(waveform, config).numpy()
+
+    figure, axes = plt.subplots(4, 1, figsize=(12, 11), constrained_layout=True)
+
+    axes[0].plot(time_axis, waveform, linewidth=0.4, color="tab:blue")
+    for segment in segments:
+        axes[0].axvspan(segment.start, segment.end, color="tab:green", alpha=0.20)
+    axes[0].set_title(f"Waveform with VAD segments - {path.name}")
+    axes[0].set_xlabel("time (s)")
+    axes[0].set_ylabel("amplitude")
+
+    axes[1].imshow(
+        spectrum_db.T,
+        aspect="auto",
+        origin="lower",
+        cmap="magma",
+        extent=[0.0, canonical.duration, 0.0, sample_rate / 2.0],
+    )
+    axes[1].set_title("Spectrogram (dB)")
+    axes[1].set_ylabel("frequency (Hz)")
+
+    axes[2].imshow(
+        mel.T,
+        aspect="auto",
+        origin="lower",
+        cmap="viridis",
+        extent=[0.0, canonical.duration, 0.0, config.n_mels],
+    )
+    axes[2].set_title(f"Log-mel spectrogram ({config.n_mels} bins)")
+    axes[2].set_ylabel("mel bin")
+
+    axes[3].plot(vad.frame_times, vad.energy_db, linewidth=0.5, color="tab:blue", label="frame energy (dB)")
+    axes[3].axhline(vad.threshold_db, color="tab:red", linestyle="--", label="threshold")
+    axes[3].fill_between(
+        vad.frame_times,
+        float(vad.energy_db.min()),
+        float(vad.energy_db.max()),
+        where=vad.mask,
+        color="tab:green",
+        alpha=0.15,
+    )
+    axes[3].set_title("VAD frame energy and decision")
+    axes[3].set_xlabel("time (s)")
+    axes[3].set_ylabel("energy (dB)")
+    axes[3].legend(loc="upper right", fontsize=8)
+
+    output = PLOTS / f"exp001_{path.stem.replace(' ', '_')}_overview.png"
+    figure.savefig(output, dpi=110)
+    plt.close(figure)
+    return output
+
+
+def inspect_real_recording(path: Path) -> dict[str, Any]:
+    """Run the canonical pipeline on the real recording and check it behaves."""
+    native = load_audio(path, mono=False)
+    canonical = resample_to_canonical(load_audio(path))
+
+    quality = analyze_quality(canonical.waveform, canonical.sample_rate)
+    config = StftConfig()
+    mel = log_mel_spectrogram(canonical.waveform, config)
+    vad = detect_speech(canonical.waveform)
+    segments = build_segments(vad, total_duration=canonical.duration)
+    plot = plot_overview(path, canonical, vad, segments)
+
+    expected_frames = 1 + canonical.num_frames // config.hop_length
+    speech_seconds = sum(segment.duration for segment in segments)
+    canonical_ok = canonical.sample_rate == CANONICAL_SR and canonical.channels == 1
+    duration_ok = abs(canonical.duration - native.duration) <= 0.01
+    mel_ok = tuple(mel.shape) == (expected_frames, DEFAULT_N_MELS)
+    segments_ok = (
+        len(segments) >= 1
+        and speech_seconds > 0.0
+        and all(0.0 <= s.start <= s.end <= canonical.duration + 1e-6 for s in segments)
+    )
+    plot_ok = plot.exists() and plot.stat().st_size > 0
+    passed = canonical_ok and duration_ok and mel_ok and segments_ok and plot_ok
+
+    return {
+        "path_name": path.name,
+        "native": {
+            "sample_rate": native.sample_rate,
+            "channels": native.channels,
+            "frames": native.num_frames,
+            "duration": round(native.duration, 4),
+        },
+        "canonical": {
+            "sample_rate": canonical.sample_rate,
+            "channels": canonical.channels,
+            "frames": canonical.num_frames,
+            "duration": round(canonical.duration, 4),
+        },
+        "quality": quality.to_dict(),
+        "log_mel_shape": [int(mel.shape[0]), int(mel.shape[1])],
+        "expected_n_frames": int(expected_frames),
+        "vad": {
+            "speech_ratio": round(vad.speech_ratio, 4),
+            "num_segments": len(segments),
+            "speech_seconds": round(speech_seconds, 3),
+            "first_segment": (
+                {"start": round(segments[0].start, 4), "end": round(segments[0].end, 4)}
+                if segments
+                else None
+            ),
+        },
+        "checks": {
+            "canonical_16k_mono": canonical_ok,
+            "duration_preserved": duration_ok,
+            "mel_shape_ok": mel_ok,
+            "segments_valid": segments_ok,
+            "plot_written": plot_ok,
+        },
+        "plot": str(plot.relative_to(ROOT)).replace("\\", "/"),
+        "passed": passed,
+    }
+
+
 CRITERIA = [
     (1, "48 kHz stereo and 22.05 kHz mono converge on 16 kHz mono", criterion_1),
     (2, "8/22.05/44.1/48 kHz resample; 16 kHz passes through untouched", criterion_2),
@@ -316,18 +467,32 @@ CRITERIA = [
 
 def main() -> int:
     FIXTURES.mkdir(parents=True, exist_ok=True)
+    real_path = find_real_recording()
+    real_report = inspect_real_recording(real_path) if real_path is not None else None
+
     results = []
     for number, description, fn in CRITERIA:
-        if fn is None:
-            results.append({
-                "id": number,
-                "description": description,
-                "status": "pending",
-                "tolerance": None,
-                "measured": None,
-                "reason": "requires one real Tamil recording in data/raw/speech/, which does not exist yet",
-            })
-            print(f"criterion {number}: PENDING (no real Tamil recording)")
+        if number == 7:
+            if real_report is None:
+                results.append({
+                    "id": 7,
+                    "description": description,
+                    "status": "pending",
+                    "tolerance": None,
+                    "measured": None,
+                    "reason": "requires one real Tamil recording in data/raw/speech/",
+                })
+                print("criterion 7: PENDING (no real Tamil recording)")
+            else:
+                entry = {
+                    "id": 7,
+                    "description": description,
+                    "status": "pass" if real_report["passed"] else "fail",
+                    "tolerance": "waveform, spectrogram, log-mel and VAD plotted from the real recording",
+                    "measured": {"plot": real_report["plot"], "checks": real_report["checks"]},
+                }
+                results.append(entry)
+                print(f"criterion 7: {entry['status'].upper()} (real recording: {real_path.name})")
             continue
         outcome = fn()
         outcome.update({"id": number, "description": description})
@@ -346,15 +511,20 @@ def main() -> int:
             "python": platform.python_version(),
             "platform": platform.platform(),
         },
-        "input": "synthetic fixtures only",
-        "real_recording_required": True,
+        "input": "synthetic fixtures + real recording" if real_report else "synthetic fixtures only",
+        "criteria_scope": (
+            "criteria 1-6 and 8 use synthetic fixtures with known ground truth; "
+            "criterion 7 and the real_recording section use the supplied recording"
+        ),
+        "real_recording": real_report,
         "criteria": results,
         "summary": {"passed": passed, "failed": failed, "pending": pending},
         "honesty_note": (
-            "Criterion 7 is pending and the README specifies the criteria be measured on a "
-            "real Tamil recording. Criteria 1-6 and 8 are measured on synthetic fixtures only "
-            "and must be re-run on the real recording before EXP-001 is accepted. No value here "
-            "is fabricated; every number was produced by this run."
+            "Criteria 1-6 and 8 are measured on synthetic fixtures with known ground truth; "
+            "criterion 7 is measured on the supplied real recording. The real_recording section "
+            "runs the same pipeline end to end on that file, but there is no ground-truth "
+            "transcript or VAD annotation, so it reports statistics rather than an accuracy "
+            "figure. Every number here was produced by this run; none is a placeholder."
         ),
     }
     (Path(__file__).parent / "results.json").write_text(

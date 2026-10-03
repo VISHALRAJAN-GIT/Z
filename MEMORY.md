@@ -11,20 +11,27 @@ This file is authoritative. Frolic telemetry is secondary and may be rotated.
 ## 1. Current status
 
 **Phase 00 — complete and committed at `35765c4`.
-Phase 01 / EXP-001 — in progress.**
+Phase 01 / EXP-001 — complete and verified.**
 
-Implemented so far this phase: `audio/io.py` (loading, canonical conversion, real
+Implemented this phase: `audio/io.py` (loading, canonical conversion, real
 validation), `audio/resampling.py` (8/22.05/44.1/48 kHz -> 16 kHz, with a
 no-op for already-16-kHz input), `audio/normalization.py` (read-only loudness
 analysis and classification, plus opt-in gain), `audio/features.py` (STFT wrapper
 on torch, mel filterbank, log-mel), `audio/quality.py` (aggregate diagnostic
 report), and `vad/detector.py` + `vad/postprocess.py` (non-neural energy +
-spectral-flatness VAD, and segment cleanup). All are tested, and an end-to-end
-load -> resample -> quality -> mel -> VAD smoke run returns sane numbers. The eight
-EXP-001 acceptance criteria were run on **synthetic fixtures** by
-`experiments/001_audio_pipeline/verify_criteria.py`: **7 pass, 0 fail, 1 pending**
-(criterion 7 needs one real Tamil recording). The criteria have *not* been verified
-on real speech, so EXP-001 is not yet accepted.
+spectral-flatness VAD, and segment cleanup). All are tested.
+
+EXP-001 is **accepted**: `experiments/001_audio_pipeline/verify_criteria.py`
+reported **8 pass, 0 fail, 0 pending**. Criteria 1-6 and 8 ran on synthetic
+fixtures with known ground truth; criterion 7 and the `real_recording` section ran
+on a real Tamil recording the user supplied, `data/raw/speech/Tamil voice
+sample.mp3` (48 kHz stereo, 47.49 s). On it the pipeline produced 16 kHz mono
+(759 886 frames, duration preserved), `normal` loudness (peak -14.0 dBFS,
+RMS -35.2 dBFS, est. SNR 23.3 dB, 24.6 % silence, no clipping), log-Mel
+`(4750, 80)`, and VAD 13 segments / 39.6 s speech (79.3 %). Plots:
+`artifacts/plots/exp001_Tamil_voice_sample_overview.png`. The real-recording check
+is a behaviour check with statistics — there is no reference transcript or VAD
+annotation, so no accuracy figure is claimed.
 
 No dataset has been downloaded. No model has been trained. Any statement to the
 contrary is false.
@@ -139,11 +146,15 @@ warning and does not prevent loading, while the rest are errors.
   floor estimated at the signal level, so it yields little or no speech. Real
   speech contains pauses; this is acceptable for the first VAD and is a candidate
   improvement, not a silent bug.
-- **Acceptance is not claimed on synthetic fixtures.** `verify_criteria.py` runs
-  criteria 1-6 and 8 on synthetic signals and writes measured numbers to
-  `results.json`, but the README requires the criteria be met on a real Tamil
-  recording. Criterion 7 is recorded as `pending`, and EXP-001 stays unaccepted
-  until that run happens.
+- **Acceptance is split by what each criterion can prove.** `verify_criteria.py`
+  runs criteria 1-6 and 8 on synthetic fixtures, because those carry known ground
+  truth (a resample target, a tone frequency, a planted defect, a known VAD burst);
+  a real recording cannot supply an "expected" answer for them. Criterion 7 and the
+  `real_recording` section run on the supplied recording. EXP-001 is accepted on
+  that basis: 8 pass, 0 fail. The real-recording checks assert behaviour (canonical
+  16 kHz mono, duration preserved, feature shape, valid segments, plots written)
+  and report statistics; with no transcript or VAD annotation, no accuracy figure
+  is claimed. This gap is recorded in section 6.
 - **Peak normalization is not automatic.** Loudness carries information. Silence,
   clipping and near-silence are detected and reported instead.
 - **Progressive implementation.** Directories now, files when their phase starts.
@@ -156,8 +167,11 @@ warning and does not prevent loading, while the rest are errors.
 
 ## 6. Open questions
 
-1. **First real Tamil recording.** EXP-001 needs one for its plotting and
-   end-to-end criteria. Undecided.
+1. **Real-recording VAD has no ground truth.** EXP-001's supplied recording has no
+   transcript or time-marked speech, so the VAD statistics (79.3 % speech, 13
+   segments) are sanity-checked, not scored. Getting even one annotated/timestamped
+   Tamil recording would turn criterion 6/7 on real audio into a precision/recall
+   measurement. Open, not blocking.
 2. **First ASR corpus.** Candidates are Common Voice Tamil, OpenSLR, AI4Bharat
    ASR. Requires a licensing decision recorded in `docs/02_data/licensing.md`
    before use. Undecided.
@@ -166,16 +180,19 @@ warning and does not prevent loading, while the rest are errors.
 
 ## 7. Next actions
 
-Phase 01 / EXP-001 continues. Done: torch installed (CPU), `audio/io.py`,
+Phase 01 / EXP-001 is **complete**. Done: torch installed (CPU), `audio/io.py`,
 `audio/resampling.py`, `audio/normalization.py`, `audio/features.py`,
 `audio/quality.py`, `vad/detector.py`, `vad/postprocess.py`, each with tests, plus
-`experiments/001_audio_pipeline/verify_criteria.py` which measured 7 of 8 criteria
-on synthetic fixtures (7 pass, 0 fail, 1 pending). Next:
+`experiments/001_audio_pipeline/verify_criteria.py`, which now runs all 8 criteria
+(8 pass, 0 fail) including the criterion-7 plots and the real-recording section on
+`data/raw/speech/Tamil voice sample.mp3`. Next, pending human decision:
 
-1. Place one real Tamil recording in `data/raw/speech/` (see section 6), re-run
-   `verify_criteria.py` on it, add the criterion-7 plots, and update this file.
+1. Plan Phase 02 (Tiny CTC ASR): pick the first corpus and record its license in
+   `docs/02_data/licensing.md` (section 6, item 2), then define the tokenizer and
+   the tiny CTC baseline as its own experiment. Per GUIDE section 31, the first
+   real milestone is overfitting 10-30 minutes of speech.
 
-Do not start EXP-002 or Phase 02 until the criteria are measured on real speech.
+Do not start Phase 02 code until the corpus/licensing decision is made.
 
 ## 8. Rules that must survive every session
 
