@@ -26,8 +26,16 @@ Phase 01 / EXP-001, in progress. No acceptance criterion has been measured yet.
   too_quiet / normal / too_loud / clipped classification. Gain is opt-in:
   `apply_gain`, `normalize_peak`, `normalize_rms`. Nothing is normalized
   automatically.
-- Tests: `test_audio_io.py` (28), `test_audio_resampling.py` (17) and
-  `test_audio_normalization.py` (25).
+- `src/tamil_voice/audio/features.py` — torch STFT wrapper (`stft`,
+  `magnitude_spectrogram`, `phase_spectrogram`, `power_spectrogram`), a unit-peak
+  `mel_filterbank`, and `mel_spectrogram` / `log_mel_spectrogram` at 80 bins.
+  Spectrograms are time-major `(frames, freqs)`.
+- `src/tamil_voice/audio/quality.py` — `analyze_quality` / `QualityReport`:
+  duration, level metrics, *estimated* SNR, silence ratio, zero-crossing rate and
+  spectral centroid / bandwidth / roll-off / flatness.
+- Tests: `test_audio_io.py` (28), `test_audio_resampling.py` (17),
+  `test_audio_normalization.py` (25), `test_audio_features.py` (30) and
+  `test_audio_quality.py` (14).
 
 ### Fixed
 

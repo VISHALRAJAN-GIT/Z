@@ -13,9 +13,18 @@
   offset, crest factor and clipping, in linear and dBFS units, and classifying the
   recording as too_quiet / normal / too_loud / clipped. Gain is opt-in only
   (`apply_gain`, `normalize_peak`, `normalize_rms`); nothing normalizes implicitly.
-- 70 new tests across the three modules (116 total), covering mono/stereo, downmix,
+- `audio/features.py`: an own torch STFT wrapper (time-major `(frames, freqs)`)
+  exposing magnitude, phase and power, plus a unit-peak mel filterbank and
+  `log_mel_spectrogram` at `(frames, 80)`. The filterbank matches
+  `librosa.filters.mel(htk=True, norm=None)` to 1e-5, and the STFT round-trips
+  through `torch.istft` to 1e-4.
+- `audio/quality.py`: `analyze_quality` aggregating the level metrics with an
+  estimated SNR, silence ratio, zero-crossing rate and spectral
+  centroid/bandwidth/rolloff/flatness.
+- 114 new tests across the five modules (160 total), covering mono/stereo, downmix,
   corrupt/missing/empty files, NaN/Inf, clipping, near-silence, unsupported rates,
-  over-long input, dBFS conversions, classification boundaries and gain.
+  over-long input, dBFS conversions, classification boundaries, gain, STFT geometry,
+  mel correctness, and the quality report.
 
 ## What failed
 
@@ -33,6 +42,14 @@ rather than a hope.
 
 ## What should be tested next
 
-`audio/quality.py` (SNR / degradation metrics), then `audio/features.py`, then
-`vad/`. Full acceptance criteria are in `README.md`. Do not start EXP-002 until
-every criterion is measured and recorded.
+`vad/detector.py` (energy + spectral + hangover) and `vad/postprocess.py`
+(segment merge, padding, minimum duration). Then run all eight acceptance
+criteria in `README.md`, which needs one real Tamil recording for criterion 7.
+Do not start EXP-002 until every criterion is measured and recorded.
+
+## Note on ordering
+
+`features.py` was built before `quality.py` even though the module list orders
+them the other way. Quality's spectral statistics need an STFT, and GUIDE section
+15 places the STFT wrapper in `features.py`; implementing a second STFT inside
+`quality.py` would have duplicated the framing and windowing logic.

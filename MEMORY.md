@@ -15,21 +15,23 @@ Phase 01 / EXP-001 — in progress.**
 
 Implemented so far this phase: `audio/io.py` (loading, canonical conversion, real
 validation), `audio/resampling.py` (8/22.05/44.1/48 kHz -> 16 kHz, with a
-no-op for already-16-kHz input), and `audio/normalization.py` (read-only loudness
-analysis and classification, plus opt-in gain). All are tested. Nothing is
-benchmarked yet and no acceptance criterion in
+no-op for already-16-kHz input), `audio/normalization.py` (read-only loudness
+analysis and classification, plus opt-in gain), `audio/features.py` (STFT wrapper
+on torch, mel filterbank, log-mel) and `audio/quality.py` (aggregate diagnostic
+report). All are tested, and an end-to-end load -> resample -> quality smoke run
+returns sane numbers. Nothing is benchmarked yet and no acceptance criterion in
 `experiments/001_audio_pipeline/README.md` is measured.
 
 No dataset has been downloaded. No model has been trained. Any statement to the
 contrary is false.
 
-Verification, run in `.venv` on Python 3.11.9, after adding io.py,
-resampling.py and normalization.py:
+Verification, run in `.venv` on Python 3.11.9, after adding io.py, resampling.py,
+normalization.py, features.py and quality.py:
 
 ```text
-pytest   116 passed
+pytest   160 passed
 ruff     All checks passed
-mypy     Success: no issues found in 18 source files
+mypy     Success: no issues found in 20 source files
 ```
 
 torch is **installed**: `torch 2.14.1+cpu`, `torchaudio 2.11.0+cpu`, from the
@@ -81,9 +83,12 @@ Empty directories are preserved with `.gitkeep`. `.venv`, caches, `checkpoints/`
 | `audio/io.py` | `AudioData` container, `load_audio` (no resampling), `audio_info` header probe, `validate_audio` / `ValidationReport` / `ValidationLimits`, `AudioLoadError` / `AudioValidationError` |
 | `audio/resampling.py` | `resample_waveform`, `resample_audio`, `resample_to_canonical`; identical-rate input is returned untouched |
 | `audio/normalization.py` | `analyze_loudness` / `LoudnessReport` (peak, RMS, DC, crest, clipping, dBFS), classification too_quiet/normal/too_loud/clipped; opt-in `apply_gain`, `normalize_peak`, `normalize_rms` |
+| `audio/features.py` | `StftConfig`, `stft` (torch, time-major `(frames, freqs)`), magnitude/phase/power, `mel_filterbank`, `mel_spectrogram`, `log_mel_spectrogram` (80 bins) |
+| `audio/quality.py` | `analyze_quality` / `QualityReport`: duration, peak/RMS/crest/clipping (from normalization), estimated SNR, silence ratio, ZCR, spectral centroid/bandwidth/rolloff/flatness |
 
 Tests: `tests/unit/test_config.py`, `test_common.py`, `test_package.py`,
-`test_audio_io.py`, `test_audio_resampling.py`, `test_audio_normalization.py`.
+`test_audio_io.py`, `test_audio_resampling.py`, `test_audio_normalization.py`,
+`test_audio_features.py`, `test_audio_quality.py`.
 
 Canonical audio: mono, 16 kHz, float32 — defined once in `config.py` and imported
 everywhere else (`CANONICAL_SAMPLE_RATE`, re-exported by `audio/io.py`).
@@ -110,6 +115,14 @@ warning and does not prevent loading, while the rest are errors.
   contained" separable from "what we did to it".
 - **Resampling is skipped at 16 kHz.** An already-canonical waveform is returned
   as the same object rather than passed through the interpolator again.
+- **The STFT lives in `features.py` and works in torch.** GUIDE section 15 wants
+  an own wrapper over tensor ops; section 18's spectral statistics reuse it rather
+  than reimplementing an STFT. Spectrograms are time-major `(frames, freqs)` and
+  log-mel is `(frames, 80)`, matching EXP-001 criterion 5.
+- **Quality SNR is explicitly *estimated*.** There is no reference signal, so the
+  noise floor is a low percentile of frame energies and the signal a high
+  percentile. It is named `estimated_snr_db` so it is never mistaken for measured
+  SNR.
 - **Peak normalization is not automatic.** Loudness carries information. Silence,
   clipping and near-silence are detected and reported instead.
 - **Progressive implementation.** Directories now, files when their phase starts.
@@ -133,15 +146,15 @@ warning and does not prevent loading, while the rest are errors.
 ## 7. Next actions
 
 Phase 01 / EXP-001 continues. Done: torch installed (CPU), `audio/io.py`,
-`audio/resampling.py`, `audio/normalization.py`, each with tests. Next, in this
-order:
+`audio/resampling.py`, `audio/normalization.py`, `audio/features.py`,
+`audio/quality.py`, each with tests. Next, in this order:
 
-1. `audio/quality.py` — SNR / degradation metrics for the EXP-001 criteria.
-2. `audio/features.py` — mel filterbank, log-mel, 80 bins, built on tensor ops.
-3. `vad/detector.py`, `vad/postprocess.py`.
-4. Run all eight acceptance criteria in
+1. `vad/detector.py` — energy + spectral + smoothing/hangover, non-neural.
+2. `vad/postprocess.py` — segment merge, padding, minimum duration.
+3. Run all eight acceptance criteria in
    `experiments/001_audio_pipeline/README.md`, record measured numbers in
-   `results.json`, and update this file.
+   `results.json`, and update this file. Criterion 7 needs one real Tamil
+   recording in `data/raw/speech/` (see section 6).
 
 Do not start EXP-002 or Phase 02 until every EXP-001 criterion is measured.
 
