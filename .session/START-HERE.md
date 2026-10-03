@@ -17,17 +17,26 @@ before it is claimed.
 ## Live status
 
 <!-- AUTO-STATUS:BEGIN -->
-_generated 2026-10-03 23:08 by scripts\update-status.ps1_
+_generated 2026-10-04 00:08 by scripts\update-status.ps1_
 
-**Last commit:** `3988e32 feat: Phase 02 data layer for corpus discovery, manifests and speaker-disjoint splits`
+**Last commit:** `050b614 chore: durable session memory with an auto-refreshing status block`
 **Branch:** `main`
-**Sync:** 1 commit(s) AHEAD of origin/main (not pushed)
-**Working tree:** 2 changed, 1 untracked
+**Sync:** 2 commit(s) AHEAD of origin/main (not pushed)
+**Working tree:** 6 changed, 5 untracked
+- `M .session/AGENTS.md`
+- `M .session/START-HERE.md`
+- `M .session/gates/pytest.txt`
 - `M CHANGELOG.md`
 - `M MEMORY.md`
-- `?? .session/`
+- `M src/tamil_voice/data/manifest.py`
+- `?? data/manifests/dataset_v001/`
+- `?? experiments/002_data_split/README.md`
+- `?? experiments/002_data_split/notes.md`
+- `?? experiments/002_data_split/results.json`
+- `?? experiments/002_data_split/verify_manifests.py`
 
 **Recent commits**
+- `050b614 chore: durable session memory with an auto-refreshing status block`
 - `3988e32 feat: Phase 02 data layer for corpus discovery, manifests and speaker-disjoint splits`
 - `32db8ae docs: record IISc-MILE Tamil corpus license and source`
 - `1f19894 test: verify EXP-001 criteria on a real Tamil recording`
@@ -35,10 +44,9 @@ _generated 2026-10-03 23:08 by scripts\update-status.ps1_
 - `6f50cb6 feat: non-neural VAD and speech segment post-processing`
 - `adc18bd refactor: share frame RMS and dBFS helpers across audio modules`
 - `fe67953 feat: STFT/mel features and audio quality report`
-- `56cacb7 feat: loudness analysis and opt-in gain normalization`
 
 **Gates, as last measured** (`tamil-voice-foundation\.session\gates\`)
-- pytest: exit=0 | 220 passed in 32.66s
+- pytest: exit=0 | 220 passed in 6.24s
 - ruff:   exit=0 | All checks passed!
 - mypy:   exit=0 | Success: no issues found in 26 source files
 

@@ -12,7 +12,7 @@ This file is authoritative. Frolic telemetry is secondary and may be rotated.
 
 **Phase 00 — complete and committed at `35765c4`.
 Phase 01 / EXP-001 — complete and verified.
-Phase 02 — the data layer is written but NOT committed and NOT yet run.**
+Phase 02 / EXP-002 — complete and verified. `dataset_v001` exists on disk.**
 
 Implemented in Phase 01: `audio/io.py` (loading, canonical conversion, real
 validation), `audio/resampling.py` (8/22.05/44.1/48 kHz -> 16 kHz, with a
@@ -34,24 +34,36 @@ RMS -35.2 dBFS, est. SNR 23.3 dB, 24.6 % silence, no clipping), log-Mel
 is a behaviour check with statistics — there is no reference transcript or VAD
 annotation, so no accuracy figure is claimed.
 
-One dataset has been **obtained**: the **IISc-MILE Tamil ASR Corpus** (OpenSLR
-SLR127, **CC BY 2.0**), at `data/raw/iisc_mile_ta/mile_tamil_asr_corpus/` —
-89,401 utterances (77,314 train / 12,087 test), ~150 h read speech, 16 kHz mono
-PCM, 16.125 GB on disk. License and source are recorded in
-`docs/02_data/licensing.md` and `docs/02_data/dataset_sources.md`. No manifest,
-no speaker-disjoint split, and no model exist yet. Any statement to the contrary
-is false.
+One dataset has been **obtained** and is now **manifested**: the **IISc-MILE Tamil
+ASR Corpus** (OpenSLR SLR127, **CC BY 2.0**), at
+`data/raw/iisc_mile_ta/mile_tamil_asr_corpus/` — 89,401 utterances, 531 speakers,
+150.1002 h measured, 16 kHz mono PCM, 16.125 GB on disk. License and source are
+recorded in `docs/02_data/licensing.md` and `docs/02_data/dataset_sources.md`.
 
-**Uncommitted work present in the working tree right now** (git status, measured):
-`src/tamil_voice/data/` (`corpus.py`, `manifest.py`, `splits.py`, `__init__.py`),
-`experiments/002_data_split/` (`build_manifests.py`, `config.yaml`), and
-`tests/unit/test_data_corpus.py`, `test_data_manifest.py`, `test_data_splits.py`.
-The gates pass with those files present, but the module is not committed and
-`build_manifests.py` has never been executed, so no `dataset_v001` manifest exists
-on disk yet.
+EXP-002 is **accepted**. `experiments/002_data_split/build_manifests.py` produced
+`data/manifests/dataset_v001/{train,dev,test}.jsonl` plus `metadata.json`, and
+`verify_manifests.py` re-derived every claim from the written bytes:
+**14 pass, 0 fail**. Measured split:
 
-Verification, run in `.venv` on Python 3.11.9, with the uncommitted data layer
-present, recorded by `scripts/run-gates.ps1` into `.session/gates/`:
+```text
+split   utterances  speakers     hours
+train       80304       476  135.4202
+dev          4526        26    7.3988
+test         4571        29    7.2812
+total       89401       531  150.1002
+```
+
+Speaker overlap is 0 for all three pairs. 0 empty transcripts, 0 duplicate
+utterance ids, 0 absolute paths, 0 missing audio files of 89401, 16 kHz
+everywhere. Durations were re-measured against file headers on a 2000-utterance
+sample: 0 mismatches. The manifests were built twice and are byte-identical by
+SHA-256. Ratios 0.90/0.05/0.05, seed `20261003`.
+
+**No model, tokenizer or training code exists.** No WER has ever been measured on
+this corpus. Any statement claiming otherwise is false.
+
+Gates, run in `.venv` on Python 3.11.9 and recorded by `scripts/run-gates.ps1` into
+`.session/gates/`:
 
 ```text
 pytest   220 passed
@@ -119,15 +131,15 @@ Empty directories are preserved with `.gitkeep`. `.venv`, caches, `checkpoints/`
 | `audio/quality.py` | `analyze_quality` / `QualityReport`: duration, peak/RMS/crest/clipping (from normalization), estimated SNR, silence ratio, ZCR, spectral centroid/bandwidth/rolloff/flatness |
 | `vad/detector.py` | `VadConfig`, `VadResult`, `detect_speech`: energy above a percentile noise floor + spectral flatness gate + median smoothing + hangover + short-run removal, all on one STFT grid |
 | `vad/postprocess.py` | `Segment`, `SegmentConfig`, `frames_to_segments`, `merge_segments`, `pad_segments`, `filter_short_segments`, `build_segments` (merge -> pad -> clamp -> re-merge -> drop short) |
-| `data/corpus.py` | **uncommitted.** `Utterance`, `parse_iisc_mile_name`, `read_transcript`, `discover_iisc_mile`, `CorpusError` — turns the corpus directory into typed utterance records |
-| `data/manifest.py` | **uncommitted.** `ManifestRecord`, `build_records`, `write_manifest`, `read_manifest` — JSONL manifests with durations measured from the audio |
-| `data/splits.py` | **uncommitted.** `SplitRatios`, `SplitConfig`, `plan_speaker_split`, `SpeakerSplitPlan`, `check_speaker_disjoint`, `SplitError` — speaker-disjoint split planning with a disjointness assertion |
+| `data/corpus.py` | `Utterance`, `parse_iisc_mile_name`, `read_transcript`, `discover_iisc_mile`, `CorpusError` — turns the corpus directory into typed utterance records |
+| `data/manifest.py` | `ManifestRecord`, `build_records`, `write_manifest`, `read_manifest` — JSONL manifests with durations measured from the audio; header reads run on an 8-thread pool because the corpus is 89k files |
+| `data/splits.py` | `SplitRatios`, `SplitConfig`, `plan_speaker_split`, `SpeakerSplitPlan`, `check_speaker_disjoint`, `SplitError` — speaker-disjoint split planning with a disjointness assertion |
 
 Tests: `tests/unit/test_config.py`, `test_common.py`, `test_package.py`,
 `test_audio_io.py`, `test_audio_resampling.py`, `test_audio_normalization.py`,
 `test_audio_features.py`, `test_audio_quality.py`, `test_vad_detector.py`,
-`test_vad_postprocess.py`, and (uncommitted) `test_data_corpus.py`,
-`test_data_manifest.py`, `test_data_splits.py`.
+`test_vad_postprocess.py`, `test_data_corpus.py`, `test_data_manifest.py`,
+`test_data_splits.py`.
 
 Canonical audio: mono, 16 kHz, float32 — defined once in `config.py` and imported
 everywhere else (`CANONICAL_SAMPLE_RATE`, re-exported by `audio/io.py`).
@@ -197,42 +209,74 @@ warning and does not prevent loading, while the rest are errors.
   `.session/gates/`, and copies of the two entry files live in `.session/` so git
   history preserves them. The script can only report git facts; it can never know
   what was decided or why, so the narrative stays a manual duty.
+- **The shipped IISc-MILE split is ignored for splitting.** The corpus's own
+  `train/` and `test/` folders put the same speaker on both sides. Each manifest row
+  keeps `shipped_split` as provenance, and `splits.py` never plans from it. Consequence
+  to remember: dev and test rows have audio under the shipped `train/` folder, so
+  nobody may filter manifests by `shipped_split` and assume disjointness. Disjointness
+  lives in which file a row is in.
+- **Header reads go through an 8-thread pool.** libsndfile releases the GIL, so the
+  89401 `soundfile.info` calls are overlapping disk waits. Measured 13.9 ms/file
+  single-threaded against 0.27 ms with four workers; eight is on the plateau and
+  sixteen measured no better. Results are reassembled in input order before sorting,
+  so scheduling cannot change the output. Without this the first full run did not
+  finish in 30 minutes; with it, 375.9 s.
+- **Durations come from the audio header, never from file size.** 16-bit PCM at
+  16 kHz would have made size inference nearly free and removed the disk cost. A
+  shortcut that is right 99.9 % of the time is exactly what silently poisons a
+  dataset version later, so `verify_manifests.py` re-measures a sample against real
+  headers.
+- **The builder's own report is never accepted as proof.** `build_manifests.py`
+  prints counts; `verify_manifests.py` re-derives all of them from the written bytes
+  and the file headers. Same split as EXP-001: the verifier is a separate program
+  that could disagree.
+- **Manifest reproducibility is measured, not asserted.** `config.yaml` claims the
+  manifests rebuild byte-for-byte, so the build was run twice and compared by
+  SHA-256. All four files matched.
+- **No manifest filtering.** All 89401 utterances are in `dataset_v001`, including
+  the 0.2427 s minimum and the 38.8509 s maximum, with 0 empty transcripts found.
+  Dropping outliers is a decision for a measured baseline, not for the builder.
 
 ## 6. Open questions
 
-1. **Real-recording VAD has no ground truth.** EXP-001's supplied recording has no
-   transcript or time-marked speech, so the VAD statistics (79.3 % speech, 13
-   segments) are sanity-checked, not scored. Getting even one annotated/timestamped
-   Tamil recording would turn criterion 6/7 on real audio into a precision/recall
-   measurement. Open, not blocking.
-2. **Diversity corpora.** IISc-MILE Tamil (CC BY 2.0) is obtained and recorded. It
-   is read, studio-clean speech, so it cannot cover colloquial, code-switched or
-   noisy audio on its own. AI4Bharat IndicVoices (Tamil, CC BY 4.0) and Kathbath
-   (Tamil, conversational) are the planned additions; each license must be recorded
-   before use. Undecided.
-3. **Tokenizer.** Word-level for the first CTC baseline, then decide on
-   subword from measured results, not preference. No commitment yet.
+1. **No WER has ever been measured.** Nothing has been trained. Every number in
+   this file is a data or signal measurement, not a model result. The first model
+   number will come from EXP-003's overfit test.
+2. **Tokenizer vocabulary size is unmeasured.** Word-level on 135.42 h of read
+   formal Tamil will produce a large vocabulary, and the out-of-vocabulary rate on
+   held-out speakers is unknown. Measure before assuming word-level is adequate.
+3. **Corpus coverage is narrow.** IISc-MILE is read, studio-clean, single-condition
+   speech. It cannot cover colloquial, code-switched, regional or noisy audio.
+   AI4Bharat IndicVoices (Tamil, CC BY 4.0) and Kathbath (Tamil, conversational)
+   are the planned additions; each license must be recorded in
+   `docs/02_data/licensing.md` before use. Undecided.
+4. **Real-recording VAD has no ground truth.** EXP-001's supplied recording has no
+   transcript or time-marked speech, so its VAD statistics (79.3 % speech, 13
+   segments) are sanity-checked, not scored. Open, not blocking.
+5. **Build wall time is unstable.** The same manifest build measured 375.9 s and
+   750.6 s on this machine. If a future step is time-boxed, measure twice first.
 
 ## 7. Next actions
 
-The immediate unfinished work is the **Phase 02 data layer**, already written and
-already gate-clean but still uncommitted and unexecuted. In order:
+EXP-002 is **complete and verified** (14 pass, 0 fail). `dataset_v001` is built,
+verified and reproducible. The next work is the first thing that trains a model.
 
-1. Run `experiments/002_data_split/build_manifests.py` over
-   `data/raw/iisc_mile_ta/` with `config.yaml` to produce the real
-   **speaker-disjoint** train/dev/test split and the JSONL manifests as
-   `dataset_v001`. Record what the run actually reports: utterance counts, speaker
-   counts, hours per split, and the disjointness check. Splitting by speaker, not
-   by recording, is mandatory or the test numbers are worthless.
-2. Complete the experiment record: `experiments/002_data_split/README.md`,
-   `results.json`, `notes.md`. Commit the data layer and the manifests.
-3. Then define the tokenizer and the tiny CTC baseline as its own experiment
-   (`experiments/003_*`). Per GUIDE section 31, the first real milestone is
-   overfitting 10-30 minutes of speech. Install the cu124 torch build for the
-   RTX 2050 before that training starts.
+1. Install the cu124 torch build for the RTX 2050. This is the first step that
+   needs a GPU and the last piece of Phase 00/01 setup left open:
+   `pip install torch torchaudio --index-url https://download.pytorch.org/whl/cu124`
+   Verify afterwards and record the real versions here. Until then, CPU only.
+2. EXP-003: define the tokenizer. Word-level first for the CTC baseline, per
+   GUIDE section 31, and only reconsider a subword scheme from measured results
+   rather than preference. The corpus is read, formal Tamil, so a word-level
+   vocabulary's size and out-of-vocabulary rate on this corpus are the numbers to
+   measure before anything else.
+3. Then the tiny CTC baseline as its own experiment, trained to **overfit 10-30
+   minutes of speech**, using only rows from `train.jsonl`. Never dev or test for
+   that check. A model that cannot overfit a small set has a data, tokenizer,
+   padding, CTC-length, blank or decoder bug, and more data will not reveal it.
 
-If this session ends before step 1 finishes, the uncommitted data layer and the
-missing `dataset_v001` manifests are the exact starting point of the next one.
+If a session ends before step 1, the exact starting point is: `dataset_v001`
+exists and is verified, and the first training run has not been started.
 
 ## 8. Rules that must survive every session
 

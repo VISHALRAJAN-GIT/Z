@@ -1,0 +1,118 @@
+{
+  "experiment": "EXP-002",
+  "generated": "2026-10-03T18:46:26+00:00",
+  "hypothesis": "A deterministic, speaker-disjoint split of the IISc-MILE Tamil corpus can be produced from its filenames and recorded as versioned JSONL manifests.",
+  "dataset": {
+    "id": "iisc_mile_ta",
+    "version": "v001",
+    "license": "CC BY 2.0",
+    "source": "https://www.openslr.org/127/",
+    "corpus_root": "data/raw/iisc_mile_ta/mile_tamil_asr_corpus"
+  },
+  "split": {
+    "seed": 20261003,
+    "ratios": {
+      "train": 0.9,
+      "dev": 0.05,
+      "test": 0.05
+    }
+  },
+  "artifacts": {
+    "train": "data/manifests/dataset_v001/train.jsonl",
+    "dev": "data/manifests/dataset_v001/dev.jsonl",
+    "test": "data/manifests/dataset_v001/test.jsonl",
+    "metadata": "data/manifests/dataset_v001/metadata.json"
+  },
+  "splits": {
+    "train": {
+      "utterances": 80304,
+      "speakers": 476,
+      "hours": 135.4202,
+      "empty_transcripts": 0,
+      "sample_rates": [
+        16000
+      ],
+      "duration_seconds": {
+        "min": 0.2427,
+        "median": 5.1701,
+        "max": 38.8509
+      },
+      "prefixes": {
+        "ISTL": 19580,
+        "MICI": 2365,
+        "MILE": 58359
+      }
+    },
+    "dev": {
+      "utterances": 4526,
+      "speakers": 26,
+      "hours": 7.3988,
+      "empty_transcripts": 0,
+      "sample_rates": [
+        16000
+      ],
+      "duration_seconds": {
+        "min": 0.6501,
+        "median": 5.1301,
+        "max": 36.0904
+      },
+      "prefixes": {
+        "ISTL": 760,
+        "MICI": 434,
+        "MILE": 3332
+      }
+    },
+    "test": {
+      "utterances": 4571,
+      "speakers": 29,
+      "hours": 7.2812,
+      "empty_transcripts": 0,
+      "sample_rates": [
+        16000
+      ],
+      "duration_seconds": {
+        "min": 1.0801,
+        "median": 5.0801,
+        "max": 26.9701
+      },
+      "prefixes": {
+        "ISTL": 838,
+        "MICI": 150,
+        "MILE": 3583
+      }
+    }
+  },
+  "total": {
+    "utterances": 89401,
+    "speakers": 531,
+    "hours": 150.1002,
+    "empty_transcripts": 0,
+    "sample_rates": [
+      16000
+    ],
+    "duration_seconds": {
+      "min": 0.2427,
+      "median": 5.1601,
+      "max": 38.8509
+    },
+    "prefixes": {
+      "ISTL": 21178,
+      "MICI": 2949,
+      "MILE": 65274
+    }
+  },
+  "speaker_overlap": {
+    "train&dev": [],
+    "train&test": [],
+    "dev&test": []
+  },
+  "records_written": {
+    "train": 80304,
+    "dev": 4526,
+    "test": 4571
+  },
+  "environment": {
+    "python": "3.11.9",
+    "platform": "Windows-10-10.0.26200-SP0"
+  }
+}

@@ -56,6 +56,13 @@ data/benchmarks/**
 !data/benchmarks/**/.gitkeep
 # Manifests ARE tracked - they are small JSONL metadata, not audio.
 !data/manifests/*.jsonl
+# ...except the large training manifest. Measured 2026-10-03: dataset_v001 is
+# 43.8 MB total and train.jsonl alone is 40.3 MB of it, almost all Tamil
+# transcript text. Git is the wrong home for that. The split is still pinned
+# exactly by metadata.json, which lists all 531 speaker ids per split, so train
+# membership is fully derivable from seed + corpus + speaker lists.
+# Rebuild with: python experiments/002_data_split/build_manifests.py
+data/manifests/**/train.jsonl
 
 # ---- Model weights ----
 checkpoints/**

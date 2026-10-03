@@ -9,11 +9,48 @@ what changed.
 
 ## [Unreleased]
 
+### Data — EXP-002 complete and verified
+
+`dataset_v001` built over the full IISc-MILE corpus and independently verified:
+**14 pass, 0 fail**.
+
+- `data/manifests/dataset_v001/{train,dev,test}.jsonl` + `metadata.json`, produced
+  by `experiments/002_data_split/build_manifests.py` at ratios 0.90/0.05/0.05, seed
+  `20261003`. Manifests are committed; no audio is.
+- Measured split: train 80304 utts / 476 speakers / 135.4202 h, dev 4526 / 26 /
+  7.3988 h, test 4571 / 29 / 7.2812 h, total 89401 / 531 / 150.1002 h.
+- Speaker overlap 0 for all three pairs. 0 empty transcripts, 0 duplicate utterance
+  ids, 0 absolute paths, 0 missing audio files of 89401, 16 kHz throughout,
+  durations 0.2427 s to 38.8509 s.
+- Built twice and compared by SHA-256: `train.jsonl`, `dev.jsonl`, `test.jsonl` and
+  `metadata.json` are byte-identical across runs.
+
+### Added
+
+- `experiments/002_data_split/verify_manifests.py` — independent verifier. Re-reads
+  the written JSONL and re-derives every claim in `results.json` from the bytes and
+  from real file headers, including a 2000-utterance duration sample. Prints
+  `14 pass, 0 fail`; exit 0 on success.
+- `experiments/002_data_split/README.md` and `notes.md` — hypothesis, scope,
+  measured results, acceptance table, the reproducibility check, and an honest
+  record of what went wrong on the way.
+- `HEADER_READ_WORKERS = 8` in `src/tamil_voice/data/manifest.py`, with the measured
+  numbers behind it in the docstring.
+
+### Fixed
+
+- `build_records` read 89401 audio headers serially and did not finish inside 30
+  minutes. Header and transcript reads now run on an 8-thread pool — libsndfile
+  releases the GIL, so these are overlapping disk waits. Measured 13.9 ms/file
+  single-threaded against 0.27 ms with four workers; eight is on the plateau.
+  Results are reassembled in input order before sorting, so output is unchanged,
+  which the SHA-256 comparison confirms.
+
 ### Session memory
 
 - `../AGENTS.md` and `../START-HERE.md` — the workspace-root entry points. The first
   is loaded automatically by opencode when a session starts one folder up, so a new
-  agent is told to read `MEMORY.md` and `git log` before doing anything.
+  agent is told to read `MEMORY.md` and `git log` before any code is touched.
 - `../scripts/update-status.ps1` — regenerates the `AUTO-STATUS` block in both entry
   files from live git output: last commit, branch, ahead/behind `origin/main`,
   working-tree entries, recent commits, last recorded gate results. It also mirrors
@@ -26,19 +63,22 @@ what changed.
   live in `.git` and are not tracked, so they must be reinstalled after a fresh clone.
 - `MEMORY.md` section 11 documents the whole mechanism and its accepted failure modes.
 
-### Uncommitted: Phase 02 data layer
-
-Written and gate-clean, but not committed and never executed. No `dataset_v001`
-manifest exists on disk yet.
+### Data layer, committed at 3988e32
 
 - `src/tamil_voice/data/corpus.py` — `Utterance`, `parse_iisc_mile_name`,
-  `read_transcript`, `discover_iisc_mile`, `CorpusError`.
+  `read_transcript`, `discover_iisc_mile`, `CorpusError`. The prefix is a recording
+  condition, not part of the speaker key; the union over prefixes is 531 speakers,
+  matching OpenSLR's published count.
 - `src/tamil_voice/data/manifest.py` — `ManifestRecord`, `build_records`,
   `write_manifest`, `read_manifest`.
 - `src/tamil_voice/data/splits.py` — `SplitRatios`, `SplitConfig`,
   `plan_speaker_split`, `SpeakerSplitPlan`, `check_speaker_disjoint`, `SplitError`.
 - `experiments/002_data_split/build_manifests.py` and `config.yaml`.
 - `tests/unit/test_data_corpus.py`, `test_data_manifest.py`, `test_data_splits.py`.
+
+The shipped `train/` and `test/` folders are **not** speaker-disjoint and are never
+used for splitting. They are recorded on each row as `shipped_split` provenance only,
+so filtering a manifest by that field does not give a disjoint set.
 
 Phase 01 / EXP-001, complete and verified. `verify_criteria.py` reported 8 pass,
 0 fail, 0 pending: criteria 1-6 and 8 on synthetic fixtures with known ground

@@ -116,25 +116,25 @@ def main(argv: list[str] | None = None) -> int:
     }
 
     metadata_path = manifest_dir / "metadata.json"
-    metadata_path.write_text(
-        json.dumps(
-            {
-                "dataset_id": dataset_id,
-                "dataset_version": split_cfg["dataset_version"],
-                "license": corpus_cfg["license"],
-                "source": corpus_cfg["source"],
-                "corpus_root": corpus_cfg["root"],
-                "split_seed": split_config.seed,
-                "ratios": split_config.ratios.as_dict(),
-                "splits": summary,
-                "speakers": {name: sorted(speaker_sets[name]) for name in SPLIT_ORDER},
-            },
-            ensure_ascii=False,
-            indent=2,
+    with metadata_path.open("w", encoding="utf-8", newline="\n") as handle:
+        handle.write(
+            json.dumps(
+                {
+                    "dataset_id": dataset_id,
+                    "dataset_version": split_cfg["dataset_version"],
+                    "license": corpus_cfg["license"],
+                    "source": corpus_cfg["source"],
+                    "corpus_root": corpus_cfg["root"],
+                    "split_seed": split_config.seed,
+                    "ratios": split_config.ratios.as_dict(),
+                    "splits": summary,
+                    "speakers": {name: sorted(speaker_sets[name]) for name in SPLIT_ORDER},
+                },
+                ensure_ascii=False,
+                indent=2,
+            )
         )
-        + "\n",
-        encoding="utf-8",
-    )
+        handle.write("\n")
 
     results: dict[str, Any] = {
         "experiment": "EXP-002",
@@ -161,9 +161,9 @@ def main(argv: list[str] | None = None) -> int:
         "records_written": written,
         "environment": {"python": platform.python_version(), "platform": platform.platform()},
     }
-    Path(__file__).with_name("results.json").write_text(
-        json.dumps(results, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
-    )
+    with Path(__file__).with_name("results.json").open("w", encoding="utf-8", newline="\n") as handle:
+        handle.write(json.dumps(results, ensure_ascii=False, indent=2))
+        handle.write("\n")
 
     print("\n== EXP-002 split summary ==")
     for name in SPLIT_ORDER:
