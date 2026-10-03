@@ -1,0 +1,199 @@
+{
+  "target_minutes": 15.0,
+  "train_vocab_size": 138047,
+  "total_train_tokens": 676524,
+  "splits": {
+    "train": {
+      "utterances": 80304,
+      "tokens": 676524,
+      "vocab_size": 138047,
+      "oov_tokens": 0,
+      "oov_rate": 0.0,
+      "top10": [
+        [
+          "ஒரு",
+          6511
+        ],
+        [
+          "மற்றும்",
+          5662
+        ],
+        [
+          "என்று",
+          4741
+        ],
+        [
+          "இந்த",
+          3767
+        ],
+        [
+          "ஆயிரத்தி",
+          3555
+        ],
+        [
+          "இரண்டு",
+          2382
+        ],
+        [
+          "இது",
+          2117
+        ],
+        [
+          "என்ற",
+          2111
+        ],
+        [
+          "வேண்டும்",
+          1966
+        ],
+        [
+          "என",
+          1922
+        ]
+      ]
+    },
+    "dev": {
+      "utterances": 4526,
+      "tokens": 38621,
+      "vocab_size": 16541,
+      "oov_tokens": 5322,
+      "oov_rate": 0.1378006783874058,
+      "top10": [
+        [
+          "ஒரு",
+          370
+        ],
+        [
+          "மற்றும்",
+          304
+        ],
+        [
+          "என்று",
+          284
+        ],
+        [
+          "இந்த",
+          208
+        ],
+        [
+          "ஆயிரத்தி",
+          178
+        ],
+        [
+          "இரண்டு",
+          139
+        ],
+        [
+          "வேண்டும்",
+          127
+        ],
+        [
+          "அமெரிக்க",
+          119
+        ],
+        [
+          "இது",
+          114
+        ],
+        [
+          "என்ற",
+          111
+        ]
+      ]
+    },
+    "test": {
+      "utterances": 4571,
+      "tokens": 38356,
+      "vocab_size": 16945,
+      "oov_tokens": 5514,
+      "oov_rate": 0.14375847325059965,
+      "top10": [
+        [
+          "ஒரு",
+          370
+        ],
+        [
+          "மற்றும்",
+          334
+        ],
+        [
+          "என்று",
+          299
+        ],
+        [
+          "இந்த",
+          251
+        ],
+        [
+          "ஆயிரத்தி",
+          171
+        ],
+        [
+          "வேண்டும்",
+          142
+        ],
+        [
+          "அமெரிக்க",
+          130
+        ],
+        [
+          "இரண்டு",
+          122
+        ],
+        [
+          "இது",
+          120
+        ],
+        [
+          "என்ற",
+          115
+        ]
+      ]
+    }
+  },
+  "unk_id": 138048,
+  "token2id_has_unk": true,
+  "subset": {
+    "utterances": 661,
+    "minutes": 15.01,
+    "hours": 0.2502,
+    "duration_seconds": 900.7,
+    "max_duration": 1.59,
+    "min_duration": 0.24
+  },
+  "subset_sample": [
+    {
+      "utterance_id": "MILE_0000289_0000070",
+      "audio_path": "raw/iisc_mile_ta/mile_tamil_asr_corpus/train/audio_files/MILE_0000289_0000070.wav",
+      "text": "வலையங்களை நீக்கிவிட வேண்டும்",
+      "speaker_id": "0000289",
+      "prefix": "MILE",
+      "shipped_split": "train",
+      "duration_seconds": 0.242688,
+      "sample_rate": 16000,
+      "dataset_id": "iisc_mile_ta"
+    },
+    {
+      "utterance_id": "MILE_0000289_0000068",
+      "audio_path": "raw/iisc_mile_ta/mile_tamil_asr_corpus/train/audio_files/MILE_0000289_0000068.wav",
+      "text": "தற்போதைய பேச்சுவார்த்தைகளில் கலந்துகொள்ள",
+      "speaker_id": "0000289",
+      "prefix": "MILE",
+      "shipped_split": "train",
+      "duration_seconds": 0.353812,
+      "sample_rate": 16000,
+      "dataset_id": "iisc_mile_ta"
+    },
+    {
+      "utterance_id": "MILE_0000289_0000067",
+      "audio_path": "raw/iisc_mile_ta/mile_tamil_asr_corpus/train/audio_files/MILE_0000289_0000067.wav",
+      "text": "யானது நம்பியாரின் அறிக்கையை நிராகரித்த போதிலும்",
+      "speaker_id": "0000289",
+      "prefix": "MILE",
+      "shipped_split": "train",
+      "duration_seconds": 0.40425,
+      "sample_rate": 16000,
+      "dataset_id": "iisc_mile_ta"
+    }
+  ]
+}

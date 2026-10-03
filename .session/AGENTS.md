@@ -23,25 +23,19 @@ repository, **the repository wins** — fix `MEMORY.md` before doing anything el
 ## 1. Live status (auto-updated by scripts/update-status.ps1)
 
 <!-- AUTO-STATUS:BEGIN -->
-_generated 2026-10-04 00:08 by scripts\update-status.ps1_
+_generated 2026-10-04 00:38 by scripts\update-status.ps1_
 
-**Last commit:** `050b614 chore: durable session memory with an auto-refreshing status block`
+**Last commit:** `4f9826c feat: EXP-002 speaker-disjoint manifests (dataset_v001) with independent verification`
 **Branch:** `main`
-**Sync:** 2 commit(s) AHEAD of origin/main (not pushed)
-**Working tree:** 6 changed, 5 untracked
+**Sync:** 3 commit(s) AHEAD of origin/main (not pushed)
+**Working tree:** 3 changed, 1 untracked
 - `M .session/AGENTS.md`
 - `M .session/START-HERE.md`
 - `M .session/gates/pytest.txt`
-- `M CHANGELOG.md`
-- `M MEMORY.md`
-- `M src/tamil_voice/data/manifest.py`
-- `?? data/manifests/dataset_v001/`
-- `?? experiments/002_data_split/README.md`
-- `?? experiments/002_data_split/notes.md`
-- `?? experiments/002_data_split/results.json`
-- `?? experiments/002_data_split/verify_manifests.py`
+- `?? experiments/003_tokenizer_baseline/`
 
 **Recent commits**
+- `4f9826c feat: EXP-002 speaker-disjoint manifests (dataset_v001) with independent verification`
 - `050b614 chore: durable session memory with an auto-refreshing status block`
 - `3988e32 feat: Phase 02 data layer for corpus discovery, manifests and speaker-disjoint splits`
 - `32db8ae docs: record IISc-MILE Tamil corpus license and source`
@@ -49,10 +43,9 @@ _generated 2026-10-04 00:08 by scripts\update-status.ps1_
 - `c4e1436 test: verify EXP-001 criteria on synthetic fixtures`
 - `6f50cb6 feat: non-neural VAD and speech segment post-processing`
 - `adc18bd refactor: share frame RMS and dBFS helpers across audio modules`
-- `fe67953 feat: STFT/mel features and audio quality report`
 
 **Gates, as last measured** (`tamil-voice-foundation\.session\gates\`)
-- pytest: exit=0 | 220 passed in 6.24s
+- pytest: exit=0 | 220 passed in 7.95s
 - ruff:   exit=0 | All checks passed!
 - mypy:   exit=0 | Success: no issues found in 26 source files
 
