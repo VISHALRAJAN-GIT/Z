@@ -150,6 +150,26 @@ def phase_spectrogram(spectrum: Tensor) -> Tensor:
     return torch.angle(spectrum)
 
 
+def frame_rms(
+    waveform: npt.ArrayLike | Tensor,
+    frame_length: int = _DEFAULT_WIN_LENGTH,
+    hop_length: int = _DEFAULT_HOP_LENGTH,
+) -> npt.NDArray[np.float64]:
+    """Per-frame RMS of a 1-D signal as float64.
+
+    Frames step by ``hop_length``; trailing samples shorter than one frame are
+    dropped. A signal shorter than one frame yields a single frame, so callers
+    never get an empty result for non-empty audio.
+    """
+    signal = _as_waveform_tensor(waveform)
+    if frame_length <= 0 or hop_length <= 0:
+        raise ValueError("frame_length and hop_length must be positive")
+    if signal.numel() < frame_length:
+        return np.array([float(signal.square().mean().sqrt())], dtype=np.float64)
+    windows = signal.unfold(0, frame_length, hop_length)
+    return windows.square().mean(dim=1).sqrt().to(dtype=torch.float64).numpy()
+
+
 def hz_to_mel(frequencies: Tensor, *, htk: bool = True) -> Tensor:
     """Convert Hz to the mel scale (HTK formula by default)."""
     if htk:
@@ -252,6 +272,7 @@ __all__ = [
     "DEFAULT_N_FFT",
     "DEFAULT_N_MELS",
     "StftConfig",
+    "frame_rms",
     "get_window",
     "hz_to_mel",
     "log_mel_spectrogram",

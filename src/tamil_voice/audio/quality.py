@@ -23,9 +23,9 @@ import numpy as np
 import numpy.typing as npt
 import torch
 
-from .features import StftConfig, magnitude_spectrogram, stft
+from .features import StftConfig, frame_rms, magnitude_spectrogram, stft
 from .io import AudioIssue, FloatArray
-from .normalization import LoudnessLimits, analyze_loudness
+from .normalization import LoudnessLimits, amplitudes_to_dbfs, analyze_loudness
 
 _SILENCE_FLOOR = 1e-12
 
@@ -103,28 +103,10 @@ class QualityReport:
         return base + " | " + "; ".join(f"{i.code}({i.severity})" for i in self.issues)
 
 
-def _frame_rms(data: FloatArray, frame_length: int, hop_length: int) -> npt.NDArray[np.float64]:
-    if data.size == 0:
-        return np.zeros(0, dtype=np.float64)
-    if data.size < frame_length:
-        level = np.sqrt(np.mean(np.square(data, dtype=np.float64)))
-        return np.array([level], dtype=np.float64)
-    windows = np.lib.stride_tricks.sliding_window_view(data, frame_length)[::hop_length]
-    return np.sqrt(np.mean(np.square(windows, dtype=np.float64), axis=1))
-
-
-def _dbfs_array(amplitudes: npt.NDArray[np.float64]) -> npt.NDArray[np.float64]:
-    """Element-wise dBFS, with ``-inf`` for zero amplitudes."""
-    out = np.full(amplitudes.shape, -np.inf, dtype=np.float64)
-    positive = amplitudes > 0.0
-    out[positive] = 20.0 * np.log10(amplitudes[positive])
-    return out
-
-
-def _estimated_snr_db(frame_rms: npt.NDArray[np.float64], limits: QualityLimits) -> float:
-    if frame_rms.size == 0:
+def _estimated_snr_db(frame_levels: npt.NDArray[np.float64], limits: QualityLimits) -> float:
+    if frame_levels.size == 0:
         return 0.0
-    frame_dbfs = _dbfs_array(frame_rms)
+    frame_dbfs = amplitudes_to_dbfs(frame_levels)
     finite = frame_dbfs[np.isfinite(frame_dbfs)]
     if finite.size == 0:
         return 0.0
@@ -195,14 +177,14 @@ def analyze_quality(
 
     frame_length = int(round(limits.frame_seconds * sample_rate))
     hop_length = int(round(limits.hop_seconds * sample_rate))
-    frame_rms = _frame_rms(data, frame_length, hop_length)
+    frame_levels = frame_rms(data, frame_length, hop_length)
 
-    if frame_rms.size:
-        frame_dbfs = _dbfs_array(frame_rms)
+    if frame_levels.size:
+        frame_dbfs = amplitudes_to_dbfs(frame_levels)
         silence_ratio = float(np.mean(frame_dbfs <= limits.silence_rms_dbfs))
     else:
         silence_ratio = 1.0
-    estimated_snr_db = _estimated_snr_db(frame_rms, limits)
+    estimated_snr_db = _estimated_snr_db(frame_levels, limits)
 
     if data.size >= 2:
         crossings = int(np.count_nonzero(np.diff(np.signbit(data))))

@@ -20,6 +20,7 @@ import math
 from dataclasses import dataclass, field
 
 import numpy as np
+import numpy.typing as npt
 
 from .io import (
     ERROR,
@@ -58,6 +59,15 @@ def amplitude_to_dbfs(amplitude: float) -> float:
 def dbfs_to_amplitude(dbfs: float) -> float:
     """Convert dBFS to a linear amplitude. ``-inf`` maps to 0."""
     return float(10.0 ** (dbfs / 20.0))
+
+
+def amplitudes_to_dbfs(amplitudes: npt.ArrayLike) -> npt.NDArray[np.float64]:
+    """Element-wise dBFS, with ``-inf`` for zero (or negative) amplitudes."""
+    data = np.asarray(amplitudes, dtype=np.float64)
+    out = np.full(data.shape, -np.inf, dtype=np.float64)
+    positive = data > 0.0
+    out[positive] = 20.0 * np.log10(data[positive])
+    return out
 
 
 @dataclass(frozen=True)
@@ -267,6 +277,7 @@ __all__ = [
     "LoudnessLimits",
     "LoudnessReport",
     "amplitude_to_dbfs",
+    "amplitudes_to_dbfs",
     "analyze_loudness",
     "apply_gain",
     "dbfs_to_amplitude",
