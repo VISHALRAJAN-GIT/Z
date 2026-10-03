@@ -21,10 +21,17 @@
 - `audio/quality.py`: `analyze_quality` aggregating the level metrics with an
   estimated SNR, silence ratio, zero-crossing rate and spectral
   centroid/bandwidth/rolloff/flatness.
-- 114 new tests across the five modules (160 total), covering mono/stereo, downmix,
-  corrupt/missing/empty files, NaN/Inf, clipping, near-silence, unsupported rates,
-  over-long input, dBFS conversions, classification boundaries, gain, STFT geometry,
-  mel correctness, and the quality report.
+- `vad/detector.py`: a non-neural VAD — energy above a percentile noise floor, a
+  spectral-flatness gate, median smoothing, hangover and short-run removal, all on
+  one STFT grid so the energy and spectral views share frames. On a tone embedded
+  in silence it detects the tone and not the silence; embedded broadband noise is
+  rejected by the flatness gate (measured: median flatness ~0.56 for white noise
+  versus ~0.00 for a 300 Hz tone).
+- `vad/postprocess.py`: `build_segments` runs merge -> pad -> clamp -> re-merge ->
+  drop-short in that documented order, turning the frame mask into speech spans.
+- 33 new tests across the two VAD modules (193 total), covering hangover,
+  median smoothing, short-run removal, detected-in-place tones, noise rejection,
+  flatness separation, config validation, and the segment pipeline.
 
 ## What failed
 
@@ -32,6 +39,11 @@
   that the rate was positive, raising `ZeroDivisionError` on a 0 Hz input. Caught
   by `test_validate_zero_sample_rate`; fixed by returning early when the rate is
   non-positive, since every rate-dependent metric is meaningless there.
+- A percentile noise floor cannot see a clip that is loud from start to finish:
+  with no quiet frames the floor is estimated at the signal level, so a steady
+  tone or continuous noise yields little or no speech. This is inherent to the
+  method, not a bug; it is recorded in `MEMORY.md` as a candidate improvement, and
+  the VAD tests use signals embedded in silence, which is the realistic case.
 
 ## Why
 
@@ -42,10 +54,10 @@ rather than a hope.
 
 ## What should be tested next
 
-`vad/detector.py` (energy + spectral + hangover) and `vad/postprocess.py`
-(segment merge, padding, minimum duration). Then run all eight acceptance
-criteria in `README.md`, which needs one real Tamil recording for criterion 7.
-Do not start EXP-002 until every criterion is measured and recorded.
+All modules of EXP-001 now exist. Next is to run the eight acceptance criteria in
+`README.md` and record the measured numbers in `results.json`; criterion 7 needs
+one real Tamil recording. Do not start EXP-002 until every criterion is measured
+and recorded.
 
 ## Note on ordering
 

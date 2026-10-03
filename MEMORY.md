@@ -17,21 +17,23 @@ Implemented so far this phase: `audio/io.py` (loading, canonical conversion, rea
 validation), `audio/resampling.py` (8/22.05/44.1/48 kHz -> 16 kHz, with a
 no-op for already-16-kHz input), `audio/normalization.py` (read-only loudness
 analysis and classification, plus opt-in gain), `audio/features.py` (STFT wrapper
-on torch, mel filterbank, log-mel) and `audio/quality.py` (aggregate diagnostic
-report). All are tested, and an end-to-end load -> resample -> quality smoke run
-returns sane numbers. Nothing is benchmarked yet and no acceptance criterion in
+on torch, mel filterbank, log-mel), `audio/quality.py` (aggregate diagnostic
+report), and `vad/detector.py` + `vad/postprocess.py` (non-neural energy +
+spectral-flatness VAD, and segment cleanup). All are tested, and an end-to-end
+load -> resample -> quality smoke run returns sane numbers. Nothing is
+benchmarked yet and no acceptance criterion in
 `experiments/001_audio_pipeline/README.md` is measured.
 
 No dataset has been downloaded. No model has been trained. Any statement to the
 contrary is false.
 
 Verification, run in `.venv` on Python 3.11.9, after adding io.py, resampling.py,
-normalization.py, features.py and quality.py:
+normalization.py, features.py, quality.py, vad/detector.py and vad/postprocess.py:
 
 ```text
-pytest   160 passed
+pytest   193 passed
 ruff     All checks passed
-mypy     Success: no issues found in 20 source files
+mypy     Success: no issues found in 22 source files
 ```
 
 torch is **installed**: `torch 2.14.1+cpu`, `torchaudio 2.11.0+cpu`, from the
@@ -85,10 +87,13 @@ Empty directories are preserved with `.gitkeep`. `.venv`, caches, `checkpoints/`
 | `audio/normalization.py` | `analyze_loudness` / `LoudnessReport` (peak, RMS, DC, crest, clipping, dBFS), classification too_quiet/normal/too_loud/clipped; opt-in `apply_gain`, `normalize_peak`, `normalize_rms` |
 | `audio/features.py` | `StftConfig`, `stft` (torch, time-major `(frames, freqs)`), magnitude/phase/power, `mel_filterbank`, `mel_spectrogram`, `log_mel_spectrogram` (80 bins) |
 | `audio/quality.py` | `analyze_quality` / `QualityReport`: duration, peak/RMS/crest/clipping (from normalization), estimated SNR, silence ratio, ZCR, spectral centroid/bandwidth/rolloff/flatness |
+| `vad/detector.py` | `VadConfig`, `VadResult`, `detect_speech`: energy above a percentile noise floor + spectral flatness gate + median smoothing + hangover + short-run removal, all on one STFT grid |
+| `vad/postprocess.py` | `Segment`, `SegmentConfig`, `frames_to_segments`, `merge_segments`, `pad_segments`, `filter_short_segments`, `build_segments` (merge -> pad -> clamp -> re-merge -> drop short) |
 
 Tests: `tests/unit/test_config.py`, `test_common.py`, `test_package.py`,
 `test_audio_io.py`, `test_audio_resampling.py`, `test_audio_normalization.py`,
-`test_audio_features.py`, `test_audio_quality.py`.
+`test_audio_features.py`, `test_audio_quality.py`, `test_vad_detector.py`,
+`test_vad_postprocess.py`.
 
 Canonical audio: mono, 16 kHz, float32 — defined once in `config.py` and imported
 everywhere else (`CANONICAL_SAMPLE_RATE`, re-exported by `audio/io.py`).
@@ -123,6 +128,15 @@ warning and does not prevent loading, while the rest are errors.
   noise floor is a low percentile of frame energies and the signal a high
   percentile. It is named `estimated_snr_db` so it is never mistaken for measured
   SNR.
+- **VAD is non-neural and shares one STFT grid.** GUIDE section 17 asks for energy
+  plus spectral cues before any model exists. Energy and spectral flatness are read
+  from the same STFT so frames align; the energy value is a relative windowed-power
+  level, not calibrated dBFS, and is used comparatively.
+- **Known VAD limitation (documented, not hidden).** Using a percentile noise
+  floor means a clip that is loud from start to finish (no quiet frames) has its
+  floor estimated at the signal level, so it yields little or no speech. Real
+  speech contains pauses; this is acceptable for the first VAD and is a candidate
+  improvement, not a silent bug.
 - **Peak normalization is not automatic.** Loudness carries information. Silence,
   clipping and near-silence are detected and reported instead.
 - **Progressive implementation.** Directories now, files when their phase starts.
@@ -147,11 +161,10 @@ warning and does not prevent loading, while the rest are errors.
 
 Phase 01 / EXP-001 continues. Done: torch installed (CPU), `audio/io.py`,
 `audio/resampling.py`, `audio/normalization.py`, `audio/features.py`,
-`audio/quality.py`, each with tests. Next, in this order:
+`audio/quality.py`, `vad/detector.py`, `vad/postprocess.py`, each with tests.
+Next, in this order:
 
-1. `vad/detector.py` — energy + spectral + smoothing/hangover, non-neural.
-2. `vad/postprocess.py` — segment merge, padding, minimum duration.
-3. Run all eight acceptance criteria in
+1. Run all eight acceptance criteria in
    `experiments/001_audio_pipeline/README.md`, record measured numbers in
    `results.json`, and update this file. Criterion 7 needs one real Tamil
    recording in `data/raw/speech/` (see section 6).

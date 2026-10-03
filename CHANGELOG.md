@@ -33,9 +33,18 @@ Phase 01 / EXP-001, in progress. No acceptance criterion has been measured yet.
 - `src/tamil_voice/audio/quality.py` — `analyze_quality` / `QualityReport`:
   duration, level metrics, *estimated* SNR, silence ratio, zero-crossing rate and
   spectral centroid / bandwidth / roll-off / flatness.
+- `src/tamil_voice/vad/detector.py` — `VadConfig`, `VadResult`, `detect_speech`:
+  non-neural VAD combining energy above a percentile noise floor, a spectral
+  flatness gate, median smoothing, hangover and short-run removal. Energy and
+  spectral cues share one STFT grid; the energy level is relative, not dBFS.
+- `src/tamil_voice/vad/postprocess.py` — `Segment`, `SegmentConfig` and
+  `frames_to_segments` / `merge_segments` / `pad_segments` /
+  `filter_short_segments` / `build_segments` (merge, pad, clamp, re-merge, drop
+  segments shorter than the minimum).
 - Tests: `test_audio_io.py` (28), `test_audio_resampling.py` (17),
-  `test_audio_normalization.py` (25), `test_audio_features.py` (30) and
-  `test_audio_quality.py` (14).
+  `test_audio_normalization.py` (25), `test_audio_features.py` (30),
+  `test_audio_quality.py` (14), `test_vad_detector.py` (19) and
+  `test_vad_postprocess.py` (14).
 
 ### Fixed
 
