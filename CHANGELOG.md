@@ -9,6 +9,47 @@ what changed.
 
 ## [Unreleased]
 
+### Added - the character tokenizer that EXP-004 decided on
+
+The `text` package, which has been an empty placeholder since Phase 00, now holds
+the implementation the EXP-004 decision was waiting for.
+
+- `src/tamil_voice/text/unicode.py` — `normalize_text` / `is_normalized` over
+  NFC/NFD/NFKC/NFKD, `Script` with `script_of` / `scripts_in` / `script_histogram`,
+  `UnicodeError`. Script classification exists so a future corpus containing Latin
+  or digits is a measurement rather than a silent distribution shift.
+- `src/tamil_voice/text/tokenizer.py` — `TokenizerConfig`, `CharacterTokenizer`
+  (`build`, `encode`, `encode_with_report`, `decode`, `decode_words`,
+  `unknown_rate`, `save`, `load`), `build_from_jsonl`, `sequence_length_report`,
+  `prepare_text`, `TokenizerError`.
+- `tests/unit/test_text_unicode.py`, `tests/unit/test_text_tokenizer.py` — 85 new
+  tests. pytest 220 -> 305.
+
+Design points that are decisions rather than defaults:
+
+- **The inventory is derived from data.** Nothing carries a 48-symbol table,
+  because `dataset_v001` contains no Latin letters and no ASCII digits and so
+  exercises none of what GUIDE section 28 requires.
+- **Whitespace is kept by default**, deviating from the EXP-004 headline in favour
+  of being able to compute WER at all. The space-free variant is one flag away and
+  the measured cost of keeping spaces is 24 utterances out of 89401.
+- **Unseen codepoints become `<unk>`, never dropped** — dropping shortens the
+  target and could satisfy CTC's frames >= labels constraint for the wrong reason.
+- **Text preparation has one definition**, shared by building and encoding, so the
+  two cannot drift apart.
+
+### Fixed - EXP-004 miscounted its own violations
+
+The speaking-rate audit said 6 of the 9 stride-4 CTC violations were corrupt rows
+belonging to speaker `0000289`, and listed 3 as legitimate fast speech. Re-checked
+against `vocabulary_measurements.json`: **5** rows are corrupt
+(`MILE_0000289_0000067`..`_0000071`, 98.9–107.4 chars/s) and **4** are legitimate.
+`MILE_0000232_0000013` was filed under the corrupt cluster but belongs to a
+different speaker and runs 196 characters over 3.98 s — fast, not impossible. The
+corpus-wide count of 6 utterances above 30 chars/s is unchanged and is what the
+sixth row actually is. Corrected in `experiments/004_character_tokenizer/README.md`,
+`notes.md`, `MEMORY.md` and `CHANGELOG.md`.
+
 ### Research - EXP-004 complete: the tokenizer scheme is decided from measurement
 
 Character-level, chosen by measuring the alternatives rather than by preference.
@@ -43,16 +84,17 @@ of Tamil.
   `vocabulary_measurements.json`, `README.md`, `notes.md`. The script decides
   nothing and asserts no verdict; it emits the numbers the decision rests on.
 - A speaking-rate audit that separates two populations hiding in the 9 CTC
-  violations: **6 rows are corrupt** (speaker `0000289`, 26–47 characters in
-  0.24–0.45 s, i.e. 57–107 characters per second, which no human can produce),
-  while **3 are legitimate fast speech** at 26–27 characters per second and must
-  be kept. All 9 are among the 200 fastest utterances in the corpus; only 6
-  utterances corpus-wide exceed 30 characters per second against a median of
-  11.9.
+  violations: **5 rows are corrupt** (speaker `0000289`, 26–47 characters in
+  0.24–0.45 s, i.e. 98.9–107.4 characters per second, which no human can produce),
+  while **4 are legitimate fast speech** — `MILE_0000232_0000013` at 49.2
+  characters per second over 3.98 s, and three more at 26.1–26.6 characters per
+  second — and must be kept. All 9 are among the 200 fastest utterances in the
+  corpus; only 6 utterances corpus-wide exceed 30 characters per second against a
+  median of 11.9.
 
 ### Known gaps
 
-- **Six corrupt rows are identified but not dispositioned.** No row was removed.
+- **Five corrupt rows are identified but not dispositioned.** No row was removed.
   If any are dropped that creates `dataset_v002`, with the reason and utterance
   ids recorded.
 - **BPE is unmeasured.** GUIDE section 28 says to benchmark it rather than assume

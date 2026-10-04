@@ -14,7 +14,9 @@ This file is authoritative. Frolic telemetry is secondary and may be rotated.
 Phase 01 / EXP-001 — complete and verified.
 Phase 02 / EXP-002 — complete and verified. `dataset_v001` exists on disk.
 Phase 02 / EXP-003 — both steps complete. Tokenizer measured, tiny CTC overfit
-test accepted.**
+test accepted.
+Phase 02 / EXP-004 — complete. Character-level decided from measurement, and
+`text/unicode.py` + `text/tokenizer.py` now implement it.**
 
 Implemented in Phase 01: `audio/io.py` (loading, canonical conversion, real
 validation), `audio/resampling.py` (8/22.05/44.1/48 kHz -> 16 kHz, with a
@@ -214,12 +216,18 @@ Empty directories are preserved with `.gitkeep`. `.venv`, caches, `checkpoints/`
 | `data/corpus.py` | `Utterance`, `parse_iisc_mile_name`, `read_transcript`, `discover_iisc_mile`, `CorpusError` — turns the corpus directory into typed utterance records |
 | `data/manifest.py` | `ManifestRecord`, `build_records`, `write_manifest`, `read_manifest` — JSONL manifests with durations measured from the audio; header reads run on an 8-thread pool because the corpus is 89k files |
 | `data/splits.py` | `SplitRatios`, `SplitConfig`, `plan_speaker_split`, `SpeakerSplitPlan`, `check_speaker_disjoint`, `SplitError` — speaker-disjoint split planning with a disjointness assertion |
+| `text/unicode.py` | `NormalizationForm`, `SUPPORTED_FORMS`, `normalize_text`, `is_normalized`, `Script`, `script_of`, `scripts_in`, `script_histogram`, `UnicodeError` — NFC normalization and script classification |
+| `text/tokenizer.py` | `TokenizerConfig`, `CharacterTokenizer` (build / encode / encode_with_report / decode / decode_words / unknown_rate / save / load), `EncodingReport`, `build_from_jsonl`, `sequence_length_report`, `prepare_text`, `TokenizerError` |
 
 Tests: `tests/unit/test_config.py`, `test_common.py`, `test_package.py`,
 `test_audio_io.py`, `test_audio_resampling.py`, `test_audio_normalization.py`,
 `test_audio_features.py`, `test_audio_quality.py`, `test_vad_detector.py`,
 `test_vad_postprocess.py`, `test_data_corpus.py`, `test_data_manifest.py`,
-`test_data_splits.py`.
+`test_data_splits.py`, `test_text_unicode.py`, `test_text_tokenizer.py`.
+
+The `text` package has held a tracked empty `__init__.py` placeholder since the
+Phase 00 skeleton (`35765c4`). Every subpackage does; there are no PEP 420
+namespace packages in `src`.
 
 Canonical audio: mono, 16 kHz, float32 — defined once in `config.py` and imported
 everywhere else (`CANONICAL_SAMPLE_RATE`, re-exported by `audio/io.py`).
@@ -361,6 +369,25 @@ warning and does not prevent loading, while the rest are errors.
   letters nor ASCII digits and GUIDE section 28 requires both.
 - **BPE stays open and unmeasured.** GUIDE says benchmark it, and EXP-004 does
   not. No claim is made in either direction.
+- **The tokenizer keeps whitespace by default, which is a deliberate deviation
+  from the EXP-004 headline.** EXP-004 recorded character-level *with whitespace
+  excluded* as the decision, and that variant has the marginally better CTC
+  arithmetic: 9 invalid utterances against 33. The implementation defaults
+  `include_space=True` instead, because a target sequence with no space symbol
+  decodes to a string with no word boundaries, which makes word error rate
+  undefined until a separate segmentation model exists — and the project's first
+  real WER is the entire point of the baseline step. The measured difference is
+  24 utterances out of 89401, so nothing is being traded away for it. The
+  space-free variant remains available through one flag, and the baseline step
+  should compare both once a WER exists.
+- **Text preparation has exactly one definition.** `prepare_text` is shared by
+  `CharacterTokenizer.prepare`, `CharacterTokenizer.build` and `build_from_jsonl`.
+  A vocabulary counted over differently-prepared text than the text later encoded
+  would be a silent total mismatch, and the mismatch would only show up as a
+  mysterious training failure.
+- **Unknown codepoints become `<unk>` and are never dropped.** Dropping them
+  would shorten the target sequence, which could make an utterance satisfy CTC's
+  frames >= labels constraint for entirely the wrong reason.
 
 ## 6. Open questions
 
@@ -388,14 +415,17 @@ warning and does not prevent loading, while the rest are errors.
    0.243 s to 1.59 s against a corpus maximum of 38.85 s. It proves the pipeline
    is internally consistent; it says nothing about long or fast speech. A
    duration-representative overfit run is still wanted.
-7. **Six corpus rows are corrupt and are not yet dispositioned.** Speaker
+7. **Five corpus rows are corrupt and are not yet dispositioned.** Speaker
    `0000289` rows `_0000067` to `_0000071` carry 26–47 characters in
-   0.24–0.45 s, which is 57–107 characters per second and physically impossible;
-   the transcripts cannot belong to that audio. Three further rows violate CTC's
-   frames >= labels at 26–27 characters per second, which is fast but human and
-   therefore a legitimate hard case, not a defect. All 9 are among the 200 fastest
-   utterances in the corpus. **No row has been removed.** Dispositioning them, and
-   creating `dataset_v002` if any are dropped, is the next decision.
+   0.24–0.45 s, which is 98.9–107.4 characters per second and physically
+   impossible; the transcripts cannot belong to that audio. Four further rows
+   violate CTC's frames >= labels while speaking fast but humanly, so they are
+   legitimate hard cases rather than defects: `MILE_0000232_0000013` at
+   49.2 characters per second over 3.98 s, and `MILE_0000133_0000144`,
+   `MILE_0000137_0000011`, `MILE_0000167_0000024` at 26.1–26.6 characters per
+   second over 1.0–2.9 s. All 9 are among the 200 fastest utterances in the
+   corpus. **No row has been removed.** Dispositioning them, and creating
+   `dataset_v002` if any are dropped, is the next decision.
 8. **`.session/AGENTS.md` and `.session/START-HERE.md` are always one commit
    stale, and this cannot be fixed by committing.** The auto-status block reports
    the last commit's hash, and the post-commit hook rewrites the workspace entry
@@ -424,13 +454,16 @@ then the first model trained on the full train split.
    letters and no ASCII digits, and it will change when the Phase 06 corpora
    arrive. Tests: valid input, unseen characters, empty text, mixed script,
    round-trip encode/decode, and determinism of the vocabulary ordering.
-2. **Disposition the 9 CTC-invalid rows** (open question 7). Six are corrupt
-   speaker-`0000289` rows at 57–107 characters per second; three are legitimate
-   fast speech and should be kept. If anything is dropped, that creates
+2. **Disposition the 9 CTC-invalid rows** (open question 7). Five are corrupt
+   speaker-`0000289` rows at 98.9–107.4 characters per second; four are
+   legitimate fast speech and should be kept. If anything is dropped, that creates
    `dataset_v002` with the reason and the utterance ids recorded, per the rule
    against silent dataset changes.
 3. **Re-run the overfit test with character targets before the full baseline.**
    Cheap, and it exercises the new tokenizer end to end. Keep encoder stride 4.
+   Use `CharacterTokenizer` with its defaults, then repeat once with
+   `include_space=False` so the two variants are compared on the same data rather
+   than one being assumed.
 4. **Then** the real CTC baseline on `train.jsonl`, evaluated on `dev.jsonl`, for
    the first genuine WER in this project. `test.jsonl` stays untouched until the
    baseline is fixed. Do not deepen the conv subsampling: stride 8 invalidates

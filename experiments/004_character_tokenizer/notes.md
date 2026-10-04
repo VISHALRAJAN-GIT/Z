@@ -28,14 +28,17 @@ wants stride 8, it needs character-level targets that are shorter than single
 graphemes, which means a subword or phoneme unit, not a deeper conv stack. That
 is a real trade and it should be measured if anyone proposes it.
 
-## Six rows are corrupt and three are hard
+## Five rows are corrupt and four are hard
 
 The rate audit separated two populations that both look like "CTC violation":
 
-- **Speaker `0000289`, six rows, 57–107 characters per second.** No human speaks
-  at 107 characters per second. The transcripts cannot belong to those audio
-  files, or the audio is truncated. These are defects.
-- **Three rows at 26–27 characters per second** over 1.0–2.9 s. Fast, but human.
+- **Speaker `0000289`, five rows, 98.9–107.4 characters per second.** No human
+  speaks at 107 characters per second. The transcripts cannot belong to those
+  audio files, or the audio is truncated. These are defects.
+- **Four rows at 26–49 characters per second.** Three of them run 1.0–2.9 s at
+  26.1–26.6 characters per second; `MILE_0000232_0000013` is 3.98 s carrying 196
+  characters at 49.2 characters per second. Fast, but human — and the 0000232 row
+  is a different speaker from the corrupt cluster, which is why it belongs here.
   GUIDE explicitly lists fast speech as something this project must handle, so
   dropping these would be deleting the hard cases the project exists to solve.
 

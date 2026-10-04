@@ -95,7 +95,7 @@ Utterances where encoder frames < character labels, out of 89 401:
 for a conv CTC encoder and it is not available here: it breaks 39 % of the corpus.
 This is the single most consequential number in the experiment.
 
-### 5. Those 9 are outliers, and 6 of them are corrupt rows
+### 5. Those 9 are outliers, and 5 of them are corrupt rows
 
 Speaking rate, non-space characters per second:
 
@@ -106,26 +106,35 @@ dev     11.940  20.332   23.463    58      0
 test    12.240  18.055   22.895    12      0
 ```
 
-All 9 stride-4 violations are among the 200 fastest utterances in the corpus. Six
-belong to speaker `0000289` and sit at 57–107 characters per second — a rate no
+All 9 stride-4 violations are among the 200 fastest utterances in the corpus. Five
+belong to speaker `0000289` and sit at 98.9–107.4 characters per second — a rate no
 human can produce, so those transcripts cannot belong to those audio files:
 
 ```text
-MILE_0000289_0000067   0.4042 s   43 chars   11 frames
-MILE_0000289_0000068   0.3538 s   38 chars    9 frames
-MILE_0000289_0000069   0.4447 s   47 chars   12 frames
-MILE_0000289_0000070   0.2427 s   26 chars    7 frames
-MILE_0000289_0000071   0.4548 s   45 chars   12 frames
-MILE_0000232_0000013   3.9801 s  196 chars  100 frames
+MILE_0000289_0000067   0.4042 s   43 chars   11 frames   106.4 chars/s
+MILE_0000289_0000068   0.3538 s   38 chars    9 frames   107.4 chars/s
+MILE_0000289_0000069   0.4447 s   47 chars   12 frames   105.7 chars/s
+MILE_0000289_0000070   0.2427 s   26 chars    7 frames   107.1 chars/s
+MILE_0000289_0000071   0.4548 s   45 chars   12 frames    98.9 chars/s
 ```
 
-The other three (`MILE_0000133_0000144`, `MILE_0000137_0000011`,
-`MILE_0000167_0000024`) are 1.0–2.9 s at 26–27 characters per second. That is fast
-but human, so they are legitimate hard cases — GUIDE lists fast speech as a
-target condition, not a defect.
+The other four are fast rather than impossible, and are treated as legitimate hard
+cases — GUIDE lists fast speech as a target condition, not a defect:
+
+```text
+MILE_0000232_0000013   3.9801 s  196 chars  100 frames    49.2 chars/s
+MILE_0000133_0000144   2.9101 s   76 chars   73 frames    26.1 chars/s
+MILE_0000137_0000011   2.1401 s   57 chars   54 frames    26.6 chars/s
+MILE_0000167_0000024   1.0201 s   27 chars   26 frames    26.5 chars/s
+```
+
+`MILE_0000232_0000013` is a 4-second utterance carrying 196 characters. It is the
+sixth and last corpus utterance above 30 characters per second, and the only fast
+case with enough duration to be checked against a plausible speaking rate rather
+than dismissed as a truncated file.
 
 **No rows were removed.** Corpus-wide, 6 utterances exceed 30 characters per
-second, and 3 of the 9 violations are real speech. Which of these to drop, and
+second, and 4 of the 9 violations are real speech. Which of these to drop, and
 whether that constitutes `dataset_v002`, is a decision for the baseline step with
 these numbers in hand. It is recorded here rather than acted on, because silently
 changing a dataset version is exactly what the rules forbid.
