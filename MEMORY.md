@@ -335,6 +335,17 @@ warning and does not prevent loading, while the rest are errors.
    0.243 s to 1.59 s against a corpus maximum of 38.85 s. It proves the pipeline
    is internally consistent; it says nothing about long or fast speech. A
    duration-representative overfit run is still wanted.
+7. **`.session/AGENTS.md` and `.session/START-HERE.md` are always one commit
+   stale, and this cannot be fixed by committing.** The auto-status block reports
+   the last commit's hash, and the post-commit hook rewrites the workspace entry
+   files immediately after a commit lands. Mirroring them into `.session/` then
+   produces a block describing a commit that the mirroring commit itself cannot
+   contain. So the tracked copies differ from the workspace copies immediately
+   after every commit, and committing them just starts the cycle again. Left
+   alone deliberately: it is cosmetic, the workspace copies are correct, and
+   redesigning the hook is not Phase 02 work. If it is ever fixed, the fix is for
+   the post-commit hook to write `.session/` and for that path to be
+   `git update-index --assume-unchanged`, or for the block to omit its own hash.
 
 ## 7. Next actions
 
@@ -364,6 +375,11 @@ train split, and one decision blocks it.
 If a session ends before step 1 finishes, the exact starting point is: `dataset_v001`
 is built and verified, EXP-003 is complete and accepted, torch 2.6.0+cu124 has CUDA
 available, and no model has ever been trained on the full corpus.
+
+**Uncommitted state at the end of this session:** only `.session/AGENTS.md` and
+`.session/START-HERE.md`, which the post-commit hook rewrites after every commit.
+Open question 7 explains why committing them cannot fix it. Nothing else is
+uncommitted and nothing is half-finished.
 
 ## 8. Rules that must survive every session
 
