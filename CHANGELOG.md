@@ -9,6 +9,84 @@ what changed.
 
 ## [Unreleased]
 
+### Model - EXP-003 complete: tokenizer measured and tiny CTC overfit test accepted
+
+Both steps of Phase 02's first experiment are done. The overfit test is the
+project's first model of any kind. Its metrics are on its own training subset;
+**no WER has ever been measured**.
+
+Step 1, `measure_tokenizer.py` (committed earlier as `dab1687`):
+
+- Word-level whitespace tokenisation over `dataset_v001`.
+- Train vocabulary 138047 words over 676524 tokens (4.9 tokens per type).
+- OOV against train: dev 13.78 %, test 14.38 %, train 0 %.
+- 15.01 min subset of 661 utterances selected shortest-first.
+
+Step 2, `train_overfit.py` (this change):
+
+- `Conv1d(80->32->64, stride 2, no BatchNorm) -> GRU(256, 2, unidirectional) ->
+  Linear`, AdamW, 200 epochs, `train.jsonl` only. 1006002 parameters.
+- Measured: `train_loss` 0.0947, `token_error_rate` 0.0386, `exact_match_rate`
+  0.8956, 271.3 s on one RTX 2050. Acceptance PASSED against thresholds that were
+  written into `config.yaml` before the run.
+- `dev.jsonl` and `test.jsonl` were never opened by the training script.
+- Checkpoints go to the gitignored `checkpoints/exp003_overfit/`.
+
+### Added
+
+- `experiments/003_tokenizer_baseline/train_overfit.py`, `config.yaml`,
+  `notes.md`, `subset_vocab.json`, `results.json`. `config.yaml` now supplies
+  every model, feature, data and training value; nothing is hardcoded in the
+  script, and it holds the acceptance thresholds.
+- `verify_length_math()` checks the encoder-length arithmetic against what
+  `nn.Conv1d` actually returns, on a padded batch and on single utterances at
+  both ends of the length range. A runtime assertion refuses to start if any
+  subset row has fewer encoder frames than labels.
+- `notes.md` records the full research history, including the first failed run.
+
+### Fixed
+
+Three bugs in the first draft of the training script, each found by running it
+rather than by reading it:
+
+- CTC targets were the padded `(B, S)` label block flattened, 40 entries where
+  `sum(target_lengths)` was 26. Beyond the shape mismatch, `CTCLoss` counts blank
+  as a target symbol, so the padding would have been trained on as if it were
+  text. Now masked to `sum(target_lengths)` before flattening.
+- Encoder length used `floor(T / 4)` and was wrong on **497 of 661** subset rows;
+  two stride-2 convolutions give `ceil(ceil(T/2)/2)`. Replaced with exact
+  per-layer arithmetic plus the verification above.
+- The output layer was sized for the full vocabulary. At the measured 138047-word
+  train vocabulary the linear layer alone is **35478593** parameters at hidden
+  256, so "tiny" was never true and the project target of < 100 MB of weights is
+  unreachable word-level at that size. The overfit test now builds its
+  1360-word vocabulary from the subset and trains a real 1.0M-parameter model,
+  and `results.json` records the full-vocab figure rather than dropping it.
+
+### Changed
+
+- `MEMORY.md`: corrected the torch record. It said `2.14.1+cpu` with CUDA
+  unavailable; the actual install is **`torch 2.6.0+cu124`** /
+  **`torchaudio 2.6.0+cu124`** with `torch.cuda.is_available()` returning `True`.
+  The earlier statement was true when written and is now false, so it was
+  replaced rather than appended.
+- `MEMORY.md` open question 2 ("is word-level adequate?") is **answered: no, not
+  as-is**, given 13.78 % dev OOV. It is replaced by the actual open decision,
+  which is what to do instead, measured rather than assumed.
+- The overfit experiment runs with `dropout: 0.0`. Measured: at 0.1 the run
+  stalled at token error rate 0.3838 and failed acceptance. Regularisation's only
+  effect on a memorisation test is to prevent memorisation.
+- `MEMORY.md` section 1 no longer claims "no tokenizer exists", which stopped
+  being true at `dab1687`.
+
+### Known gaps
+
+- The vocabulary scheme for the real baseline is undecided and now blocks it.
+  Word-level is measured inadequate at 13.78 % dev OOV; the OOV-versus-N curve
+  and the character inventory have not been measured yet.
+- The overfit subset spans 0.243 s to 1.59 s against a corpus maximum of
+  38.85 s, so the pipeline check has not covered long or fast speech.
+
 ### Data — EXP-002 complete and verified
 
 `dataset_v001` built over the full IISc-MILE corpus and independently verified:

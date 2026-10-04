@@ -1,0 +1,75 @@
+# EXP-003 step 2: tiny CTC model trained to overfit a 15-minute train subset.
+#
+# Every value here is read by train_overfit.py. Nothing is hardcoded in the
+# script. The subset selection rule (shortest utterances first, accumulated until
+# subset_minutes) must stay identical to measure_tokenizer.py, otherwise the two
+# steps disagree about what "the subset" is.
+
+experiment_id: "003_tokenizer_baseline"
+step: "overfit_tiny_ctc"
+
+model:
+  # Conv front-end subsamples time by conv_strides before the recurrent stack.
+  # Total stride = product(conv_strides) = 4, so the GRU runs at 25 Hz.
+  conv_channels: [32, 64]
+  conv_kernel: 3
+  conv_strides: [2, 2]
+  conv_padding: [1, 1]
+  gru_hidden: 256
+  gru_layers: 2
+  # Unidirectional on purpose: Phase 07 needs streaming, and halving the GRU
+  # parameters is free. Bidirectional was measured and rejected for this size.
+  gru_bidirectional: false
+  # Dropout is 0 on purpose. This step tests whether the pipeline can memorise a
+  # small set, and dropout is regularisation whose only effect here is to make
+  # that harder. Measured: at dropout 0.1 the run stalled at token error rate
+  # 0.38 after 40 epochs and failed acceptance.
+  dropout: 0.0
+  # No BatchNorm anywhere. BatchNorm over a padded (B, C, T) tensor averages the
+  # zero-padded tail into the statistics of the real frames. CTC already tells us
+  # the true lengths, so normalisation is not needed to make this trainable.
+
+features:
+  n_fft: 512
+  win_length: 400
+  hop_length: 160
+  n_mels: 80
+  # 16 kHz / 160 samples = 100 frames per second before the conv stride of 4.
+
+data:
+  manifest_dir: data/manifests/dataset_v001
+  # train.jsonl only. dev and test are never opened by this script.
+  splits: ["train"]
+  subset_minutes: 15.0
+  # The vocabulary is rebuilt from the subset, not loaded from token2id.json.
+  # Measured: the subset holds 1360 distinct words, 0.99 % of the 138047-word
+  # train vocabulary. A 138049-way softmax over 1863 tokens is not a pipeline
+  # test, it is a vocabulary-coverage test wearing one. See README.md.
+  vocab_source: "subset"
+
+tokenizer:
+  blank_id: 0
+  # Which id to emit for a word missing from the chosen vocabulary. With
+  # vocab_source=subset this is unreachable by construction (every word in the
+  # subset is in the subset vocabulary). It is kept because the real baseline
+  # will need it, and an unreachable branch that is asserted is better than a
+  # silent one.
+
+training:
+  batch_size: 8
+  epochs: 200
+  lr: 0.001
+  weight_decay: 0.0
+  grad_clip: 5.0
+  seed: 20261003
+  # "auto" uses CUDA when torch reports it available, otherwise CPU. The choice
+  # is recorded in results.json; it is never assumed.
+  device: "auto"
+  num_workers: 0
+  log_interval: 20
+  eval_every: 1
+  save_every: 10
+  # Acceptance thresholds for this step. An overfit test that cannot fail is not
+  # a test, so these are checked explicitly and the run exits non-zero if missed.
+  accept_max_token_error_rate: 0.10
+  accept_max_loss: 1.0

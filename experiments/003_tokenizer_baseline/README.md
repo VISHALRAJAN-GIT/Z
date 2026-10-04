@@ -1,10 +1,12 @@
 # EXP-003 — Tokenizer (word-level) and tiny CTC baseline (overfit test)
 
-**Status:** Step 1 done (tokenizer measurements). Step 2 pending: tiny CTC to overfit 10-30 min subset.
+**Status:** Step 1 done (tokenizer measurements). Step 2 done and accepted (tiny CTC overfits the subset). Next: choose the vocabulary scheme from the measured OOV rate.
 
 ## Why
 
 Guide section 31: before training on a large split, prove the pipeline can overfit 10-30 minutes of speech. If it cannot, the bug is in the data, tokenizer, feature extraction, padding, CTC lengths, blank, or decoder — not the amount of data. This experiment is exactly that sanity check.
+
+`notes.md` holds the full record, including the three bugs this step caught before it could produce a number. Read that before changing anything here.
 
 ## Measurements
 
@@ -22,29 +24,51 @@ Files:
 
 Notes: The word-level vocabulary is large (138k). That’s expected for this corpus; we don’t switch to subwords yet — the overfit test will tell us if the model can learn. If not, reducing sequence length or switching to a smaller vocabulary (e.g. character-level or BPE) is the next move, not a guess.
 
+## Step 2 result (measured, `results.json`)
+
+Tiny CTC: `Conv1d(80→32→64, stride 2, no BatchNorm) → GRU(256, 2, unidirectional) → Linear`, trained with AdamW on the 661-utterance / 900.7 s subset, train split only.
+
+```text
+parameters            1006002
+train_loss            0.0947
+token_error_rate      0.0386
+exact_match_rate      0.8956
+elapsed               271.3 s on one RTX 2050 (torch 2.6.0+cu124)
+acceptance            PASSED
+```
+
+Acceptance thresholds (`accept_max_token_error_rate: 0.10`, `accept_max_loss: 1.0`) were written into `config.yaml` before the run and are checked explicitly; the script exits non-zero if they are missed. The first attempt, at `dropout: 0.1` and 40 epochs, reached token error rate 0.3838 and failed. Dropout is regularisation and this step tests memorisation, so it is now 0.
+
+These are **training-subset** metrics. No WER is claimed. dev and test were never opened by `train_overfit.py`.
+
+## The vocabulary finding that blocks the next step
+
+The subset contains **1360 distinct words**, 0.99 % of the 138047-word train vocabulary. With the full vocabulary the linear output layer alone is **35478593 parameters** at hidden 256 — 35x the entire model trained here, and far past the project's < 100 MB weight target. So this step builds its vocabulary from the subset and trains a genuine 1.0M-parameter model; the full-vocab figure is computed and stored in `results.json` rather than dropped, because it is the number that decides the real baseline's vocabulary scheme.
+
+Measured from step 1 and not yet acted on: **dev OOV 13.78 %, test OOV 14.38 %** for word-level. That, not architecture preference, is what should pick the next vocabulary scheme.
+
 ## Approach for baseline
 
-1. Build a tiny CTC model: small Conv+GRU encoder (or Transformer-lite), ~1–5M params, CPU-first, but with CUDA available.
-2. Use 80-bin log-Mel features (canonical, matches EXP-001) on 16 kHz audio. Load from manifests, derive features per utterance.
-3. Train on the 15-min subset only (never dev/test). Monitor CTC loss and see if it goes to very small (overfits) — target loss decreasing quickly, converging to near-zero or very low over many steps.
-4. Keep batch small, deterministic-ish (seed) where easy. Record all hyperparams in config/results.
+1. Vocabulary scheme chosen from the measured OOV curve, not from preference.
+2. 80-bin log-Mel features (canonical, matches EXP-001) on 16 kHz audio, loaded from manifests.
+3. Train on `train.jsonl`, evaluate on `dev.jsonl`. `test.jsonl` stays untouched until the baseline is fixed.
+4. Record all hyperparams in config/results.
 
-## Files to add
+## Files
 
-- `experiments/003_tokenizer_baseline/train_overfit.py` — training script
-- `experiments/003_tokenizer_baseline/config.yaml` — model+training params
-- `experiments/003_tokenizer_baseline/results.json` — actual measured metrics (loss curves, steps, final loss)
-- `experiments/003_tokenizer_baseline/notes.md` — observations
+| File | Role |
+|---|---|
+| `measure_tokenizer.py` | step 1: word-level vocabulary, OOV rates, subset selection |
+| `train_overfit.py` | step 2: the overfit run. Reads every value from `config.yaml` |
+| `config.yaml` | all model, feature, data and training parameters, including the acceptance thresholds |
+| `verify_criteria.py` | *not written* — step 2's checks are runtime assertions inside the trainer, because three of the bugs were only findable by running the real op |
+| `tokenizer_stats.json` | step 1 measurements |
+| `subset_vocab.json` | the 1360-word subset vocabulary actually used in step 2 |
+| `results.json` | step 2 measured metrics, full per-epoch history, acceptance block |
+| `notes.md` | the research record: what failed, why, what to test next |
+| `word_vocab.txt`, `token2id.json` | full 138047-word train vocabulary from step 1 |
 
-## Success criteria
-
-The subset trains and loss drops substantially (overfits). Specifically: CTC loss on the subset training set becomes < 1.0 (rough target) and clearly decreasing; model can be saved. (Exact target set once we see first run.)
-
-## Known caveats
-
-- Word-level vocab 138k means the output layer is large. That’s a tradeoff for this test; if memory/throughput is an issue, we can try character-level as fallback.
-- Audio loading: use existing `audio.io.load_audio` + resampling (already canonical-ready).
-- Features: reuse `audio.features.log_mel_spectrogram` (time-major). Handle variable lengths.
+Checkpoints go to `checkpoints/exp003_overfit/`, which is gitignored. No model weights are committed.
 
 ## Measured numbers (for sanity)
 
@@ -53,4 +77,6 @@ The subset trains and loss drops substantially (overfits). Specifically: CTC los
 | train | 80304 | 676524 | 0 | 0.0000 | 138047 |
 | dev | 4526 | 38621 | 5322 | 0.1378 | 16541 |
 | test | 4571 | 38356 | 5514 | 0.1438 | 16945 |
-| subset (15.01 min) | 661 | - | - | - | - |
+| subset (15.01 min) | 661 | 1863 | 0 | 0.0000 | 1360 |
+
+The subset row uses the subset's own vocabulary, so its OOV is 0 by construction. That is not a property of the corpus; it is why step 2 is a pipeline test and not a vocabulary test.

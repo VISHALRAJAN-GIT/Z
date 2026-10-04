@@ -12,7 +12,9 @@ This file is authoritative. Frolic telemetry is secondary and may be rotated.
 
 **Phase 00 — complete and committed at `35765c4`.
 Phase 01 / EXP-001 — complete and verified.
-Phase 02 / EXP-002 — complete and verified. `dataset_v001` exists on disk.**
+Phase 02 / EXP-002 — complete and verified. `dataset_v001` exists on disk.
+Phase 02 / EXP-003 — both steps complete. Tokenizer measured, tiny CTC overfit
+test accepted.**
 
 Implemented in Phase 01: `audio/io.py` (loading, canonical conversion, real
 validation), `audio/resampling.py` (8/22.05/44.1/48 kHz -> 16 kHz, with a
@@ -59,8 +61,9 @@ everywhere. Durations were re-measured against file headers on a 2000-utterance
 sample: 0 mismatches. The manifests were built twice and are byte-identical by
 SHA-256. Ratios 0.90/0.05/0.05, seed `20261003`.
 
-**No model, tokenizer or training code exists.** No WER has ever been measured on
-this corpus. Any statement claiming otherwise is false.
+**No model has been trained on the full corpus and no WER has ever been
+measured.** The only model that has ever run is the EXP-003 overfit test, whose
+metrics are on its own training subset. Any statement claiming a WER is false.
 
 Gates, run in `.venv` on Python 3.11.9 and recorded by `scripts/run-gates.ps1` into
 `.session/gates/`:
@@ -75,14 +78,53 @@ The exact wall time of the pytest run varies between roughly 10 and 60 s dependi
 on cache state. The verbatim result of the latest run, with its exit code, is in
 `.session/gates/pytest.txt` and is re-recorded by every `run-gates.ps1`.
 
-torch is **installed**: `torch 2.14.1+cpu`, `torchaudio 2.11.0+cpu`, from the
-explicitly chosen CPU wheel index `https://download.pytorch.org/whl/cpu`. CUDA is
-unavailable in this environment and `seed_everything` reports
-`fully_deterministic=True` honestly because of that. The RTX 2050 still requires a
-separate cu124 install when training starts.
+torch is installed as **`torch 2.6.0+cu124`** with **`torchaudio 2.6.0+cu124`**,
+from the cu124 index. `torch.cuda.is_available()` is **`True`** on this machine and
+the EXP-003 run trained on the RTX 2050. This corrects the earlier record in this
+file, which said `2.14.1+cpu` with CUDA unavailable; that was true when written
+and is now false. `seed_everything` still reports `fully_deterministic` from the
+Python/NumPy/torch seeding alone — its `cuda_deterministic` field reflects
+`cudnn.deterministic = True`, which is requested but not a guarantee of bitwise
+reproducibility across GPU kernel selections. Do not overstate it.
 
 Session memory is now backed by committed files plus an automatic refresher. See
 section 11.
+
+### EXP-003, in detail
+
+**Step 1, tokenizer** (`experiments/003_tokenizer_baseline/measure_tokenizer.py`,
+committed at `dab1687`). Whitespace word-level tokenisation over
+`dataset_v001`: train vocabulary **138047** words over 676524 tokens (4.9 tokens
+per type). OOV against train: dev **13.78 %**, test **14.38 %**, train 0 %.
+A 15.01 min subset of 661 utterances was selected, shortest first.
+
+**Step 2, overfit test** (`train_overfit.py`, this session). Architecture
+`Conv1d(80→32→64, stride 2, no BatchNorm) → GRU(256, 2, unidirectional) →
+Linear`, AdamW, 200 epochs, train split only, 271.3 s on the RTX 2050:
+
+```text
+parameters            1006002
+train_loss            0.0947
+token_error_rate      0.0386
+exact_match_rate      0.8956
+acceptance            PASSED
+```
+
+These are **training-subset** metrics. dev and test were never opened by that
+script. No WER.
+
+Three bugs were caught by running it, all in the first draft, none visible by
+reading: CTC targets were the padded `(B, S)` block flattened (40 entries where
+`sum(target_lengths)` was 26); encoder length used `floor(T/4)` and was wrong on
+**497 of 661** rows; and the full-vocabulary output layer is **35478593**
+parameters at hidden 256, so "tiny" was never true at full vocab. A fourth
+finding: the first run used `dropout: 0.1` and stalled at token error rate
+0.3838, failing acceptance — dropout is regularisation and this step tests
+memorisation. At 0.0 it reaches 0.0386.
+
+No new `src/` module was added this session. The CTC decoder and the token error
+rate function live in `experiments/` and graduate to `src/` when a real baseline
+needs them.
 
 ## 2. The project
 
@@ -236,15 +278,49 @@ warning and does not prevent loading, while the rest are errors.
 - **No manifest filtering.** All 89401 utterances are in `dataset_v001`, including
   the 0.2427 s minimum and the 38.8509 s maximum, with 0 empty transcripts found.
   Dropping outliers is a decision for a measured baseline, not for the builder.
+- **The overfit test uses a subset vocabulary, and that is stated, not hidden.**
+  The subset holds 1360 distinct words, 0.99 % of the 138047-word train
+  vocabulary. The full-vocab linear layer is 35478593 parameters at hidden 256 —
+  35x the model that was trained. Rebuilding the vocabulary from the subset is
+  what makes this a pipeline test instead of a vocabulary-coverage test, so the
+  full-vocab figure is computed and stored in `results.json` rather than dropped.
+  Anyone reading only the passing acceptance number must still see it.
+- **Acceptance thresholds are written before the run and checked explicitly.**
+  `config.yaml` carries `accept_max_token_error_rate` and `accept_max_loss`; the
+  script exits non-zero if they are missed. The first run failed acceptance at
+  token error rate 0.3838 and said so instead of being retuned until it passed.
+- **No BatchNorm and no bidirectional GRU in the CTC baseline.** Both are padding
+  correctness, not taste. BatchNorm averages the zero-padded tail into the
+  statistics of real frames; a bidirectional GRU reads that tail backwards into
+  the last valid frames. With a unidirectional stack and true CTC input lengths,
+  zero-padding cannot influence any valid output.
+- **Encoder lengths are exact per-layer arithmetic, verified against the real op.**
+  `floor(T / 4)` is wrong on 497 of 661 subset rows; two stride-2 convs give
+  `ceil(ceil(T/2)/2)`. `verify_length_math()` compares the arithmetic against what
+  `nn.Conv1d` actually returns, on a padded batch and on single utterances.
+- **CTC runs with `zero_infinity=False`.** The flag is commonly `True`, and it
+  would silently swallow the input-shorter-than-target condition this step exists
+  to detect. The condition is asserted instead, before training starts.
+- **Dropout is 0 for the overfit test.** Regularisation's only effect on a
+  memorisation test is to prevent memorisation. This is scoped to this
+  experiment, not a claim about the real baseline.
+- **The overfit subset stays the shortest-first subset from step 1.** Changing the
+  selection rule in step 2 alone would silently decouple the two steps'
+  measurements. Its unrepresentativeness is recorded as a limitation instead.
 
 ## 6. Open questions
 
-1. **No WER has ever been measured.** Nothing has been trained. Every number in
-   this file is a data or signal measurement, not a model result. The first model
-   number will come from EXP-003's overfit test.
-2. **Tokenizer vocabulary size is unmeasured.** Word-level on 135.42 h of read
-   formal Tamil will produce a large vocabulary, and the out-of-vocabulary rate on
-   held-out speakers is unknown. Measure before assuming word-level is adequate.
+1. **No WER has ever been measured.** Nothing has been trained on the full
+   corpus. Every number in this file is a data, signal or memorisation
+   measurement, not a generalisation result. The first real WER will come from
+   the baseline evaluated on `dev.jsonl`.
+2. **The vocabulary scheme is undecided, and this is now the blocking question.**
+   Question 2 of the previous revision — "is word-level adequate?" — is
+   **answered: no, not as-is.** Dev OOV 13.78 % and test OOV 14.38 % mean a
+   seventh of the words do not exist in the vocabulary. What is *not* answered is
+   what to do instead: restrict to the most frequent N words and measure the
+   OOV-versus-N curve, or move to a character-level Tamil vocabulary, which is
+   small and closed. Measure the curve, then choose. Do not choose by preference.
 3. **Corpus coverage is narrow.** IISc-MILE is read, studio-clean, single-condition
    speech. It cannot cover colloquial, code-switched, regional or noisy audio.
    AI4Bharat IndicVoices (Tamil, CC BY 4.0) and Kathbath (Tamil, conversational)
@@ -255,28 +331,39 @@ warning and does not prevent loading, while the rest are errors.
    segments) are sanity-checked, not scored. Open, not blocking.
 5. **Build wall time is unstable.** The same manifest build measured 375.9 s and
    750.6 s on this machine. If a future step is time-boxed, measure twice first.
+6. **The overfit test covers only very short utterances.** The subset runs
+   0.243 s to 1.59 s against a corpus maximum of 38.85 s. It proves the pipeline
+   is internally consistent; it says nothing about long or fast speech. A
+   duration-representative overfit run is still wanted.
 
 ## 7. Next actions
 
-EXP-002 is **complete and verified** (14 pass, 0 fail). `dataset_v001` is built,
-verified and reproducible. The next work is the first thing that trains a model.
+EXP-002 is **complete and verified** (14 pass, 0 fail). EXP-003 is **complete**:
+step 1 measured the tokenizer, step 2's overfit test is accepted. The GPU is
+installed and working. The next work is the first model trained on the full
+train split, and one decision blocks it.
 
-1. Install the cu124 torch build for the RTX 2050. This is the first step that
-   needs a GPU and the last piece of Phase 00/01 setup left open:
-   `pip install torch torchaudio --index-url https://download.pytorch.org/whl/cu124`
-   Verify afterwards and record the real versions here. Until then, CPU only.
-2. EXP-003: define the tokenizer. Word-level first for the CTC baseline, per
-   GUIDE section 31, and only reconsider a subword scheme from measured results
-   rather than preference. The corpus is read, formal Tamil, so a word-level
-   vocabulary's size and out-of-vocabulary rate on this corpus are the numbers to
-   measure before anything else.
-3. Then the tiny CTC baseline as its own experiment, trained to **overfit 10-30
-   minutes of speech**, using only rows from `train.jsonl`. Never dev or test for
-   that check. A model that cannot overfit a small set has a data, tokenizer,
-   padding, CTC-length, blank or decoder bug, and more data will not reveal it.
+1. **Decide the vocabulary scheme from measurement.** This is now the blocking
+   item. Measured: word-level gives dev OOV 13.78 % / test OOV 14.38 % on a
+   138047-word train vocabulary, and a full-vocab output layer is 35478593
+   parameters at hidden 256, which does not fit the < 100 MB target. Next action:
+   write `measure_vocab_size.py` to sweep the most-frequent-N restriction and
+   plot OOV rate against N on dev and test, and separately count the distinct
+   Tamil characters in the corpus to size a character-level vocabulary. Then
+   choose from the two measured curves. Do not pick a scheme from preference, and
+   do not adopt subword (BPE/SentencePiece) without measuring it too — GUIDE
+   section 31 wants a reasoned choice, and the reason has to be a number.
+2. **Then** the real CTC baseline on `train.jsonl` with the chosen vocabulary,
+   evaluated on `dev.jsonl`. `test.jsonl` stays untouched until the baseline is
+   fixed. This produces the first genuine WER in the project.
+3. **Also worth doing before step 2**, because it is cheap and it closes open
+   question 6: re-run the overfit test on a duration-representative subset, so
+   the pipeline check covers long utterances instead of only the 0.243–1.59 s
+   tail.
 
-If a session ends before step 1, the exact starting point is: `dataset_v001`
-exists and is verified, and the first training run has not been started.
+If a session ends before step 1 finishes, the exact starting point is: `dataset_v001`
+is built and verified, EXP-003 is complete and accepted, torch 2.6.0+cu124 has CUDA
+available, and no model has ever been trained on the full corpus.
 
 ## 8. Rules that must survive every session
 

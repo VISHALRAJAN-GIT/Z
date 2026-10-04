@@ -1,6 +1,6 @@
 # AGENTS.md — Tamil Voice Foundation (session entry point)
 
-**You opened opencode in `<workspace>`. This file is auto-loaded.
+**You opened opencode in `C:\ANTI_GRAVITY\PROJECT Z`. This file is auto-loaded.
 Read it, then follow the Resume Protocol below. Do not start from zero.**
 
 ---
@@ -23,18 +23,26 @@ repository, **the repository wins** — fix `MEMORY.md` before doing anything el
 ## 1. Live status (auto-updated by scripts/update-status.ps1)
 
 <!-- AUTO-STATUS:BEGIN -->
-_generated 2026-10-04 00:38 by scripts\update-status.ps1_
+_generated 2026-10-04 11:20 by scripts\update-status.ps1_
 
-**Last commit:** `4f9826c feat: EXP-002 speaker-disjoint manifests (dataset_v001) with independent verification`
+**Last commit:** `dab1687 feat: EXP-003 word-level tokenizer measurements and subset`
 **Branch:** `main`
-**Sync:** 3 commit(s) AHEAD of origin/main (not pushed)
-**Working tree:** 3 changed, 1 untracked
+**Sync:** 4 commit(s) AHEAD of origin/main (not pushed)
+**Working tree:** 6 changed, 5 untracked
 - `M .session/AGENTS.md`
 - `M .session/START-HERE.md`
 - `M .session/gates/pytest.txt`
-- `?? experiments/003_tokenizer_baseline/`
+- `M CHANGELOG.md`
+- `M MEMORY.md`
+- `M experiments/003_tokenizer_baseline/README.md`
+- `?? experiments/003_tokenizer_baseline/config.yaml`
+- `?? experiments/003_tokenizer_baseline/notes.md`
+- `?? experiments/003_tokenizer_baseline/results.json`
+- `?? experiments/003_tokenizer_baseline/subset_vocab.json`
+- `?? experiments/003_tokenizer_baseline/train_overfit.py`
 
 **Recent commits**
+- `dab1687 feat: EXP-003 word-level tokenizer measurements and subset`
 - `4f9826c feat: EXP-002 speaker-disjoint manifests (dataset_v001) with independent verification`
 - `050b614 chore: durable session memory with an auto-refreshing status block`
 - `3988e32 feat: Phase 02 data layer for corpus discovery, manifests and speaker-disjoint splits`
@@ -42,10 +50,9 @@ _generated 2026-10-04 00:38 by scripts\update-status.ps1_
 - `1f19894 test: verify EXP-001 criteria on a real Tamil recording`
 - `c4e1436 test: verify EXP-001 criteria on synthetic fixtures`
 - `6f50cb6 feat: non-neural VAD and speech segment post-processing`
-- `adc18bd refactor: share frame RMS and dBFS helpers across audio modules`
 
 **Gates, as last measured** (`tamil-voice-foundation\.session\gates\`)
-- pytest: exit=0 | 220 passed in 7.95s
+- pytest: exit=0 | 220 passed in 8.09s
 - ruff:   exit=0 | All checks passed!
 - mypy:   exit=0 | Success: no issues found in 26 source files
 
@@ -61,7 +68,7 @@ Tanglish, Tamil-English code switching, regional pronunciation, and degraded
 audio (noisy, reverberant, far-field, phone mic, low volume, fast speech).
 
 Specification (authoritative, never modify):
-`<workspace>\GUIDE.MD`
+`C:\ANTI_GRAVITY\PROJECT Z\GUIDE.MD`
 
 ## 3. Folder map of this workspace
 

@@ -1,0 +1,1683 @@
+{
+  "experiment_id": "003_tokenizer_baseline",
+  "step": "overfit_tiny_ctc",
+  "device": "cuda",
+  "torch_version": "2.6.0+cu124",
+  "cuda_available": true,
+  "seed": {
+    "seed": 20261003,
+    "python_hash_seed": true,
+    "numpy": true,
+    "torch": true,
+    "cuda_deterministic": true
+  },
+  "subset": {
+    "utterances": 661,
+    "duration_seconds": 900.7,
+    "minutes": 15.01,
+    "selection_rule": "shortest utterances first until subset_minutes is met",
+    "speakers": 148,
+    "tokens": 1863,
+    "min_duration_seconds": 0.243,
+    "max_duration_seconds": 1.59
+  },
+  "vocabulary": {
+    "source": "subset",
+    "size": 1360,
+    "num_classes": 1362,
+    "blank_id": 0,
+    "unk_id": 1361,
+    "unk_hits": 0,
+    "as_fraction_of_train_vocab": 0.009852
+  },
+  "features": {
+    "n_fft": 512,
+    "win_length": 400,
+    "hop_length": 160,
+    "n_mels": 80,
+    "extract_seconds": 1.47,
+    "frames_min": 25,
+    "frames_max": 160,
+    "encoder_stride": 4,
+    "encoder_frames_min": 7,
+    "encoder_frames_max": 40,
+    "length_math_verified_against_conv1d": true,
+    "rows_where_floor_over_stride_would_be_wrong": 497
+  },
+  "model": {
+    "architecture": "Conv1d x2 (no BatchNorm) -> GRU -> Linear",
+    "gru_bidirectional": false,
+    "parameters": 1006002,
+    "parameters_millions": 1.006,
+    "full_train_vocab_would_be_classes": 138049,
+    "full_train_vocab_fc_parameters": 35478593,
+    "parameter_note": "with the measured 138047-word train vocabulary the output layer alone is 35478593 parameters, so the full-vocab model cannot be called tiny and does not fit the <100 MB weight target"
+  },
+  "training": {
+    "epochs": 200,
+    "batch_size": 8,
+    "lr": 0.001,
+    "optimizer": "AdamW",
+    "grad_clip": 5.0,
+    "elapsed_seconds": 271.3,
+    "seconds_per_epoch": 1.36
+  },
+  "final": {
+    "train_loss": 0.09474456767517939,
+    "token_error_rate": 0.03864734299516908,
+    "exact_match_rate": 0.8956127080181543
+  },
+  "history": [
+    {
+      "epoch": 1,
+      "train_loss": 11.944926083806049,
+      "token_error_rate": 0.989801395598497,
+      "exact_match_rate": 0.0,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 654.0
+    },
+    {
+      "epoch": 2,
+      "train_loss": 7.5938260526542205,
+      "token_error_rate": 0.989801395598497,
+      "exact_match_rate": 0.0,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 654.0
+    },
+    {
+      "epoch": 3,
+      "train_loss": 7.368653458285045,
+      "token_error_rate": 0.9892646269457863,
+      "exact_match_rate": 0.0,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 659.0
+    },
+    {
+      "epoch": 4,
+      "train_loss": 7.197487974741373,
+      "token_error_rate": 0.986580783682233,
+      "exact_match_rate": 0.0,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 660.0
+    },
+    {
+      "epoch": 5,
+      "train_loss": 7.022380610546434,
+      "token_error_rate": 0.9822866344605475,
+      "exact_match_rate": 0.0,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 670.0
+    },
+    {
+      "epoch": 6,
+      "train_loss": 6.849156190113849,
+      "token_error_rate": 0.9785292538915727,
+      "exact_match_rate": 0.0,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 829.0
+    },
+    {
+      "epoch": 7,
+      "train_loss": 6.651655909526779,
+      "token_error_rate": 0.9769189479334407,
+      "exact_match_rate": 0.0,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 985.0
+    },
+    {
+      "epoch": 8,
+      "train_loss": 6.501224058220186,
+      "token_error_rate": 0.9785292538915727,
+      "exact_match_rate": 0.0,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 874.0
+    },
+    {
+      "epoch": 9,
+      "train_loss": 6.3185740206615035,
+      "token_error_rate": 0.9736983360171766,
+      "exact_match_rate": 0.0015128593040847202,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 993.0
+    },
+    {
+      "epoch": 10,
+      "train_loss": 6.14748065442924,
+      "token_error_rate": 0.9753086419753086,
+      "exact_match_rate": 0.0,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 911.0
+    },
+    {
+      "epoch": 11,
+      "train_loss": 5.990309198218656,
+      "token_error_rate": 0.9656468062265163,
+      "exact_match_rate": 0.0015128593040847202,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1064.0
+    },
+    {
+      "epoch": 12,
+      "train_loss": 5.806804708687656,
+      "token_error_rate": 0.9602791196994096,
+      "exact_match_rate": 0.0,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1072.0
+    },
+    {
+      "epoch": 13,
+      "train_loss": 5.593813735318471,
+      "token_error_rate": 0.9484702093397746,
+      "exact_match_rate": 0.012102874432677761,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1061.0
+    },
+    {
+      "epoch": 14,
+      "train_loss": 5.386888865964958,
+      "token_error_rate": 0.9468599033816425,
+      "exact_match_rate": 0.01059001512859304,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 998.0
+    },
+    {
+      "epoch": 15,
+      "train_loss": 5.171108395220285,
+      "token_error_rate": 0.9382716049382716,
+      "exact_match_rate": 0.015128593040847202,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1060.0
+    },
+    {
+      "epoch": 16,
+      "train_loss": 4.95452730626945,
+      "token_error_rate": 0.9119699409554483,
+      "exact_match_rate": 0.024205748865355523,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1229.0
+    },
+    {
+      "epoch": 17,
+      "train_loss": 4.732988121997879,
+      "token_error_rate": 0.8915727321524423,
+      "exact_match_rate": 0.030257186081694403,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1210.0
+    },
+    {
+      "epoch": 18,
+      "train_loss": 4.499446030122688,
+      "token_error_rate": 0.8674181427804616,
+      "exact_match_rate": 0.028744326777609682,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1306.0
+    },
+    {
+      "epoch": 19,
+      "train_loss": 4.270041948341461,
+      "token_error_rate": 0.8362855609232421,
+      "exact_match_rate": 0.048411497730711045,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1322.0
+    },
+    {
+      "epoch": 20,
+      "train_loss": 4.045740667595921,
+      "token_error_rate": 0.8035426731078905,
+      "exact_match_rate": 0.06656580937972768,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1312.0
+    },
+    {
+      "epoch": 21,
+      "train_loss": 3.8026672874588563,
+      "token_error_rate": 0.7788513150831992,
+      "exact_match_rate": 0.08472012102874432,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1322.0
+    },
+    {
+      "epoch": 22,
+      "train_loss": 3.6184603909412063,
+      "token_error_rate": 0.7192699946323134,
+      "exact_match_rate": 0.09228441754916793,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1484.0
+    },
+    {
+      "epoch": 23,
+      "train_loss": 3.3852057456970215,
+      "token_error_rate": 0.6596886741814278,
+      "exact_match_rate": 0.12254160363086233,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1491.0
+    },
+    {
+      "epoch": 24,
+      "train_loss": 3.181346640529403,
+      "token_error_rate": 0.6553945249597424,
+      "exact_match_rate": 0.1422087745839637,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1460.0
+    },
+    {
+      "epoch": 25,
+      "train_loss": 2.9673169722040016,
+      "token_error_rate": 0.5560923242082663,
+      "exact_match_rate": 0.18305597579425115,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1563.0
+    },
+    {
+      "epoch": 26,
+      "train_loss": 2.771194761057934,
+      "token_error_rate": 0.5738056897477187,
+      "exact_match_rate": 0.18910741301059,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1520.0
+    },
+    {
+      "epoch": 27,
+      "train_loss": 2.589150782091072,
+      "token_error_rate": 0.48201825013419214,
+      "exact_match_rate": 0.24508320726172467,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1641.0
+    },
+    {
+      "epoch": 28,
+      "train_loss": 2.3938148352036994,
+      "token_error_rate": 0.44605475040257647,
+      "exact_match_rate": 0.25113464447806355,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1673.0
+    },
+    {
+      "epoch": 29,
+      "train_loss": 2.2478342314800583,
+      "token_error_rate": 0.4524959742351047,
+      "exact_match_rate": 0.2526475037821483,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1654.0
+    },
+    {
+      "epoch": 30,
+      "train_loss": 2.1202862104737616,
+      "token_error_rate": 0.40042941492216855,
+      "exact_match_rate": 0.2813918305597579,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1722.0
+    },
+    {
+      "epoch": 31,
+      "train_loss": 1.972952990646822,
+      "token_error_rate": 0.35050993022007515,
+      "exact_match_rate": 0.3328290468986384,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1763.0
+    },
+    {
+      "epoch": 32,
+      "train_loss": 1.8827743487185742,
+      "token_error_rate": 0.3365539452495974,
+      "exact_match_rate": 0.34190620272314676,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1758.0
+    },
+    {
+      "epoch": 33,
+      "train_loss": 1.745707573660885,
+      "token_error_rate": 0.35050993022007515,
+      "exact_match_rate": 0.33434190620272314,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1782.0
+    },
+    {
+      "epoch": 34,
+      "train_loss": 1.6212042742464916,
+      "token_error_rate": 0.2882447665056361,
+      "exact_match_rate": 0.39636913767019666,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1802.0
+    },
+    {
+      "epoch": 35,
+      "train_loss": 1.5246378800955163,
+      "token_error_rate": 0.25925925925925924,
+      "exact_match_rate": 0.4281391830559758,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1808.0
+    },
+    {
+      "epoch": 36,
+      "train_loss": 1.4342396840991745,
+      "token_error_rate": 0.2318840579710145,
+      "exact_match_rate": 0.4583963691376702,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1831.0
+    },
+    {
+      "epoch": 37,
+      "train_loss": 1.3598537344530404,
+      "token_error_rate": 0.2318840579710145,
+      "exact_match_rate": 0.44478063540090773,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1829.0
+    },
+    {
+      "epoch": 38,
+      "train_loss": 1.2933123398976154,
+      "token_error_rate": 0.20611916264090177,
+      "exact_match_rate": 0.5143721633888049,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1831.0
+    },
+    {
+      "epoch": 39,
+      "train_loss": 1.248350317937782,
+      "token_error_rate": 0.202361782071927,
+      "exact_match_rate": 0.5264750378214826,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1833.0
+    },
+    {
+      "epoch": 40,
+      "train_loss": 1.1295246941497528,
+      "token_error_rate": 0.2028985507246377,
+      "exact_match_rate": 0.49924357034795763,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1842.0
+    },
+    {
+      "epoch": 41,
+      "train_loss": 1.1119386618395886,
+      "token_error_rate": 0.178743961352657,
+      "exact_match_rate": 0.5476550680786687,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1843.0
+    },
+    {
+      "epoch": 42,
+      "train_loss": 1.0360525257616158,
+      "token_error_rate": 0.17337627482555018,
+      "exact_match_rate": 0.5597579425113465,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1848.0
+    },
+    {
+      "epoch": 43,
+      "train_loss": 1.0056412830410233,
+      "token_error_rate": 0.16639828234031132,
+      "exact_match_rate": 0.5748865355521936,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1844.0
+    },
+    {
+      "epoch": 44,
+      "train_loss": 0.9360742892127439,
+      "token_error_rate": 0.1728395061728395,
+      "exact_match_rate": 0.5658093797276853,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1843.0
+    },
+    {
+      "epoch": 45,
+      "train_loss": 0.874981449311038,
+      "token_error_rate": 0.1497584541062802,
+      "exact_match_rate": 0.6066565809379728,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1848.0
+    },
+    {
+      "epoch": 46,
+      "train_loss": 0.8428062035376767,
+      "token_error_rate": 0.15136876006441224,
+      "exact_match_rate": 0.6142208774583964,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1850.0
+    },
+    {
+      "epoch": 47,
+      "train_loss": 0.8150925334677639,
+      "token_error_rate": 0.13311862587224907,
+      "exact_match_rate": 0.6459909228441755,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1850.0
+    },
+    {
+      "epoch": 48,
+      "train_loss": 0.76498366910291,
+      "token_error_rate": 0.12077294685990338,
+      "exact_match_rate": 0.6853252647503782,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1854.0
+    },
+    {
+      "epoch": 49,
+      "train_loss": 0.7492373047104801,
+      "token_error_rate": 0.12399355877616747,
+      "exact_match_rate": 0.6686838124054463,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1853.0
+    },
+    {
+      "epoch": 50,
+      "train_loss": 0.7159206777451986,
+      "token_error_rate": 0.1374127750939345,
+      "exact_match_rate": 0.6444780635400907,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1852.0
+    },
+    {
+      "epoch": 51,
+      "train_loss": 0.7051621679081974,
+      "token_error_rate": 0.12345679012345678,
+      "exact_match_rate": 0.6777609682299546,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1855.0
+    },
+    {
+      "epoch": 52,
+      "train_loss": 0.638269881886172,
+      "token_error_rate": 0.09608158883521202,
+      "exact_match_rate": 0.7397881996974282,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1857.0
+    },
+    {
+      "epoch": 53,
+      "train_loss": 0.6172784408891058,
+      "token_error_rate": 0.09500805152979067,
+      "exact_match_rate": 0.7488653555219364,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1857.0
+    },
+    {
+      "epoch": 54,
+      "train_loss": 0.6097122039421495,
+      "token_error_rate": 0.08964036500268384,
+      "exact_match_rate": 0.762481089258699,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1860.0
+    },
+    {
+      "epoch": 55,
+      "train_loss": 0.5759981640850205,
+      "token_error_rate": 0.08266237251744499,
+      "exact_match_rate": 0.7791225416036308,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1856.0
+    },
+    {
+      "epoch": 56,
+      "train_loss": 0.5593057992946671,
+      "token_error_rate": 0.08641975308641975,
+      "exact_match_rate": 0.7639939485627837,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1856.0
+    },
+    {
+      "epoch": 57,
+      "train_loss": 0.5616578132991331,
+      "token_error_rate": 0.08427267847557703,
+      "exact_match_rate": 0.7700453857791225,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1858.0
+    },
+    {
+      "epoch": 58,
+      "train_loss": 0.5202787592109427,
+      "token_error_rate": 0.1084272678475577,
+      "exact_match_rate": 0.7095310136157338,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1856.0
+    },
+    {
+      "epoch": 59,
+      "train_loss": 0.48963602641260767,
+      "token_error_rate": 0.08749329039184112,
+      "exact_match_rate": 0.762481089258699,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1858.0
+    },
+    {
+      "epoch": 60,
+      "train_loss": 0.4956603030483407,
+      "token_error_rate": 0.08910359634997315,
+      "exact_match_rate": 0.7594553706505295,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1859.0
+    },
+    {
+      "epoch": 61,
+      "train_loss": 0.49252782349126883,
+      "token_error_rate": 0.08588298443370908,
+      "exact_match_rate": 0.7821482602118003,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1854.0
+    },
+    {
+      "epoch": 62,
+      "train_loss": 0.4784343504762075,
+      "token_error_rate": 0.09017713365539452,
+      "exact_match_rate": 0.7670196671709532,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1858.0
+    },
+    {
+      "epoch": 63,
+      "train_loss": 0.44601923442748653,
+      "token_error_rate": 0.0644122383252818,
+      "exact_match_rate": 0.8260211800302572,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1858.0
+    },
+    {
+      "epoch": 64,
+      "train_loss": 0.42185328469937106,
+      "token_error_rate": 0.06763285024154589,
+      "exact_match_rate": 0.8154311649016641,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1858.0
+    },
+    {
+      "epoch": 65,
+      "train_loss": 0.39086580043097574,
+      "token_error_rate": 0.07353730542136339,
+      "exact_match_rate": 0.8033282904689864,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1859.0
+    },
+    {
+      "epoch": 66,
+      "train_loss": 0.4054656933589154,
+      "token_error_rate": 0.06602254428341385,
+      "exact_match_rate": 0.8229954614220878,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1860.0
+    },
+    {
+      "epoch": 67,
+      "train_loss": 0.3757252045065524,
+      "token_error_rate": 0.09232420826623725,
+      "exact_match_rate": 0.7503782148260212,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1861.0
+    },
+    {
+      "epoch": 68,
+      "train_loss": 0.3587065975529602,
+      "token_error_rate": 0.07783145464304884,
+      "exact_match_rate": 0.783661119515885,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1860.0
+    },
+    {
+      "epoch": 69,
+      "train_loss": 0.3810932856187763,
+      "token_error_rate": 0.06548577563070317,
+      "exact_match_rate": 0.8184568835098336,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1862.0
+    },
+    {
+      "epoch": 70,
+      "train_loss": 0.38607069095933294,
+      "token_error_rate": 0.07836822329575953,
+      "exact_match_rate": 0.7866868381240545,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1862.0
+    },
+    {
+      "epoch": 71,
+      "train_loss": 0.3621517918914197,
+      "token_error_rate": 0.09339774557165861,
+      "exact_match_rate": 0.75642965204236,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1863.0
+    },
+    {
+      "epoch": 72,
+      "train_loss": 0.3757008723465793,
+      "token_error_rate": 0.04938271604938271,
+      "exact_match_rate": 0.8608169440242057,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1862.0
+    },
+    {
+      "epoch": 73,
+      "train_loss": 0.33755042628351467,
+      "token_error_rate": 0.06709608158883522,
+      "exact_match_rate": 0.8214826021180031,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1861.0
+    },
+    {
+      "epoch": 74,
+      "train_loss": 0.3118891264480281,
+      "token_error_rate": 0.041331186258722494,
+      "exact_match_rate": 0.8835098335854765,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1862.0
+    },
+    {
+      "epoch": 75,
+      "train_loss": 0.2856608950589077,
+      "token_error_rate": 0.04830917874396135,
+      "exact_match_rate": 0.8653555219364599,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1862.0
+    },
+    {
+      "epoch": 76,
+      "train_loss": 0.2750608524285167,
+      "token_error_rate": 0.0381105743424584,
+      "exact_match_rate": 0.8925869894099848,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1862.0
+    },
+    {
+      "epoch": 77,
+      "train_loss": 0.2481112838330039,
+      "token_error_rate": 0.03274288781535158,
+      "exact_match_rate": 0.9077155824508321,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1862.0
+    },
+    {
+      "epoch": 78,
+      "train_loss": 0.2830573958176446,
+      "token_error_rate": 0.030059044551798177,
+      "exact_match_rate": 0.9152798789712556,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1862.0
+    },
+    {
+      "epoch": 79,
+      "train_loss": 0.2409723489938012,
+      "token_error_rate": 0.04186795491143317,
+      "exact_match_rate": 0.8819969742813918,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1862.0
+    },
+    {
+      "epoch": 80,
+      "train_loss": 0.2568990825170494,
+      "token_error_rate": 0.05475040257648953,
+      "exact_match_rate": 0.848714069591528,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1862.0
+    },
+    {
+      "epoch": 81,
+      "train_loss": 0.25007800003850317,
+      "token_error_rate": 0.02844873859366613,
+      "exact_match_rate": 0.9198184568835098,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1862.0
+    },
+    {
+      "epoch": 82,
+      "train_loss": 0.21442581201533237,
+      "token_error_rate": 0.029522275899087493,
+      "exact_match_rate": 0.9183055975794251,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1862.0
+    },
+    {
+      "epoch": 83,
+      "train_loss": 0.23956263559051308,
+      "token_error_rate": 0.03542673107890499,
+      "exact_match_rate": 0.9062027231467473,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1862.0
+    },
+    {
+      "epoch": 84,
+      "train_loss": 0.2531348637428628,
+      "token_error_rate": 0.04079441760601181,
+      "exact_match_rate": 0.886535552193646,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1862.0
+    },
+    {
+      "epoch": 85,
+      "train_loss": 0.25472400615732355,
+      "token_error_rate": 0.04669887278582931,
+      "exact_match_rate": 0.875945537065053,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1861.0
+    },
+    {
+      "epoch": 86,
+      "train_loss": 0.27133998427405415,
+      "token_error_rate": 0.048845947396672036,
+      "exact_match_rate": 0.8714069591527988,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1860.0
+    },
+    {
+      "epoch": 87,
+      "train_loss": 0.3004164641880127,
+      "token_error_rate": 0.06065485775630703,
+      "exact_match_rate": 0.8517397881996974,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1856.0
+    },
+    {
+      "epoch": 88,
+      "train_loss": 0.35788301109190446,
+      "token_error_rate": 0.05689747718733226,
+      "exact_match_rate": 0.8608169440242057,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1850.0
+    },
+    {
+      "epoch": 89,
+      "train_loss": 0.35057378147380897,
+      "token_error_rate": 0.06333870101986044,
+      "exact_match_rate": 0.8381240544629349,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1857.0
+    },
+    {
+      "epoch": 90,
+      "train_loss": 0.29047843167580756,
+      "token_error_rate": 0.03864734299516908,
+      "exact_match_rate": 0.8940998487140696,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1863.0
+    },
+    {
+      "epoch": 91,
+      "train_loss": 0.2420110566070281,
+      "token_error_rate": 0.042404723564143855,
+      "exact_match_rate": 0.8819969742813918,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1865.0
+    },
+    {
+      "epoch": 92,
+      "train_loss": 0.24269526676241174,
+      "token_error_rate": 0.026838432635534086,
+      "exact_match_rate": 0.924357034795764,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1862.0
+    },
+    {
+      "epoch": 93,
+      "train_loss": 0.21772776508187675,
+      "token_error_rate": 0.040257648953301126,
+      "exact_match_rate": 0.8895612708018155,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1862.0
+    },
+    {
+      "epoch": 94,
+      "train_loss": 0.19743900155895447,
+      "token_error_rate": 0.04079441760601181,
+      "exact_match_rate": 0.886535552193646,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1862.0
+    },
+    {
+      "epoch": 95,
+      "train_loss": 0.18870668611433133,
+      "token_error_rate": 0.024154589371980676,
+      "exact_match_rate": 0.9319213313161876,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1862.0
+    },
+    {
+      "epoch": 96,
+      "train_loss": 0.17647640303854484,
+      "token_error_rate": 0.026838432635534086,
+      "exact_match_rate": 0.924357034795764,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1862.0
+    },
+    {
+      "epoch": 97,
+      "train_loss": 0.18823306244539928,
+      "token_error_rate": 0.03166935050993022,
+      "exact_match_rate": 0.9122541603630863,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1862.0
+    },
+    {
+      "epoch": 98,
+      "train_loss": 0.15269139898290118,
+      "token_error_rate": 0.02147074610842727,
+      "exact_match_rate": 0.9394856278366112,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1862.0
+    },
+    {
+      "epoch": 99,
+      "train_loss": 0.1336988088147468,
+      "token_error_rate": 0.028985507246376812,
+      "exact_match_rate": 0.9198184568835098,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1862.0
+    },
+    {
+      "epoch": 100,
+      "train_loss": 0.14065792061478258,
+      "token_error_rate": 0.0381105743424584,
+      "exact_match_rate": 0.9001512859304085,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1862.0
+    },
+    {
+      "epoch": 101,
+      "train_loss": 0.14320845408252922,
+      "token_error_rate": 0.03435319377348363,
+      "exact_match_rate": 0.9077155824508321,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1862.0
+    },
+    {
+      "epoch": 102,
+      "train_loss": 0.16595086661807026,
+      "token_error_rate": 0.03435319377348363,
+      "exact_match_rate": 0.9077155824508321,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1862.0
+    },
+    {
+      "epoch": 103,
+      "train_loss": 0.20060125098799367,
+      "token_error_rate": 0.01825013419216318,
+      "exact_match_rate": 0.9485627836611196,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1862.0
+    },
+    {
+      "epoch": 104,
+      "train_loss": 0.1626349182866783,
+      "token_error_rate": 0.020397208803005905,
+      "exact_match_rate": 0.9425113464447806,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1862.0
+    },
+    {
+      "epoch": 105,
+      "train_loss": 0.143909408071314,
+      "token_error_rate": 0.026301663982823402,
+      "exact_match_rate": 0.9273827534039334,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1862.0
+    },
+    {
+      "epoch": 106,
+      "train_loss": 0.14897081500525217,
+      "token_error_rate": 0.02844873859366613,
+      "exact_match_rate": 0.9198184568835098,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1862.0
+    },
+    {
+      "epoch": 107,
+      "train_loss": 0.15048841271459698,
+      "token_error_rate": 0.02200751476113795,
+      "exact_match_rate": 0.9379727685325264,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1862.0
+    },
+    {
+      "epoch": 108,
+      "train_loss": 0.13723183472652034,
+      "token_error_rate": 0.017176596886741814,
+      "exact_match_rate": 0.9515885022692889,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1862.0
+    },
+    {
+      "epoch": 109,
+      "train_loss": 0.15970867279782353,
+      "token_error_rate": 0.05528717122920022,
+      "exact_match_rate": 0.8502269288956127,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1862.0
+    },
+    {
+      "epoch": 110,
+      "train_loss": 0.18014249896787735,
+      "token_error_rate": 0.028985507246376812,
+      "exact_match_rate": 0.9258698940998488,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1864.0
+    },
+    {
+      "epoch": 111,
+      "train_loss": 0.2664947794323944,
+      "token_error_rate": 0.09822866344605476,
+      "exact_match_rate": 0.7791225416036308,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1872.0
+    },
+    {
+      "epoch": 112,
+      "train_loss": 0.3047276817890535,
+      "token_error_rate": 0.03327965646806227,
+      "exact_match_rate": 0.913767019667171,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1869.0
+    },
+    {
+      "epoch": 113,
+      "train_loss": 0.311437597027026,
+      "token_error_rate": 0.029522275899087493,
+      "exact_match_rate": 0.9228441754916793,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1860.0
+    },
+    {
+      "epoch": 114,
+      "train_loss": 0.20073207972728344,
+      "token_error_rate": 0.027911969940955447,
+      "exact_match_rate": 0.9288956127080181,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1862.0
+    },
+    {
+      "epoch": 115,
+      "train_loss": 0.1679042562932135,
+      "token_error_rate": 0.017713365539452495,
+      "exact_match_rate": 0.9546142208774584,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1863.0
+    },
+    {
+      "epoch": 116,
+      "train_loss": 0.13404716360551047,
+      "token_error_rate": 0.04079441760601181,
+      "exact_match_rate": 0.8895612708018155,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1862.0
+    },
+    {
+      "epoch": 117,
+      "train_loss": 0.17233327370002327,
+      "token_error_rate": 0.011808910359634998,
+      "exact_match_rate": 0.9667170953101362,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1861.0
+    },
+    {
+      "epoch": 118,
+      "train_loss": 0.1391998649496271,
+      "token_error_rate": 0.03327965646806227,
+      "exact_match_rate": 0.9092284417549168,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1862.0
+    },
+    {
+      "epoch": 119,
+      "train_loss": 0.18157656896994057,
+      "token_error_rate": 0.027911969940955447,
+      "exact_match_rate": 0.9258698940998488,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1862.0
+    },
+    {
+      "epoch": 120,
+      "train_loss": 0.1525601267096508,
+      "token_error_rate": 0.03327965646806227,
+      "exact_match_rate": 0.9107413010590015,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1862.0
+    },
+    {
+      "epoch": 121,
+      "train_loss": 0.13676162485975818,
+      "token_error_rate": 0.01825013419216318,
+      "exact_match_rate": 0.9485627836611196,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1862.0
+    },
+    {
+      "epoch": 122,
+      "train_loss": 0.16759069979819188,
+      "token_error_rate": 0.015566290928609769,
+      "exact_match_rate": 0.9561270801815431,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1862.0
+    },
+    {
+      "epoch": 123,
+      "train_loss": 0.15871145203709602,
+      "token_error_rate": 0.02254428341384863,
+      "exact_match_rate": 0.9364599092284418,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1862.0
+    },
+    {
+      "epoch": 124,
+      "train_loss": 0.11761771889784968,
+      "token_error_rate": 0.017176596886741814,
+      "exact_match_rate": 0.9515885022692889,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1862.0
+    },
+    {
+      "epoch": 125,
+      "train_loss": 0.11518214996455305,
+      "token_error_rate": 0.030595813204508857,
+      "exact_match_rate": 0.9152798789712556,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1862.0
+    },
+    {
+      "epoch": 126,
+      "train_loss": 0.13296584594231772,
+      "token_error_rate": 0.03542673107890499,
+      "exact_match_rate": 0.9046898638426626,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1861.0
+    },
+    {
+      "epoch": 127,
+      "train_loss": 0.17560648485030755,
+      "token_error_rate": 0.024154589371980676,
+      "exact_match_rate": 0.9334341906202723,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1862.0
+    },
+    {
+      "epoch": 128,
+      "train_loss": 0.109913959291326,
+      "token_error_rate": 0.013955984970477724,
+      "exact_match_rate": 0.9606656580937972,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1862.0
+    },
+    {
+      "epoch": 129,
+      "train_loss": 0.12273090905004955,
+      "token_error_rate": 0.019860440150295224,
+      "exact_match_rate": 0.9500756429652042,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1860.0
+    },
+    {
+      "epoch": 130,
+      "train_loss": 0.16805494580058808,
+      "token_error_rate": 0.042404723564143855,
+      "exact_match_rate": 0.8940998487140696,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1855.0
+    },
+    {
+      "epoch": 131,
+      "train_loss": 0.16533051872154675,
+      "token_error_rate": 0.026301663982823402,
+      "exact_match_rate": 0.9288956127080181,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1859.0
+    },
+    {
+      "epoch": 132,
+      "train_loss": 0.2123933379953525,
+      "token_error_rate": 0.04186795491143317,
+      "exact_match_rate": 0.8910741301059002,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1853.0
+    },
+    {
+      "epoch": 133,
+      "train_loss": 0.2136327690972262,
+      "token_error_rate": 0.03274288781535158,
+      "exact_match_rate": 0.9152798789712556,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1856.0
+    },
+    {
+      "epoch": 134,
+      "train_loss": 0.18309692787118706,
+      "token_error_rate": 0.035963499731615674,
+      "exact_match_rate": 0.9062027231467473,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1852.0
+    },
+    {
+      "epoch": 135,
+      "train_loss": 0.15435916554541831,
+      "token_error_rate": 0.039184111647879764,
+      "exact_match_rate": 0.903177004538578,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1865.0
+    },
+    {
+      "epoch": 136,
+      "train_loss": 0.12623040562114082,
+      "token_error_rate": 0.02308105206655931,
+      "exact_match_rate": 0.9349470499243571,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1862.0
+    },
+    {
+      "epoch": 137,
+      "train_loss": 0.11414076617907688,
+      "token_error_rate": 0.011808910359634998,
+      "exact_match_rate": 0.9667170953101362,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1862.0
+    },
+    {
+      "epoch": 138,
+      "train_loss": 0.10122818183378283,
+      "token_error_rate": 0.05850778314546431,
+      "exact_match_rate": 0.8441754916792739,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1861.0
+    },
+    {
+      "epoch": 139,
+      "train_loss": 0.09184381861172347,
+      "token_error_rate": 0.006977992485238862,
+      "exact_match_rate": 0.9803328290468987,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1862.0
+    },
+    {
+      "epoch": 140,
+      "train_loss": 0.11381073815591004,
+      "token_error_rate": 0.030059044551798177,
+      "exact_match_rate": 0.9183055975794251,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1862.0
+    },
+    {
+      "epoch": 141,
+      "train_loss": 0.11510898609342704,
+      "token_error_rate": 0.039184111647879764,
+      "exact_match_rate": 0.8940998487140696,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1862.0
+    },
+    {
+      "epoch": 142,
+      "train_loss": 0.09462135305336442,
+      "token_error_rate": 0.013955984970477724,
+      "exact_match_rate": 0.9606656580937972,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1862.0
+    },
+    {
+      "epoch": 143,
+      "train_loss": 0.09828893125550933,
+      "token_error_rate": 0.01288244766505636,
+      "exact_match_rate": 0.9636913767019667,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1862.0
+    },
+    {
+      "epoch": 144,
+      "train_loss": 0.09450920617364976,
+      "token_error_rate": 0.037037037037037035,
+      "exact_match_rate": 0.9001512859304085,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1860.0
+    },
+    {
+      "epoch": 145,
+      "train_loss": 0.09992865039910896,
+      "token_error_rate": 0.00912506709608159,
+      "exact_match_rate": 0.9742813918305597,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1862.0
+    },
+    {
+      "epoch": 146,
+      "train_loss": 0.09710864579664116,
+      "token_error_rate": 0.016639828234031134,
+      "exact_match_rate": 0.9576399394856279,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1861.0
+    },
+    {
+      "epoch": 147,
+      "train_loss": 0.1168017845757934,
+      "token_error_rate": 0.05152979066022544,
+      "exact_match_rate": 0.8623298033282905,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1857.0
+    },
+    {
+      "epoch": 148,
+      "train_loss": 0.1424995477546949,
+      "token_error_rate": 0.01825013419216318,
+      "exact_match_rate": 0.9515885022692889,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1865.0
+    },
+    {
+      "epoch": 149,
+      "train_loss": 0.14616230780999345,
+      "token_error_rate": 0.03972088030059045,
+      "exact_match_rate": 0.903177004538578,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1864.0
+    },
+    {
+      "epoch": 150,
+      "train_loss": 0.20612942865006176,
+      "token_error_rate": 0.03542673107890499,
+      "exact_match_rate": 0.9107413010590015,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1861.0
+    },
+    {
+      "epoch": 151,
+      "train_loss": 0.17705593583544335,
+      "token_error_rate": 0.03972088030059045,
+      "exact_match_rate": 0.897125567322239,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1854.0
+    },
+    {
+      "epoch": 152,
+      "train_loss": 0.18176638523498215,
+      "token_error_rate": 0.01932367149758454,
+      "exact_match_rate": 0.9470499243570348,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1864.0
+    },
+    {
+      "epoch": 153,
+      "train_loss": 0.10325073288102825,
+      "token_error_rate": 0.03274288781535158,
+      "exact_match_rate": 0.9077155824508321,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1857.0
+    },
+    {
+      "epoch": 154,
+      "train_loss": 0.09267679147467196,
+      "token_error_rate": 0.015566290928609769,
+      "exact_match_rate": 0.9561270801815431,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1863.0
+    },
+    {
+      "epoch": 155,
+      "train_loss": 0.10207781869446836,
+      "token_error_rate": 0.013955984970477724,
+      "exact_match_rate": 0.9606656580937972,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1863.0
+    },
+    {
+      "epoch": 156,
+      "train_loss": 0.08612918329750557,
+      "token_error_rate": 0.06011808910359635,
+      "exact_match_rate": 0.8472012102874432,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1863.0
+    },
+    {
+      "epoch": 157,
+      "train_loss": 0.1065340373911951,
+      "token_error_rate": 0.028985507246376812,
+      "exact_match_rate": 0.9228441754916793,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1862.0
+    },
+    {
+      "epoch": 158,
+      "train_loss": 0.10556893864175282,
+      "token_error_rate": 0.010735373054213635,
+      "exact_match_rate": 0.9697428139183056,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1863.0
+    },
+    {
+      "epoch": 159,
+      "train_loss": 0.1160371296152652,
+      "token_error_rate": 0.05743424584004294,
+      "exact_match_rate": 0.8456883509833586,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1861.0
+    },
+    {
+      "epoch": 160,
+      "train_loss": 0.15529643318402658,
+      "token_error_rate": 0.01932367149758454,
+      "exact_match_rate": 0.9470499243570348,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1863.0
+    },
+    {
+      "epoch": 161,
+      "train_loss": 0.13730662987084993,
+      "token_error_rate": 0.020933977455716585,
+      "exact_match_rate": 0.9425113464447806,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1863.0
+    },
+    {
+      "epoch": 162,
+      "train_loss": 0.07517051996090954,
+      "token_error_rate": 0.008588298443370907,
+      "exact_match_rate": 0.9757942511346445,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1863.0
+    },
+    {
+      "epoch": 163,
+      "train_loss": 0.0773750655184758,
+      "token_error_rate": 0.01825013419216318,
+      "exact_match_rate": 0.9485627836611196,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1863.0
+    },
+    {
+      "epoch": 164,
+      "train_loss": 0.04968537894604975,
+      "token_error_rate": 0.02147074610842727,
+      "exact_match_rate": 0.9394856278366112,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1863.0
+    },
+    {
+      "epoch": 165,
+      "train_loss": 0.09819415868091655,
+      "token_error_rate": 0.015566290928609769,
+      "exact_match_rate": 0.9561270801815431,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1863.0
+    },
+    {
+      "epoch": 166,
+      "train_loss": 0.07381820484591894,
+      "token_error_rate": 0.017176596886741814,
+      "exact_match_rate": 0.9515885022692889,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1862.0
+    },
+    {
+      "epoch": 167,
+      "train_loss": 0.07352264398282551,
+      "token_error_rate": 0.028985507246376812,
+      "exact_match_rate": 0.9183055975794251,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1863.0
+    },
+    {
+      "epoch": 168,
+      "train_loss": 0.09368128415634744,
+      "token_error_rate": 0.0703166935050993,
+      "exact_match_rate": 0.8184568835098336,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1863.0
+    },
+    {
+      "epoch": 169,
+      "train_loss": 0.13837205359981541,
+      "token_error_rate": 0.03542673107890499,
+      "exact_match_rate": 0.9107413010590015,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1862.0
+    },
+    {
+      "epoch": 170,
+      "train_loss": 0.09839054502838526,
+      "token_error_rate": 0.01288244766505636,
+      "exact_match_rate": 0.9652042360060514,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1863.0
+    },
+    {
+      "epoch": 171,
+      "train_loss": 0.11807169601410987,
+      "token_error_rate": 0.03488996242619431,
+      "exact_match_rate": 0.9062027231467473,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1859.0
+    },
+    {
+      "epoch": 172,
+      "train_loss": 0.09611783723111253,
+      "token_error_rate": 0.015029522275899088,
+      "exact_match_rate": 0.9576399394856279,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1865.0
+    },
+    {
+      "epoch": 173,
+      "train_loss": 0.26414325272282924,
+      "token_error_rate": 0.026301663982823402,
+      "exact_match_rate": 0.9273827534039334,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1862.0
+    },
+    {
+      "epoch": 174,
+      "train_loss": 0.15918441864112057,
+      "token_error_rate": 0.017713365539452495,
+      "exact_match_rate": 0.9515885022692889,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1863.0
+    },
+    {
+      "epoch": 175,
+      "train_loss": 0.16968624361128692,
+      "token_error_rate": 0.02844873859366613,
+      "exact_match_rate": 0.9258698940998488,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1861.0
+    },
+    {
+      "epoch": 176,
+      "train_loss": 0.14856936599700207,
+      "token_error_rate": 0.0322061191626409,
+      "exact_match_rate": 0.9228441754916793,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1854.0
+    },
+    {
+      "epoch": 177,
+      "train_loss": 0.19431816720325185,
+      "token_error_rate": 0.013955984970477724,
+      "exact_match_rate": 0.962178517397882,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1860.0
+    },
+    {
+      "epoch": 178,
+      "train_loss": 0.12810064157673035,
+      "token_error_rate": 0.0440150295222759,
+      "exact_match_rate": 0.8880484114977307,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1865.0
+    },
+    {
+      "epoch": 179,
+      "train_loss": 0.1368471088942634,
+      "token_error_rate": 0.012345679012345678,
+      "exact_match_rate": 0.9652042360060514,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1861.0
+    },
+    {
+      "epoch": 180,
+      "train_loss": 0.08668158300983977,
+      "token_error_rate": 0.013955984970477724,
+      "exact_match_rate": 0.962178517397882,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1863.0
+    },
+    {
+      "epoch": 181,
+      "train_loss": 0.07448267239897725,
+      "token_error_rate": 0.008051529790660225,
+      "exact_match_rate": 0.9773071104387292,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1863.0
+    },
+    {
+      "epoch": 182,
+      "train_loss": 0.06638556991210096,
+      "token_error_rate": 0.006977992485238862,
+      "exact_match_rate": 0.9803328290468987,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1863.0
+    },
+    {
+      "epoch": 183,
+      "train_loss": 0.05446780777917838,
+      "token_error_rate": 0.005367686527106817,
+      "exact_match_rate": 0.9848714069591528,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1863.0
+    },
+    {
+      "epoch": 184,
+      "train_loss": 0.05230367791850165,
+      "token_error_rate": 0.00912506709608159,
+      "exact_match_rate": 0.9742813918305597,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1863.0
+    },
+    {
+      "epoch": 185,
+      "train_loss": 0.07355853815349829,
+      "token_error_rate": 0.0381105743424584,
+      "exact_match_rate": 0.9016641452344932,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1863.0
+    },
+    {
+      "epoch": 186,
+      "train_loss": 0.07943173043755253,
+      "token_error_rate": 0.011808910359634998,
+      "exact_match_rate": 0.9667170953101362,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1863.0
+    },
+    {
+      "epoch": 187,
+      "train_loss": 0.08468902262533645,
+      "token_error_rate": 0.02147074610842727,
+      "exact_match_rate": 0.9394856278366112,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1863.0
+    },
+    {
+      "epoch": 188,
+      "train_loss": 0.11874890108087874,
+      "token_error_rate": 0.02308105206655931,
+      "exact_match_rate": 0.9409984871406959,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1864.0
+    },
+    {
+      "epoch": 189,
+      "train_loss": 0.08235351341855095,
+      "token_error_rate": 0.014492753623188406,
+      "exact_match_rate": 0.962178517397882,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1862.0
+    },
+    {
+      "epoch": 190,
+      "train_loss": 0.09595729851904493,
+      "token_error_rate": 0.017176596886741814,
+      "exact_match_rate": 0.9561270801815431,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1862.0
+    },
+    {
+      "epoch": 191,
+      "train_loss": 0.07438167048820171,
+      "token_error_rate": 0.005367686527106817,
+      "exact_match_rate": 0.9848714069591528,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1863.0
+    },
+    {
+      "epoch": 192,
+      "train_loss": 0.12816997299094246,
+      "token_error_rate": 0.017713365539452495,
+      "exact_match_rate": 0.9531013615733737,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1861.0
+    },
+    {
+      "epoch": 193,
+      "train_loss": 0.11949502351604042,
+      "token_error_rate": 0.028985507246376812,
+      "exact_match_rate": 0.9213313161875946,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1862.0
+    },
+    {
+      "epoch": 194,
+      "train_loss": 0.06802426330206623,
+      "token_error_rate": 0.013419216317767043,
+      "exact_match_rate": 0.962178517397882,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1862.0
+    },
+    {
+      "epoch": 195,
+      "train_loss": 0.06567549619947123,
+      "token_error_rate": 0.011808910359634998,
+      "exact_match_rate": 0.9682299546142209,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1863.0
+    },
+    {
+      "epoch": 196,
+      "train_loss": 0.13912563647581153,
+      "token_error_rate": 0.02254428341384863,
+      "exact_match_rate": 0.9379727685325264,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1863.0
+    },
+    {
+      "epoch": 197,
+      "train_loss": 0.08261877562603857,
+      "token_error_rate": 0.013419216317767043,
+      "exact_match_rate": 0.962178517397882,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1863.0
+    },
+    {
+      "epoch": 198,
+      "train_loss": 0.08001249403894756,
+      "token_error_rate": 0.00644122383252818,
+      "exact_match_rate": 0.983358547655068,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1862.0
+    },
+    {
+      "epoch": 199,
+      "train_loss": 0.07990034665710416,
+      "token_error_rate": 0.0322061191626409,
+      "exact_match_rate": 0.9107413010590015,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1863.0
+    },
+    {
+      "epoch": 200,
+      "train_loss": 0.09474456767517939,
+      "token_error_rate": 0.03864734299516908,
+      "exact_match_rate": 0.8956127080181543,
+      "reference_tokens": 1863.0,
+      "hypothesis_tokens": 1863.0
+    }
+  ],
+  "notes": [
+    "Metrics are on the training subset. That is the point: an overfit test measures memorisation, not generalisation. No WER is claimed.",
+    "dev and test were never opened by this script."
+  ],
+  "acceptance": {
+    "accept_max_token_error_rate": 0.1,
+    "accept_max_loss": 1.0,
+    "token_error_rate_pass": true,
+    "loss_pass": true,
+    "passed": true
+  }
+}
