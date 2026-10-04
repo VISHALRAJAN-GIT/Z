@@ -47,11 +47,38 @@ one phase at a time, and each phase must be measured before the next begins.
 
 ## Current status
 
-**Phase 00 — Project Engineering.**
+**Phase 02 — Tiny CTC ASR, in progress.** Phase 00 (engineering) and Phase 01
+(audio foundation) are complete.
 
-Nothing is implemented yet. No model has been trained and no metric has been
-measured. See [`MEMORY.md`](MEMORY.md) for the live state and
-[`AGENTS.md`](AGENTS.md) for the rules any contributor or AI agent must follow.
+Six experiments are committed and verified:
+
+```text
+EXP-001  audio pipeline          8 pass, 0 fail  on synthetic + one real recording
+EXP-002  speaker-disjoint split  14 pass, 0 fail  dataset_v001
+EXP-003  tokenizer baseline      overfit test accepted
+EXP-004  tokenizer scheme        character-level, chosen by measurement
+EXP-005  character CTC targets   overfit accepted, first WER computed
+EXP-006  dataset_v002            31 pass, 0 fail  5 corrupt rows removed
+```
+
+What is implemented and tested: audio loading, validation and resampling to the
+canonical 16 kHz mono format, loudness and quality analysis, log-mel features,
+a non-neural energy + spectral-flatness VAD, corpus discovery, JSONL manifests,
+speaker-disjoint split planning, Unicode NFC handling, a character tokenizer, and
+a CTC model (`TinyCTC`).
+
+The dataset is the **IISc-MILE Tamil ASR Corpus** (OpenSLR SLR127, CC BY 2.0),
+89,396 utterances across 531 speakers and 150.1 hours, as `dataset_v002`, split
+by speaker with zero speaker overlap between train, dev and test.
+
+**No WER has ever been measured on held-out data.** No model has been trained on
+the full corpus. The only WER in this repository, 0.001647, comes from an
+overfit test scored on its own training subset and is a memorisation number, not
+a generalisation result. The next step is the real CTC baseline, evaluated on
+`dev.jsonl` for the first genuine WER.
+
+[`MEMORY.md`](MEMORY.md) holds the live state and
+[`AGENTS.md`](AGENTS.md) holds the rules any contributor or AI agent must follow.
 
 ## Repository layout
 
@@ -145,9 +172,9 @@ raw -> interim -> processed -> manifest -> training
 ## Roadmap
 
 ```text
-PHASE 00  Project Engineering      <- current
-PHASE 01  Audio Foundation
-PHASE 02  Tiny CTC ASR
+PHASE 00  Project Engineering      done
+PHASE 01  Audio Foundation         done
+PHASE 02  Tiny CTC ASR             <- current
 PHASE 03  Real Tamil ASR
 PHASE 04  Noise Research
 PHASE 05  Noise-Robust ASR
