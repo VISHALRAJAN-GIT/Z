@@ -1,0 +1,596 @@
+{
+  "experiment_id": "006_dataset_v002",
+  "source_version": "v001",
+  "target_version": "v002",
+  "encoder_stride": 4,
+  "corrupt_rate_threshold": 60.0,
+  "ambiguity_interval_checked": [
+    50.0,
+    95.0
+  ],
+  "rows_in_v001": 89401,
+  "rows_in_v002": 89396,
+  "removed": [
+    {
+      "utterance_id": "MILE_0000289_0000067",
+      "speaker_id": "0000289",
+      "split": "train",
+      "duration_seconds": 0.40425,
+      "text_characters": 47
+    },
+    {
+      "utterance_id": "MILE_0000289_0000068",
+      "speaker_id": "0000289",
+      "split": "train",
+      "duration_seconds": 0.353812,
+      "text_characters": 40
+    },
+    {
+      "utterance_id": "MILE_0000289_0000069",
+      "speaker_id": "0000289",
+      "split": "train",
+      "duration_seconds": 0.44475,
+      "text_characters": 50
+    },
+    {
+      "utterance_id": "MILE_0000289_0000070",
+      "speaker_id": "0000289",
+      "split": "train",
+      "duration_seconds": 0.242688,
+      "text_characters": 28
+    },
+    {
+      "utterance_id": "MILE_0000289_0000071",
+      "speaker_id": "0000289",
+      "split": "train",
+      "duration_seconds": 0.454813,
+      "text_characters": 49
+    }
+  ],
+  "violations": {
+    "with_space": [
+      {
+        "utterance_id": "MILE_0000289_0000068",
+        "speaker_id": "0000289",
+        "split": "train",
+        "variant": "with_space",
+        "duration_seconds": 0.353812,
+        "encoder_frames": 9,
+        "labels": 40,
+        "characters_per_second": 107.402,
+        "reason": "corrupt_transcript"
+      },
+      {
+        "utterance_id": "MILE_0000289_0000070",
+        "speaker_id": "0000289",
+        "split": "train",
+        "variant": "with_space",
+        "duration_seconds": 0.242688,
+        "encoder_frames": 7,
+        "labels": 28,
+        "characters_per_second": 107.133,
+        "reason": "corrupt_transcript"
+      },
+      {
+        "utterance_id": "MILE_0000289_0000067",
+        "speaker_id": "0000289",
+        "split": "train",
+        "variant": "with_space",
+        "duration_seconds": 0.40425,
+        "encoder_frames": 11,
+        "labels": 47,
+        "characters_per_second": 106.37,
+        "reason": "corrupt_transcript"
+      },
+      {
+        "utterance_id": "MILE_0000289_0000069",
+        "speaker_id": "0000289",
+        "split": "train",
+        "variant": "with_space",
+        "duration_seconds": 0.44475,
+        "encoder_frames": 12,
+        "labels": 50,
+        "characters_per_second": 105.677,
+        "reason": "corrupt_transcript"
+      },
+      {
+        "utterance_id": "MILE_0000289_0000071",
+        "speaker_id": "0000289",
+        "split": "train",
+        "variant": "with_space",
+        "duration_seconds": 0.454813,
+        "encoder_frames": 12,
+        "labels": 49,
+        "characters_per_second": 98.942,
+        "reason": "corrupt_transcript"
+      },
+      {
+        "utterance_id": "MILE_0000232_0000013",
+        "speaker_id": "0000232",
+        "split": "train",
+        "variant": "with_space",
+        "duration_seconds": 3.980062,
+        "encoder_frames": 100,
+        "labels": 221,
+        "characters_per_second": 49.245,
+        "reason": "fast_speech_below_encoder_resolution"
+      },
+      {
+        "utterance_id": "MILE_0000137_0000011",
+        "speaker_id": "0000137",
+        "split": "test",
+        "variant": "with_space",
+        "duration_seconds": 2.140062,
+        "encoder_frames": 54,
+        "labels": 60,
+        "characters_per_second": 26.635,
+        "reason": "fast_speech_below_encoder_resolution"
+      },
+      {
+        "utterance_id": "MILE_0000167_0000024",
+        "speaker_id": "0000167",
+        "split": "train",
+        "variant": "with_space",
+        "duration_seconds": 1.020063,
+        "encoder_frames": 26,
+        "labels": 28,
+        "characters_per_second": 26.469,
+        "reason": "fast_speech_below_encoder_resolution"
+      },
+      {
+        "utterance_id": "MILE_0000133_0000144",
+        "speaker_id": "0000133",
+        "split": "train",
+        "variant": "with_space",
+        "duration_seconds": 2.910062,
+        "encoder_frames": 73,
+        "labels": 83,
+        "characters_per_second": 26.116,
+        "reason": "fast_speech_below_encoder_resolution"
+      },
+      {
+        "utterance_id": "MILE_0000137_0000022",
+        "speaker_id": "0000137",
+        "split": "train",
+        "variant": "with_space",
+        "duration_seconds": 1.120062,
+        "encoder_frames": 29,
+        "labels": 31,
+        "characters_per_second": 25.891,
+        "reason": "fast_speech_below_encoder_resolution"
+      },
+      {
+        "utterance_id": "MILE_0000152_0000135",
+        "speaker_id": "0000152",
+        "split": "train",
+        "variant": "with_space",
+        "duration_seconds": 1.040062,
+        "encoder_frames": 27,
+        "labels": 28,
+        "characters_per_second": 24.999,
+        "reason": "fast_speech_below_encoder_resolution"
+      },
+      {
+        "utterance_id": "MILE_0000260_0000023",
+        "speaker_id": "0000260",
+        "split": "test",
+        "variant": "with_space",
+        "duration_seconds": 1.760063,
+        "encoder_frames": 45,
+        "labels": 49,
+        "characters_per_second": 24.999,
+        "reason": "fast_speech_below_encoder_resolution"
+      },
+      {
+        "utterance_id": "MILE_0000291_0000271",
+        "speaker_id": "0000291",
+        "split": "train",
+        "variant": "with_space",
+        "duration_seconds": 1.680063,
+        "encoder_frames": 43,
+        "labels": 48,
+        "characters_per_second": 24.999,
+        "reason": "fast_speech_below_encoder_resolution"
+      },
+      {
+        "utterance_id": "MILE_0000137_0000025",
+        "speaker_id": "0000137",
+        "split": "train",
+        "variant": "with_space",
+        "duration_seconds": 1.290062,
+        "encoder_frames": 33,
+        "labels": 34,
+        "characters_per_second": 24.805,
+        "reason": "fast_speech_below_encoder_resolution"
+      },
+      {
+        "utterance_id": "MILE_0000260_0000217",
+        "speaker_id": "0000260",
+        "split": "train",
+        "variant": "with_space",
+        "duration_seconds": 1.290062,
+        "encoder_frames": 33,
+        "labels": 35,
+        "characters_per_second": 24.805,
+        "reason": "fast_speech_below_encoder_resolution"
+      },
+      {
+        "utterance_id": "MILE_0000291_0000093",
+        "speaker_id": "0000291",
+        "split": "train",
+        "variant": "with_space",
+        "duration_seconds": 1.100062,
+        "encoder_frames": 28,
+        "labels": 29,
+        "characters_per_second": 24.544,
+        "reason": "fast_speech_below_encoder_resolution"
+      },
+      {
+        "utterance_id": "MILE_0000299_0000176",
+        "speaker_id": "0000299",
+        "split": "train",
+        "variant": "with_space",
+        "duration_seconds": 2.000062,
+        "encoder_frames": 51,
+        "labels": 54,
+        "characters_per_second": 24.499,
+        "reason": "fast_speech_below_encoder_resolution"
+      },
+      {
+        "utterance_id": "MILE_0000133_0000075",
+        "speaker_id": "0000133",
+        "split": "train",
+        "variant": "with_space",
+        "duration_seconds": 2.750062,
+        "encoder_frames": 69,
+        "labels": 74,
+        "characters_per_second": 24.363,
+        "reason": "fast_speech_below_encoder_resolution"
+      },
+      {
+        "utterance_id": "MILE_0000260_0000232",
+        "speaker_id": "0000260",
+        "split": "test",
+        "variant": "with_space",
+        "duration_seconds": 1.440063,
+        "encoder_frames": 37,
+        "labels": 38,
+        "characters_per_second": 24.304,
+        "reason": "fast_speech_below_encoder_resolution"
+      },
+      {
+        "utterance_id": "MILE_0000133_0000152",
+        "speaker_id": "0000133",
+        "split": "train",
+        "variant": "with_space",
+        "duration_seconds": 3.460062,
+        "encoder_frames": 87,
+        "labels": 92,
+        "characters_per_second": 24.277,
+        "reason": "fast_speech_below_encoder_resolution"
+      },
+      {
+        "utterance_id": "MILE_0000133_0000122",
+        "speaker_id": "0000133",
+        "split": "test",
+        "variant": "with_space",
+        "duration_seconds": 2.480062,
+        "encoder_frames": 63,
+        "labels": 66,
+        "characters_per_second": 24.193,
+        "reason": "fast_speech_below_encoder_resolution"
+      },
+      {
+        "utterance_id": "MILE_0000297_0000028",
+        "speaker_id": "0000297",
+        "split": "train",
+        "variant": "with_space",
+        "duration_seconds": 1.61325,
+        "encoder_frames": 41,
+        "labels": 44,
+        "characters_per_second": 24.175,
+        "reason": "fast_speech_below_encoder_resolution"
+      },
+      {
+        "utterance_id": "MILE_0000104_0000031",
+        "speaker_id": "0000104",
+        "split": "test",
+        "variant": "with_space",
+        "duration_seconds": 1.990063,
+        "encoder_frames": 50,
+        "labels": 52,
+        "characters_per_second": 24.12,
+        "reason": "fast_speech_below_encoder_resolution"
+      },
+      {
+        "utterance_id": "MILE_0000137_0000017",
+        "speaker_id": "0000137",
+        "split": "train",
+        "variant": "with_space",
+        "duration_seconds": 2.550063,
+        "encoder_frames": 64,
+        "labels": 67,
+        "characters_per_second": 23.921,
+        "reason": "fast_speech_below_encoder_resolution"
+      },
+      {
+        "utterance_id": "MILE_0000263_0000087",
+        "speaker_id": "0000263",
+        "split": "train",
+        "variant": "with_space",
+        "duration_seconds": 2.120062,
+        "encoder_frames": 54,
+        "labels": 55,
+        "characters_per_second": 23.584,
+        "reason": "fast_speech_below_encoder_resolution"
+      },
+      {
+        "utterance_id": "MILE_0000133_0000141",
+        "speaker_id": "0000133",
+        "split": "train",
+        "variant": "with_space",
+        "duration_seconds": 3.020062,
+        "encoder_frames": 76,
+        "labels": 77,
+        "characters_per_second": 23.509,
+        "reason": "fast_speech_below_encoder_resolution"
+      },
+      {
+        "utterance_id": "MILE_0000137_0000016",
+        "speaker_id": "0000137",
+        "split": "train",
+        "variant": "with_space",
+        "duration_seconds": 2.810062,
+        "encoder_frames": 71,
+        "labels": 72,
+        "characters_per_second": 23.487,
+        "reason": "fast_speech_below_encoder_resolution"
+      },
+      {
+        "utterance_id": "MILE_0000127_0000036",
+        "speaker_id": "0000127",
+        "split": "test",
+        "variant": "with_space",
+        "duration_seconds": 3.580062,
+        "encoder_frames": 90,
+        "labels": 91,
+        "characters_per_second": 23.463,
+        "reason": "fast_speech_below_encoder_resolution"
+      },
+      {
+        "utterance_id": "ISTL_0000412_0000056",
+        "speaker_id": "0000412",
+        "split": "train",
+        "variant": "with_space",
+        "duration_seconds": 4.59375,
+        "encoder_frames": 115,
+        "labels": 118,
+        "characters_per_second": 23.293,
+        "reason": "fast_speech_below_encoder_resolution"
+      },
+      {
+        "utterance_id": "MILE_0000127_0000076",
+        "speaker_id": "0000127",
+        "split": "train",
+        "variant": "with_space",
+        "duration_seconds": 1.77,
+        "encoder_frames": 45,
+        "labels": 46,
+        "characters_per_second": 23.164,
+        "reason": "fast_speech_below_encoder_resolution"
+      },
+      {
+        "utterance_id": "MICI_0000019_0000119",
+        "speaker_id": "0000019",
+        "split": "train",
+        "variant": "with_space",
+        "duration_seconds": 3.979625,
+        "encoder_frames": 100,
+        "labels": 102,
+        "characters_per_second": 23.118,
+        "reason": "fast_speech_below_encoder_resolution"
+      },
+      {
+        "utterance_id": "MILE_0000133_0000089",
+        "speaker_id": "0000133",
+        "split": "train",
+        "variant": "with_space",
+        "duration_seconds": 3.120062,
+        "encoder_frames": 79,
+        "labels": 80,
+        "characters_per_second": 23.076,
+        "reason": "fast_speech_below_encoder_resolution"
+      },
+      {
+        "utterance_id": "MILE_0000073_0000030",
+        "speaker_id": "0000073",
+        "split": "test",
+        "variant": "with_space",
+        "duration_seconds": 2.560062,
+        "encoder_frames": 65,
+        "labels": 66,
+        "characters_per_second": 23.046,
+        "reason": "fast_speech_below_encoder_resolution"
+      }
+    ],
+    "without_space": [
+      {
+        "utterance_id": "MILE_0000289_0000068",
+        "speaker_id": "0000289",
+        "split": "train",
+        "variant": "without_space",
+        "duration_seconds": 0.353812,
+        "encoder_frames": 9,
+        "labels": 38,
+        "characters_per_second": 107.402,
+        "reason": "corrupt_transcript"
+      },
+      {
+        "utterance_id": "MILE_0000289_0000070",
+        "speaker_id": "0000289",
+        "split": "train",
+        "variant": "without_space",
+        "duration_seconds": 0.242688,
+        "encoder_frames": 7,
+        "labels": 26,
+        "characters_per_second": 107.133,
+        "reason": "corrupt_transcript"
+      },
+      {
+        "utterance_id": "MILE_0000289_0000067",
+        "speaker_id": "0000289",
+        "split": "train",
+        "variant": "without_space",
+        "duration_seconds": 0.40425,
+        "encoder_frames": 11,
+        "labels": 43,
+        "characters_per_second": 106.37,
+        "reason": "corrupt_transcript"
+      },
+      {
+        "utterance_id": "MILE_0000289_0000069",
+        "speaker_id": "0000289",
+        "split": "train",
+        "variant": "without_space",
+        "duration_seconds": 0.44475,
+        "encoder_frames": 12,
+        "labels": 47,
+        "characters_per_second": 105.677,
+        "reason": "corrupt_transcript"
+      },
+      {
+        "utterance_id": "MILE_0000289_0000071",
+        "speaker_id": "0000289",
+        "split": "train",
+        "variant": "without_space",
+        "duration_seconds": 0.454813,
+        "encoder_frames": 12,
+        "labels": 45,
+        "characters_per_second": 98.942,
+        "reason": "corrupt_transcript"
+      },
+      {
+        "utterance_id": "MILE_0000232_0000013",
+        "speaker_id": "0000232",
+        "split": "train",
+        "variant": "without_space",
+        "duration_seconds": 3.980062,
+        "encoder_frames": 100,
+        "labels": 196,
+        "characters_per_second": 49.245,
+        "reason": "fast_speech_below_encoder_resolution"
+      },
+      {
+        "utterance_id": "MILE_0000137_0000011",
+        "speaker_id": "0000137",
+        "split": "test",
+        "variant": "without_space",
+        "duration_seconds": 2.140062,
+        "encoder_frames": 54,
+        "labels": 57,
+        "characters_per_second": 26.635,
+        "reason": "fast_speech_below_encoder_resolution"
+      },
+      {
+        "utterance_id": "MILE_0000167_0000024",
+        "speaker_id": "0000167",
+        "split": "train",
+        "variant": "without_space",
+        "duration_seconds": 1.020063,
+        "encoder_frames": 26,
+        "labels": 27,
+        "characters_per_second": 26.469,
+        "reason": "fast_speech_below_encoder_resolution"
+      },
+      {
+        "utterance_id": "MILE_0000133_0000144",
+        "speaker_id": "0000133",
+        "split": "train",
+        "variant": "without_space",
+        "duration_seconds": 2.910062,
+        "encoder_frames": 73,
+        "labels": 76,
+        "characters_per_second": 26.116,
+        "reason": "fast_speech_below_encoder_resolution"
+      }
+    ]
+  },
+  "violation_counts": {
+    "with_space": 33,
+    "without_space": 9
+  },
+  "corrupt_counts": {
+    "with_space": 5,
+    "without_space": 5
+  },
+  "split_stats": {
+    "train": {
+      "utterances": 80299,
+      "speakers": 476,
+      "hours": 135.4197,
+      "empty_transcripts": 0,
+      "sample_rates": [
+        16000
+      ],
+      "duration_seconds": {
+        "min": 0.4801,
+        "median": 5.1701,
+        "max": 38.8509
+      },
+      "prefixes": {
+        "ISTL": 19580,
+        "MICI": 2365,
+        "MILE": 58354
+      }
+    },
+    "dev": {
+      "utterances": 4526,
+      "speakers": 26,
+      "hours": 7.3988,
+      "empty_transcripts": 0,
+      "sample_rates": [
+        16000
+      ],
+      "duration_seconds": {
+        "min": 0.6501,
+        "median": 5.1301,
+        "max": 36.0904
+      },
+      "prefixes": {
+        "ISTL": 760,
+        "MICI": 434,
+        "MILE": 3332
+      }
+    },
+    "test": {
+      "utterances": 4571,
+      "speakers": 29,
+      "hours": 7.2812,
+      "empty_transcripts": 0,
+      "sample_rates": [
+        16000
+      ],
+      "duration_seconds": {
+        "min": 1.0801,
+        "median": 5.0801,
+        "max": 26.9701
+      },
+      "prefixes": {
+        "ISTL": 838,
+        "MICI": 150,
+        "MILE": 3583
+      }
+    }
+  },
+  "speaker_overlap_after": {
+    "train_dev": 0,
+    "train_test": 0,
+    "dev_test": 0
+  },
+  "notes": [
+    "Only the corrupt rows are removed. Fast-but-valid rows stay in dataset_v002 and are excluded at training time by utterance id.",
+    "Splits are unchanged, so every speaker keeps the split it had in v001 and speaker overlap stays 0.",
+    "No audio was read or modified. Removal is manifest-level only.",
+    "The corrupt set is identical with and without whitespace, so the rows removed do not depend on the tokenizer configuration."
+  ]
+}

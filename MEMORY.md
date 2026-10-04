@@ -19,7 +19,10 @@ Phase 02 / EXP-004 — complete. Character-level decided from measurement, and
 `text/unicode.py` + `text/tokenizer.py` now implement it.
 Phase 02 / EXP-005 — complete. Character targets overfit to TER 0.000190, first WER
 computed (0.001647, training data only), whitespace default confirmed by
-measurement.**
+measurement.
+Phase 02 / EXP-006 — complete. The 5 corrupt rows removed and the 28 fast-but-valid
+rows kept, as `dataset_v002`, with the CTC-ineligible set published for training-time
+filtering.**
 
 Implemented in Phase 01: `audio/io.py` (loading, canonical conversion, real
 validation), `audio/resampling.py` (8/22.05/44.1/48 kHz -> 16 kHz, with a
@@ -66,6 +69,13 @@ everywhere. Durations were re-measured against file headers on a 2000-utterance
 sample: 0 mismatches. The manifests were built twice and are byte-identical by
 SHA-256. Ratios 0.90/0.05/0.05, seed `20261003`.
 
+`dataset_v002` now supersedes it for training. Same corpus, same audio, same
+speaker-disjoint split; 5 corrupt rows removed, so **89396 utterances, 80 299 train
+/ 4526 dev / 4571 test**, 135.4197 train hours, speaker overlap still 0 and no
+speaker moved splits. `dataset_v001` is untouched and retained for provenance. The
+28 rows that are valid but too fast for a stride-4 encoder are still in it, listed
+by id for training-time filtering. See EXP-006 below.
+
 **No model has been trained on the full corpus and no WER has ever been
 measured.** The only model that has ever run is the EXP-003 overfit test, whose
 metrics are on its own training subset. Any statement claiming a WER is false.
@@ -74,9 +84,9 @@ Gates, run in `.venv` on Python 3.11.9 and recorded by `scripts/run-gates.ps1` i
 `.session/gates/`:
 
 ```text
-pytest   220 passed
+pytest   305 passed
 ruff     All checks passed!
-mypy     Success: no issues found in 26 source files
+mypy     Success: no issues found in 28 source files
 ```
 
 The exact wall time of the pytest run varies between roughly 10 and 60 s depending
@@ -214,6 +224,72 @@ The comparison is **not** a clean A/B: the two variants train on different row s
 (649 against 655) because CTC validity forces it. The token error rate gap is
 confounded by the row set and is not claimed as a controlled result. Holding the
 row set constant means dropping 6 rows from both, which means `dataset_v002`.
+
+### EXP-006, in detail — `dataset_v002`, one set of rows split by cause
+
+EXP-005 established that 5 rows are unusable. This step decided what to do about
+them, and — more importantly — about the rows that merely *cannot be trained on
+yet*.
+
+```text
+                              with_space   without_space
+violations in v001                     33               9
+  corrupt, removed                      5               5   (identical id set)
+  fast but valid, kept                 28               4
+```
+
+| | v001 | v002 |
+|---|---:|---:|
+| utterances | 89401 | **89396** |
+| train | 80304 | 80299 |
+| dev | 4526 | 4526 |
+| test | 4571 | 4571 |
+| train hours | 135.4202 | 135.4197 |
+| speakers train/dev/test | 476 / 26 / 29 | 476 / 26 / 29 |
+| speaker overlap | 0 | 0 |
+
+`dataset_v001` is untouched and still on disk; `dataset_v002` is additive. All 5
+removed rows were in train, so dev and test are numerically unchanged.
+
+**The decision.** `dataset_v002` = `dataset_v001` minus 5 corrupt rows. The 28
+fast-but-valid rows **stay** and are filtered at training time by published id.
+These are two different problems with two different answers, and giving them one
+answer is the mistake this step exists to prevent: the 28 fail for an
+*architectural* reason — a stride-4 encoder emits 25 frames per second and cannot
+label 26–49 characters per second of speech — not because their audio or text is
+wrong. Fast speech is an explicit GUIDE target condition, so deleting the evidence
+that the model cannot yet handle it would be backwards. EXP-004 already refuted the
+cheap fix of stride 8 (35 148 of 89401 rows become invalid).
+
+**The boundary was measured, not chosen.** Every violating row's speaking rate was
+computed and sorted. There is a factor-of-two gap between 49.24 chars/s (fastest
+valid) and 98.94 chars/s (slowest corrupt), and **zero rows corpus-wide between 50
+and 95**. The script uses 60 and *asserts* the interval is empty, so the partition
+is identical for any threshold in that range. The corrupt set is also identical with
+and without whitespace, so the removal does not depend on tokenizer configuration.
+
+**Verification** — `experiments/006_dataset_v002/verify_criteria.py`,
+**31 pass, 0 fail, 0 pending**, sharing no code with the builder. It re-derives
+every claim from the manifests on disk and from git. All four files are
+byte-identical across three consecutive builds.
+
+**Three bugs this step caught in itself**, none visible to the count checks:
+
+1. The published CTC-ineligible list **included the 5 removed rows**. Counts were
+   right (28 and 4) while the id sets were wrong, so a training filter built from
+   that list would have referenced utterances v002 no longer contains. Found by the
+   independent recomputation, not by the totals. The builder now filters and asserts
+   this before writing.
+2. A verification check asserted a **false invariant** — that `shipped_split` equals
+   the manifest a row lives in. It must not: EXP-002 re-split speaker-disjointly
+   across the union of the corpus splits, so `shipped_split` records IISc-MILE's own
+   partition and is deliberately not the project split. The check was measuring the
+   project, not the data, and would have failed a correct dataset.
+3. Output was written with **CRLF** because that is what Python's text mode does on
+   Windows, while `.gitattributes` declares `eol=lf`. Git would store LF, so the
+   working copy and the committed blob would differ and **no recorded SHA-256 would
+   survive a fresh checkout**. Now written with explicit `newline="\n"`, matching
+   `dataset_v001`, which is pure LF on disk.
 
 ## 2. The project
 
@@ -436,6 +512,24 @@ warning and does not prevent loading, while the rest are errors.
 - **Unknown codepoints become `<unk>` and are never dropped.** Dropping them
   would shorten the target sequence, which could make an utterance satisfy CTC's
   frames >= labels constraint for entirely the wrong reason.
+- **"Untrainable" and "corrupt" are different classifications, and only one of
+  them deletes data.** 5 rows are corrupt and were removed in `dataset_v002`; 28 are
+  valid and merely too fast for a stride-4 encoder, so they were kept and published
+  for training-time filtering. A row that fails `frames >= labels` has not
+  necessarily been damaged. The 28 would otherwise be deleted for being exactly the
+  condition GUIDE requires the system to handle.
+- **The corrupt/fast threshold is a range, and the code asserts the gap.** Speaking
+  rates cluster with nothing between 50 and 95 characters per second corpus-wide, so
+  any threshold in that interval yields the same partition. The threshold is
+  therefore not a tuned parameter and no precision beyond the gap is claimed.
+- **The verifier imports nothing from the code it verifies.**
+  `experiments/006_dataset_v002/verify_criteria.py` shares no functions with
+  `build_dataset_v002.py` and re-derives its claims from the written bytes and from
+  git. It found two defects — a wrong published id set and a check asserting a false
+  invariant — that the builder's own totals reported as clean.
+- **Dataset changes are verified against git, not against a fresh copy.** A copy
+  taken after the fact proves nothing. `dataset_v001` being untouched is asserted
+  with `git status --porcelain -- data/manifests/dataset_v001`.
 
 ## 6. Open questions
 
@@ -463,23 +557,17 @@ warning and does not prevent loading, while the rest are errors.
    0.243 s to 1.59 s against a corpus maximum of 38.85 s. It proves the pipeline
    is internally consistent; it says nothing about long or fast speech. A
    duration-representative overfit run is still wanted.
-7. **Five corpus rows are corrupt, and EXP-005 upgraded this from observation to
-   blocker.** Speaker `0000289` rows `_0000067` to `_0000071` carry 26–47
-   characters in 0.24–0.45 s, which is 98.9–107.4 characters per second and
-   physically impossible; the transcripts cannot belong to that audio. EXP-005
-   showed that at character targets these rows **cannot be trained on at all**, at
-   either whitespace setting — they are unusable examples, not awkward ones.
-   Character targets are what exposed this: word targets fit inside 7–12 encoder
-   frames, which is why EXP-003 consumed them without ever being blocked. Four
-   further rows violate CTC's frames >= labels while speaking fast but humanly, so
-   they are legitimate hard cases rather than defects: `MILE_0000232_0000013` at
-   49.2 characters per second over 3.98 s, and `MILE_0000133_0000144`,
-   `MILE_0000137_0000011`, `MILE_0000167_0000024` at 26.1–26.6 characters per
-   second over 1.0–2.9 s. All 9 are among the 200 fastest utterances in the
-   corpus. **No row has been removed from `dataset_v001`.** EXP-005 excluded the
-   invalid rows per variant and listed them by id, but that is a filter on the
-   overfit subset, not a disposition. `dataset_v002` must happen before the full
-   baseline and must record which rows were removed and why.
+7. ~~**Five corpus rows are corrupt.**~~ **Resolved in EXP-006.** Speaker `0000289`
+   rows `_0000067` to `_0000071` carry 26–47 characters in 0.24–0.45 s, which is
+   98.9–107.4 characters per second and physically impossible; the transcripts
+   cannot belong to that audio. They are removed in `dataset_v002`, with the reason
+   and the ids recorded in `metadata.json`. The 28 further rows that violate
+   `frames >= labels` while speaking fast but humanly (23.05–49.24 characters per
+   second) are **kept** and published under
+   `changes.kept_fast_speech.ctc_ineligible_at_stride_4`. What is *not* resolved is
+   the underlying limitation: those 28 remain untrainable at stride 4, and a
+   subword or phoneme unit is the likely real answer. That question is now open in
+   its own right rather than a data-cleaning problem.
 8. **`.session/AGENTS.md` and `.session/START-HERE.md` are always one commit
    stale, and this cannot be fixed by committing.** The auto-status block reports
    the last commit's hash, and the post-commit hook rewrites the workspace entry
@@ -498,21 +586,21 @@ EXP-002 is **complete and verified** (14 pass, 0 fail). EXP-003 is **complete**:
 step 1 measured the tokenizer, step 2's overfit test is accepted. EXP-004 is
 **complete**: the tokenizer scheme is decided — character-level, from measurement.
 EXP-005 is **complete**: the character targets overfit, the tokenizer is proven
-inside a training loop, and the whitespace default is settled by measurement. The
-GPU is installed and working.
+inside a training loop, and the whitespace default is settled by measurement.
+EXP-006 is **complete**: `dataset_v002` exists, 5 corrupt rows removed, 28
+fast-but-valid rows kept and published (31 pass, 0 fail). The GPU is installed and
+working.
 
-Items 1 and 3 below are **done** and are kept as the record of what was decided, not
-as work to do.
+Items 1, 2 and 3 below are **done** and are kept as the record of what was decided,
+not as work to do.
 
 1. ~~**Build the character tokenizer as a `src/tamil_voice/text/` module with
    tests.**~~ **Done** in `80fc716`: `text/unicode.py` and `text/tokenizer.py`, 85
    tests. The inventory is data-driven, as required.
-2. **Create `dataset_v002` by dispositioning the CTC-invalid rows.** This is now
-   **blocking the baseline**, not optional tidying. EXP-005 showed the 5 corrupt
-   rows cannot be trained on at all; the other 4 are legitimate fast speech and
-   should be kept. Record the reason and the utterance ids, per the rule against
-   silent dataset changes. EXP-005 found 12 rows invalid with whitespace and 6
-   without on the overfit subset; the corpus-wide counts are 33 and 9.
+2. ~~**Create `dataset_v002` by dispositioning the CTC-invalid rows.**~~ **Done**
+   in EXP-006. 89 401 → 89 396; the 5 removed ids and the 28 kept-but-ineligible ids
+   are both in `data/manifests/dataset_v002/metadata.json`; all four output files are
+   byte-identical across three builds.
 3. ~~**Re-run the overfit test with character targets.**~~ **Done** in EXP-005.
    Both whitespace variants trained; acceptance passed for both.
 4. **Move the CTC model into `src/tamil_voice/asr/`.** The model currently exists
@@ -522,12 +610,17 @@ as work to do.
 5. **Then** the real CTC baseline on `train.jsonl`, evaluated on `dev.jsonl`, for
    the first genuine WER in this project. `test.jsonl` stays untouched until the
    baseline is fixed. Keep encoder stride 4: do not deepen the conv subsampling,
-   because stride 8 invalidates 39 % of the corpus.
+   because stride 8 invalidates 39 % of the corpus. The baseline must **filter the
+   28 published ineligible ids** rather than skipping them silently, and must report
+   how many rows it actually trained on, so the manifest and the training set cannot
+   quietly disagree.
 
-If a session ends before step 1 finishes, the exact starting point is: `dataset_v001`
-is built and verified, EXP-003 and EXP-004 are complete, torch 2.6.0+cu124 has CUDA
-available, the tokenizer decision is character-level, and no model has ever been
-trained on the full corpus.
+If a session ends before step 4 finishes, the exact starting point is:
+`dataset_v002` is built, verified (31 pass, 0 fail) and deterministic,
+`data/manifests/dataset_v002/metadata.json` holds the removed and the
+CTC-ineligible id lists, EXP-003 through EXP-006 are complete, torch 2.6.0+cu124 has
+CUDA available, the tokenizer decision is character-level with `include_space=True`,
+and no model has ever been trained on the full corpus.
 
 **Uncommitted state at the end of this session:** only `.session/AGENTS.md` and
 `.session/START-HERE.md`, which the post-commit hook rewrites after every commit.

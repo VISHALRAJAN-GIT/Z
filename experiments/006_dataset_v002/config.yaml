@@ -1,0 +1,94 @@
+# EXP-006: dispose of the rows where character CTC cannot train, creating dataset_v002.
+#
+# This step exists because "CTC cannot train on this row" is one symptom with two
+# causes, and only one of them means the data is damaged. Conflating them would have
+# deleted 28 valid fast-speech utterances along with 5 genuinely corrupt ones, and
+# fast speech is an explicit GUIDE target condition.
+#
+# Nothing here trains a model. This is data hygiene, and it is a hard gate on the
+# baseline: EXP-005 proved the 5 corrupt rows cannot be trained on at all, so the
+# baseline is blocked until they have a disposition.
+
+experiment_id: "006_dataset_v002"
+step: "dispose_ctc_invalid_rows"
+
+source:
+  version: "dataset_v001"
+  manifest_dir: data/manifests/dataset_v001
+  splits: ["train", "dev", "test"]
+  # dataset_v001 is read-only input and is never rewritten. The removal is recorded
+  # in the new version's metadata, not by editing the old manifests.
+  immutable: true
+
+target:
+  version: "dataset_v002"
+  manifest_dir: data/manifests/dataset_v002
+  # Same corpus, same audio files, same speaker-disjoint split. Only the row set
+  # changes, which is why this is a data version bump and not a re-split.
+  inherit_split_from_source: true
+
+# The CTC arithmetic, copied from EXP-004 which measured it. The encoder subsamples
+# time by product(conv_strides)=2*2=4, so the GRU runs at 25 Hz.
+#
+# The two-ceiling form matters. floor(T/4) is wrong for odd T, which silently
+# over-counts valid utterances and would have hidden real violations.
+frame_budget:
+  sample_rate: 16000
+  hop_length: 160
+  conv_strides: [2, 2]
+  stft_frames: "1 + floor(samples / hop_length)"
+  encoder_frames: "ceil(ceil(T / 2) / 2)"
+
+classification:
+  # A row is unusable for CTC training when the encoder emits fewer frames than the
+  # transcript needs labels. The reason it is unusable decides what happens to it.
+  #
+  # corrupt_transcript                 -> removed, version bumped
+  # fast_speech_below_encoder_resolution -> kept, filtered at training time
+  #
+  # Stride 8 was considered as an alternative and rejected on EXP-004 measurements:
+  # it invalidates 35148 of 89401 utterances, 39 % of the corpus.
+  corrupt_rate_threshold: 60.0
+  # Not a tuned parameter. Speaking rates cluster with zero rows between 50 and 95
+  # characters per second, so any threshold in that interval gives the same
+  # partition. The build asserts the interval is empty rather than trusting it,
+  # which is what makes the threshold defensible instead of arbitrary.
+  ambiguity_interval_checked: [50.0, 95.0]
+  assert_interval_empty: true
+  # The corrupt set must not depend on the tokenizer configuration. Verified, not
+  # assumed: it is identical with and without whitespace.
+  assert_corrupt_set_identical_across_variants: true
+
+tokenizer_variants:
+  # Read from the EXP-005 artifacts rather than rebuilt, so the labels counted here
+  # are the labels the baseline will actually encode.
+  artifacts:
+    with_space: experiments/005_character_ctc_overfit/tokenizer_with_space.json
+    without_space: experiments/005_character_ctc_overfit/tokenizer_without_space.json
+
+outputs:
+  manifests: ["train.jsonl", "dev.jsonl", "test.jsonl", "metadata.json"]
+  metadata_records:
+    - "removed utterances, with the reason"
+    - "kept-but-CTC-ineligible utterance ids, per tokenizer variant"
+    - "the threshold used and the ambiguity interval checked"
+  # "this is a data version, here is what changed in it" is the whole point of
+  # recording it. Silent dataset changes are forbidden.
+
+verification:
+  script: experiments/006_dataset_v002/verify_criteria.py
+  # The verifier imports nothing from the builder. Sharing functions would only
+  # prove the code agrees with itself, and that is exactly how the wrong published
+  # id set survived a build whose counts were all correct.
+  shares_code_with_builder: false
+  checks:
+    - "dataset_v001 unmodified, via git status and not a post-hoc copy"
+    - "exactly the expected ids removed, none added, no duplicates"
+    - "every kept row identical to its source row"
+    - "no empty transcripts; every shipped_split a real corpus partition"
+    - "speaker overlap zero in all three pairs; no speaker moved splits"
+    - "metadata counts and hours recomputed and matched"
+    - "both CTC-ineligible lists reproduced from scratch and matched"
+    - "audio for every removed row still present on disk"
+  exit_nonzero_on_failure: true
+  determinism: "all four output files byte-identical across three consecutive builds"

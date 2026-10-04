@@ -9,6 +9,62 @@ what changed.
 
 ## [Unreleased]
 
+### Data - EXP-006 complete: `dataset_v002` removes the 5 corrupt rows, keeps the 28 fast-but-valid ones
+
+`experiments/006_dataset_v002/` dispositions every row in `dataset_v001` where
+character CTC cannot train at encoder stride 4. Same corpus, same audio, same
+speaker-disjoint split; 5 rows removed.
+
+| | v001 | v002 |
+|---|---:|---:|
+| utterances | 89401 | 89396 |
+| train | 80304 | 80299 |
+| dev | 4526 | 4526 |
+| test | 4571 | 4571 |
+| train hours | 135.4202 | 135.4197 |
+| speakers train/dev/test | 476 / 26 / 29 | 476 / 26 / 29 |
+| speaker overlap | 0 | 0 |
+
+| variant | violations in v001 | corrupt (removed) | fast, valid (kept) |
+|---|---:|---:|---:|
+| with_space | 33 | 5 | 28 |
+| without_space | 9 | 5 | 4 |
+
+- The decision is to split by *cause*, not by symptom. 5 rows carry 26-47 characters
+  in 0.24-0.45 s, which is 98.9-107.4 characters per second and impossible for a
+  human, so they are removed and the version is bumped. The other 28 speak at
+  23.05-49.24 characters per second, which a stride-4 encoder simply cannot label at
+  25 Hz; they are **kept** and their ids are published for training-time filtering.
+  Deleting them would have removed exactly the fast-speech condition GUIDE requires
+  the system to handle, and EXP-004 has already refuted stride 8 as a fix (it
+  invalidates 39 % of the corpus).
+- The corrupt/fast boundary is measured, not tuned. Speaking rates cluster with
+  nothing between 49.24 and 98.94 characters per second, and **zero rows corpus-wide
+  between 50 and 95**, so any threshold in that interval yields the same partition.
+  The corrupt id set is identical with and without whitespace.
+- `verify_criteria.py`: **31 pass, 0 fail, 0 pending**, importing nothing from the
+  builder. It re-derives every claim from the written bytes and from git, and checks
+  `dataset_v001` is untouched with `git status --porcelain` rather than against a
+  copy taken after the fact. All four output files are byte-identical across three
+  consecutive builds.
+- Three defects were caught and fixed:
+  - The published CTC-ineligible list **contained the 5 removed rows**. The counts
+    (28 and 4) were correct while the id sets were not, so a training filter built
+    from it would have loaded utterances v002 does not have. No count-based check
+    could have found this; comparing sets did. The builder now filters and asserts.
+  - A verification check asserted a **false invariant** - that `shipped_split`
+    equals the manifest a row lives in. It deliberately does not: EXP-002 re-split
+    speaker-disjointly across the union of the corpus splits, so `shipped_split`
+    records IISc-MILE's own partition. The check would have failed a correct
+    dataset.
+  - Output was written CRLF, as Python's text mode does on Windows, while
+    `.gitattributes` declares `eol=lf`. Git stores LF, so the working copy and the
+    committed blob would have differed and no recorded SHA-256 would have survived a
+    fresh checkout. Now written with explicit `newline="\n"`, matching `dataset_v001`.
+- `dataset_v001` is untouched and retained for provenance. `dataset_v002` is additive.
+- Still unresolved, and now open in its own right: the 28 valid fast rows remain
+  untrainable at stride 4. A subword or phoneme unit is the likely real answer.
+
 ### Research - EXP-005 complete: character targets overfit, and the whitespace default is settled
 
 `experiments/005_character_ctc_overfit/` trains the EXP-003 model on character
