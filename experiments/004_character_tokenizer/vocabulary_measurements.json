@@ -1,0 +1,1249 @@
+{
+  "experiment_id": "004_character_tokenizer",
+  "purpose": "measure tokenizer options so the choice follows GUIDE section 28 from data",
+  "manifest_dir": "data/manifests/dataset_v001",
+  "dataset_version": "dataset_v001",
+  "normalization": {
+    "NFC": {
+      "transcripts_changed": 0,
+      "transcripts_total": 89401
+    },
+    "NFD": {
+      "transcripts_changed": 53109,
+      "transcripts_total": 89401
+    },
+    "NFKC": {
+      "transcripts_changed": 0,
+      "transcripts_total": 89401
+    },
+    "distinct_codepoints_raw": 48,
+    "distinct_codepoints_nfc": 48,
+    "already_nfc": true
+  },
+  "character_inventory_train": {
+    "distinct_characters": 48,
+    "by_script": {
+      "ascii_other": 1,
+      "tamil_block": 47
+    },
+    "rareest_20": [
+      [
+        "ஔ",
+        7
+      ],
+      [
+        "ௌ",
+        278
+      ],
+      [
+        "ஃ",
+        771
+      ],
+      [
+        "ஊ",
+        1891
+      ],
+      [
+        "ஹ",
+        2016
+      ],
+      [
+        "ஈ",
+        2320
+      ],
+      [
+        "ஓ",
+        2792
+      ],
+      [
+        "ஞ",
+        3169
+      ],
+      [
+        "ஐ",
+        4461
+      ],
+      [
+        "ஷ",
+        4654
+      ],
+      [
+        "ஏ",
+        6318
+      ],
+      [
+        "ஜ",
+        9113
+      ],
+      [
+        "ஸ",
+        9691
+      ],
+      [
+        "ஒ",
+        15828
+      ],
+      [
+        "ீ",
+        18651
+      ],
+      [
+        "உ",
+        21283
+      ],
+      [
+        "ூ",
+        24789
+      ],
+      [
+        "ஆ",
+        25350
+      ],
+      [
+        "ங",
+        29367
+      ],
+      [
+        "ழ",
+        30906
+      ]
+    ],
+    "most_common_20": [
+      [
+        "்",
+        879895
+      ],
+      [
+        " ",
+        596220
+      ],
+      [
+        "த",
+        406994
+      ],
+      [
+        "க",
+        400167
+      ],
+      [
+        "ு",
+        399128
+      ],
+      [
+        "ி",
+        386685
+      ],
+      [
+        "ர",
+        238533
+      ],
+      [
+        "ப",
+        233033
+      ],
+      [
+        "ம",
+        225677
+      ],
+      [
+        "ட",
+        219441
+      ],
+      [
+        "ா",
+        213923
+      ],
+      [
+        "ன",
+        182505
+      ],
+      [
+        "வ",
+        172884
+      ],
+      [
+        "ல",
+        162574
+      ],
+      [
+        "ற",
+        147575
+      ],
+      [
+        "ய",
+        145097
+      ],
+      [
+        "ை",
+        135545
+      ],
+      [
+        "ள",
+        127626
+      ],
+      [
+        "ச",
+        103164
+      ],
+      [
+        "ந",
+        96946
+      ]
+    ]
+  },
+  "character_stats": {
+    "train": {
+      "utterances": 80304,
+      "characters": 6061783,
+      "non_space_characters": 5465563,
+      "distinct_characters": 48,
+      "unseen_character_tokens": 0,
+      "unseen_character_rate": 0.0,
+      "unseen_non_space_tokens": 0,
+      "unseen_non_space_rate": 0.0,
+      "distinct_unseen_characters": []
+    },
+    "dev": {
+      "utterances": 4526,
+      "characters": 346030,
+      "non_space_characters": 311935,
+      "distinct_characters": 47,
+      "unseen_character_tokens": 0,
+      "unseen_character_rate": 0.0,
+      "unseen_non_space_tokens": 0,
+      "unseen_non_space_rate": 0.0,
+      "distinct_unseen_characters": []
+    },
+    "test": {
+      "utterances": 4571,
+      "characters": 346182,
+      "non_space_characters": 312397,
+      "distinct_characters": 47,
+      "unseen_character_tokens": 0,
+      "unseen_character_rate": 0.0,
+      "unseen_non_space_tokens": 0,
+      "unseen_non_space_rate": 0.0,
+      "distinct_unseen_characters": []
+    }
+  },
+  "ctc_feasibility": {
+    "word": {
+      "4": {
+        "encoder_hz": 25.0,
+        "conv_layers_stride2": 2,
+        "utterances_violating_frames_lt_labels": 0,
+        "utterances_ratio_below_2": 0,
+        "ratio_min": 2.2,
+        "ratio_p05": 11.556,
+        "ratio_median": 17.2
+      },
+      "8": {
+        "encoder_hz": 12.5,
+        "conv_layers_stride2": 3,
+        "utterances_violating_frames_lt_labels": 0,
+        "utterances_ratio_below_2": 6,
+        "ratio_min": 1.2,
+        "ratio_p05": 5.8,
+        "ratio_median": 8.625
+      },
+      "16": {
+        "encoder_hz": 6.25,
+        "conv_layers_stride2": 4,
+        "utterances_violating_frames_lt_labels": 5,
+        "utterances_ratio_below_2": 7,
+        "ratio_min": 0.6,
+        "ratio_p05": 3.0,
+        "ratio_median": 4.333
+      },
+      "32": {
+        "encoder_hz": 3.125,
+        "conv_layers_stride2": 5,
+        "utterances_violating_frames_lt_labels": 8,
+        "utterances_ratio_below_2": 25994,
+        "ratio_min": 0.333,
+        "ratio_p05": 1.5,
+        "ratio_median": 2.2
+      }
+    },
+    "char_no_space": {
+      "4": {
+        "encoder_hz": 25.0,
+        "conv_layers_stride2": 2,
+        "utterances_violating_frames_lt_labels": 9,
+        "utterances_ratio_below_2": 36492,
+        "ratio_min": 0.237,
+        "ratio_p05": 1.488,
+        "ratio_median": 2.103
+      },
+      "8": {
+        "encoder_hz": 12.5,
+        "conv_layers_stride2": 3,
+        "utterances_violating_frames_lt_labels": 35148,
+        "utterances_ratio_below_2": 53362,
+        "ratio_min": 0.128,
+        "ratio_p05": 0.75,
+        "ratio_median": 1.056
+      },
+      "16": {
+        "encoder_hz": 6.25,
+        "conv_layers_stride2": 4,
+        "utterances_violating_frames_lt_labels": 88458,
+        "utterances_ratio_below_2": 943,
+        "ratio_min": 0.064,
+        "ratio_p05": 0.379,
+        "ratio_median": 0.532
+      },
+      "32": {
+        "encoder_hz": 3.125,
+        "conv_layers_stride2": 5,
+        "utterances_violating_frames_lt_labels": 89401,
+        "utterances_ratio_below_2": 0,
+        "ratio_min": 0.038,
+        "ratio_p05": 0.194,
+        "ratio_median": 0.27
+      }
+    },
+    "char_with_space": {
+      "4": {
+        "encoder_hz": 25.0,
+        "conv_layers_stride2": 2,
+        "utterances_violating_frames_lt_labels": 33,
+        "utterances_ratio_below_2": 51854,
+        "ratio_min": 0.225,
+        "ratio_p05": 1.354,
+        "ratio_median": 1.899
+      },
+      "8": {
+        "encoder_hz": 12.5,
+        "conv_layers_stride2": 3,
+        "utterances_violating_frames_lt_labels": 50740,
+        "utterances_ratio_below_2": 38281,
+        "ratio_min": 0.12,
+        "ratio_p05": 0.681,
+        "ratio_median": 0.953
+      },
+      "16": {
+        "encoder_hz": 6.25,
+        "conv_layers_stride2": 4,
+        "utterances_violating_frames_lt_labels": 89001,
+        "utterances_ratio_below_2": 400,
+        "ratio_min": 0.06,
+        "ratio_p05": 0.345,
+        "ratio_median": 0.481
+      },
+      "32": {
+        "encoder_hz": 3.125,
+        "conv_layers_stride2": 5,
+        "utterances_violating_frames_lt_labels": 89401,
+        "utterances_ratio_below_2": 0,
+        "ratio_min": 0.036,
+        "ratio_p05": 0.176,
+        "ratio_median": 0.244
+      }
+    }
+  },
+  "word_top_n_curve": [
+    {
+      "n": 100,
+      "fc_parameters_at_hidden_256": 25957,
+      "splits": {
+        "train": {
+          "tokens": 676524,
+          "oov_tokens": 562815,
+          "oov_rate": 0.8319217056601096,
+          "oov_utterance_rate": 0.9999501892807332
+        },
+        "dev": {
+          "tokens": 38621,
+          "oov_tokens": 32077,
+          "oov_rate": 0.8305585044405893,
+          "oov_utterance_rate": 1.0
+        },
+        "test": {
+          "tokens": 38356,
+          "oov_tokens": 31854,
+          "oov_rate": 0.8304828449264783,
+          "oov_utterance_rate": 1.0
+        }
+      }
+    },
+    {
+      "n": 250,
+      "fc_parameters_at_hidden_256": 64507,
+      "splits": {
+        "train": {
+          "tokens": 676524,
+          "oov_tokens": 508149,
+          "oov_rate": 0.7511174769852954,
+          "oov_utterance_rate": 0.9992154811715481
+        },
+        "dev": {
+          "tokens": 38621,
+          "oov_tokens": 29028,
+          "oov_rate": 0.7516118174050387,
+          "oov_utterance_rate": 1.0
+        },
+        "test": {
+          "tokens": 38356,
+          "oov_tokens": 28791,
+          "oov_rate": 0.7506257169673585,
+          "oov_utterance_rate": 0.9991249179610588
+        }
+      }
+    },
+    {
+      "n": 500,
+      "fc_parameters_at_hidden_256": 128757,
+      "splits": {
+        "train": {
+          "tokens": 676524,
+          "oov_tokens": 456995,
+          "oov_rate": 0.6755044906019594,
+          "oov_utterance_rate": 0.997907949790795
+        },
+        "dev": {
+          "tokens": 38621,
+          "oov_tokens": 26023,
+          "oov_rate": 0.6738044069288729,
+          "oov_utterance_rate": 0.9993371630578878
+        },
+        "test": {
+          "tokens": 38356,
+          "oov_tokens": 25860,
+          "oov_rate": 0.67421003232871,
+          "oov_utterance_rate": 0.9989061474513236
+        }
+      }
+    },
+    {
+      "n": 1000,
+      "fc_parameters_at_hidden_256": 257257,
+      "splits": {
+        "train": {
+          "tokens": 676524,
+          "oov_tokens": 397208,
+          "oov_rate": 0.5871306856815132,
+          "oov_utterance_rate": 0.9935121538155011
+        },
+        "dev": {
+          "tokens": 38621,
+          "oov_tokens": 22714,
+          "oov_rate": 0.5881256311333213,
+          "oov_utterance_rate": 0.9955810870525851
+        },
+        "test": {
+          "tokens": 38356,
+          "oov_tokens": 22430,
+          "oov_rate": 0.5847846490770675,
+          "oov_utterance_rate": 0.9954058192955589
+        }
+      }
+    },
+    {
+      "n": 2000,
+      "fc_parameters_at_hidden_256": 514257,
+      "splits": {
+        "train": {
+          "tokens": 676524,
+          "oov_tokens": 335693,
+          "oov_rate": 0.4962026476518202,
+          "oov_utterance_rate": 0.978905160390516
+        },
+        "dev": {
+          "tokens": 38621,
+          "oov_tokens": 19168,
+          "oov_rate": 0.4963102975065379,
+          "oov_utterance_rate": 0.9849756959787892
+        },
+        "test": {
+          "tokens": 38356,
+          "oov_tokens": 18920,
+          "oov_rate": 0.49327354260089684,
+          "oov_utterance_rate": 0.9849048348282652
+        }
+      }
+    },
+    {
+      "n": 5000,
+      "fc_parameters_at_hidden_256": 1285257,
+      "splits": {
+        "train": {
+          "tokens": 676524,
+          "oov_tokens": 255790,
+          "oov_rate": 0.3780944947998888,
+          "oov_utterance_rate": 0.9389196054991034
+        },
+        "dev": {
+          "tokens": 38621,
+          "oov_tokens": 14622,
+          "oov_rate": 0.37860231480282747,
+          "oov_utterance_rate": 0.9454264250994255
+        },
+        "test": {
+          "tokens": 38356,
+          "oov_tokens": 14603,
+          "oov_rate": 0.380722703097299,
+          "oov_utterance_rate": 0.9481513891927368
+        }
+      }
+    },
+    {
+      "n": 10000,
+      "fc_parameters_at_hidden_256": 2570257,
+      "splits": {
+        "train": {
+          "tokens": 676524,
+          "oov_tokens": 199904,
+          "oov_rate": 0.29548693024933337,
+          "oov_utterance_rate": 0.880292388922096
+        },
+        "dev": {
+          "tokens": 38621,
+          "oov_tokens": 11585,
+          "oov_rate": 0.2999663395562,
+          "oov_utterance_rate": 0.8862129916040654
+        },
+        "test": {
+          "tokens": 38356,
+          "oov_tokens": 11730,
+          "oov_rate": 0.3058191677964334,
+          "oov_utterance_rate": 0.898052942463356
+        }
+      }
+    },
+    {
+      "n": 20000,
+      "fc_parameters_at_hidden_256": 5140257,
+      "splits": {
+        "train": {
+          "tokens": 676524,
+          "oov_tokens": 149353,
+          "oov_rate": 0.2207652647947449,
+          "oov_utterance_rate": 0.7896991432556286
+        },
+        "dev": {
+          "tokens": 38621,
+          "oov_tokens": 9165,
+          "oov_rate": 0.2373061287900365,
+          "oov_utterance_rate": 0.8148475475033142
+        },
+        "test": {
+          "tokens": 38356,
+          "oov_tokens": 9356,
+          "oov_rate": 0.2439253311085619,
+          "oov_utterance_rate": 0.8346094946401225
+        }
+      }
+    },
+    {
+      "n": 50000,
+      "fc_parameters_at_hidden_256": 12850257,
+      "splits": {
+        "train": {
+          "tokens": 676524,
+          "oov_tokens": 88047,
+          "oov_rate": 0.13014615889458467,
+          "oov_utterance_rate": 0.5988618250647539
+        },
+        "dev": {
+          "tokens": 38621,
+          "oov_tokens": 7110,
+          "oov_rate": 0.1840967349369514,
+          "oov_utterance_rate": 0.7253645603181618
+        },
+        "test": {
+          "tokens": 38356,
+          "oov_tokens": 7281,
+          "oov_rate": 0.18982688497236416,
+          "oov_utterance_rate": 0.7519142419601837
+        }
+      }
+    },
+    {
+      "n": 100000,
+      "fc_parameters_at_hidden_256": 25700257,
+      "splits": {
+        "train": {
+          "tokens": 676524,
+          "oov_tokens": 38047,
+          "oov_rate": 0.05623895087240068,
+          "oov_utterance_rate": 0.34770372584180115
+        },
+        "dev": {
+          "tokens": 38621,
+          "oov_tokens": 6063,
+          "oov_rate": 0.15698713135340878,
+          "oov_utterance_rate": 0.6668139637649139
+        },
+        "test": {
+          "tokens": 38356,
+          "oov_tokens": 6270,
+          "oov_rate": 0.16346855772239025,
+          "oov_utterance_rate": 0.6985342375847736
+        }
+      }
+    },
+    {
+      "n": 138047,
+      "fc_parameters_at_hidden_256": 35478336,
+      "splits": {
+        "train": {
+          "tokens": 676524,
+          "oov_tokens": 0,
+          "oov_rate": 0.0,
+          "oov_utterance_rate": 0.0
+        },
+        "dev": {
+          "tokens": 38621,
+          "oov_tokens": 5322,
+          "oov_rate": 0.1378006783874058,
+          "oov_utterance_rate": 0.622182942996023
+        },
+        "test": {
+          "tokens": 38356,
+          "oov_tokens": 5514,
+          "oov_rate": 0.14375847325059965,
+          "oov_utterance_rate": 0.6409975935243929
+        }
+      }
+    }
+  ],
+  "vocabulary_options": {
+    "char_no_space": {
+      "vocabulary_size": 48,
+      "note": "whitespace is not a target symbol; words are re-joined at decode time",
+      "fc_parameters_at_hidden_256": 12593,
+      "fc_weights_mb_fp32": 0.05,
+      "fits_100mb_weight_target": true
+    },
+    "word_top_1000": {
+      "vocabulary_size": 1000,
+      "fc_parameters_at_hidden_256": 257257,
+      "fc_weights_mb_fp32": 1.03,
+      "fits_100mb_weight_target": true
+    },
+    "word_top_10000": {
+      "vocabulary_size": 10000,
+      "fc_parameters_at_hidden_256": 2570257,
+      "fc_weights_mb_fp32": 10.28,
+      "fits_100mb_weight_target": true
+    },
+    "word_full": {
+      "vocabulary_size": 138047,
+      "fc_parameters_at_hidden_256": 35478336,
+      "fc_weights_mb_fp32": 141.91,
+      "fits_100mb_weight_target": false
+    }
+  },
+  "rate_audit": {
+    "char_no_space": {
+      "unit": "non-space characters",
+      "per_split": {
+        "train": {
+          "utterances": 80304,
+          "labels_per_second_p50": 11.926,
+          "labels_per_second_p95": 16.885,
+          "labels_per_second_p99": 19.117,
+          "labels_per_second_max": 107.402,
+          "above_15_per_second": 11732,
+          "above_20_per_second": 389,
+          "above_25_per_second": 10,
+          "above_30_per_second": 6,
+          "speakers": 476
+        },
+        "dev": {
+          "utterances": 4526,
+          "labels_per_second_p50": 11.94,
+          "labels_per_second_p95": 18.143,
+          "labels_per_second_p99": 20.332,
+          "labels_per_second_max": 23.463,
+          "above_15_per_second": 976,
+          "above_20_per_second": 58,
+          "above_25_per_second": 0,
+          "above_30_per_second": 0,
+          "speakers": 26
+        },
+        "test": {
+          "utterances": 4571,
+          "labels_per_second_p50": 12.24,
+          "labels_per_second_p95": 16.393,
+          "labels_per_second_p99": 18.055,
+          "labels_per_second_max": 22.895,
+          "above_15_per_second": 620,
+          "above_20_per_second": 12,
+          "above_25_per_second": 0,
+          "above_30_per_second": 0,
+          "speakers": 29
+        }
+      },
+      "worst_20": [
+        {
+          "split": "train",
+          "utterance_id": "MILE_0000289_0000068",
+          "speaker_id": "0000289",
+          "duration_seconds": 0.353812,
+          "labels": 38,
+          "labels_per_second": 107.402
+        },
+        {
+          "split": "train",
+          "utterance_id": "MILE_0000289_0000070",
+          "speaker_id": "0000289",
+          "duration_seconds": 0.242688,
+          "labels": 26,
+          "labels_per_second": 107.133
+        },
+        {
+          "split": "train",
+          "utterance_id": "MILE_0000289_0000067",
+          "speaker_id": "0000289",
+          "duration_seconds": 0.40425,
+          "labels": 43,
+          "labels_per_second": 106.37
+        },
+        {
+          "split": "train",
+          "utterance_id": "MILE_0000289_0000069",
+          "speaker_id": "0000289",
+          "duration_seconds": 0.44475,
+          "labels": 47,
+          "labels_per_second": 105.677
+        },
+        {
+          "split": "train",
+          "utterance_id": "MILE_0000289_0000071",
+          "speaker_id": "0000289",
+          "duration_seconds": 0.454813,
+          "labels": 45,
+          "labels_per_second": 98.942
+        },
+        {
+          "split": "train",
+          "utterance_id": "MILE_0000232_0000013",
+          "speaker_id": "0000232",
+          "duration_seconds": 3.980062,
+          "labels": 196,
+          "labels_per_second": 49.245
+        },
+        {
+          "split": "train",
+          "utterance_id": "MILE_0000137_0000011",
+          "speaker_id": "0000137",
+          "duration_seconds": 2.140062,
+          "labels": 57,
+          "labels_per_second": 26.635
+        },
+        {
+          "split": "train",
+          "utterance_id": "MILE_0000167_0000024",
+          "speaker_id": "0000167",
+          "duration_seconds": 1.020063,
+          "labels": 27,
+          "labels_per_second": 26.469
+        },
+        {
+          "split": "train",
+          "utterance_id": "MILE_0000133_0000144",
+          "speaker_id": "0000133",
+          "duration_seconds": 2.910062,
+          "labels": 76,
+          "labels_per_second": 26.116
+        },
+        {
+          "split": "train",
+          "utterance_id": "MILE_0000137_0000022",
+          "speaker_id": "0000137",
+          "duration_seconds": 1.120062,
+          "labels": 29,
+          "labels_per_second": 25.891
+        },
+        {
+          "split": "train",
+          "utterance_id": "MILE_0000152_0000135",
+          "speaker_id": "0000152",
+          "duration_seconds": 1.040062,
+          "labels": 26,
+          "labels_per_second": 24.999
+        },
+        {
+          "split": "train",
+          "utterance_id": "MILE_0000260_0000023",
+          "speaker_id": "0000260",
+          "duration_seconds": 1.760063,
+          "labels": 44,
+          "labels_per_second": 24.999
+        },
+        {
+          "split": "train",
+          "utterance_id": "MILE_0000291_0000271",
+          "speaker_id": "0000291",
+          "duration_seconds": 1.680063,
+          "labels": 42,
+          "labels_per_second": 24.999
+        },
+        {
+          "split": "train",
+          "utterance_id": "MILE_0000137_0000025",
+          "speaker_id": "0000137",
+          "duration_seconds": 1.290062,
+          "labels": 32,
+          "labels_per_second": 24.805
+        },
+        {
+          "split": "train",
+          "utterance_id": "MILE_0000260_0000217",
+          "speaker_id": "0000260",
+          "duration_seconds": 1.290062,
+          "labels": 32,
+          "labels_per_second": 24.805
+        },
+        {
+          "split": "train",
+          "utterance_id": "MILE_0000291_0000093",
+          "speaker_id": "0000291",
+          "duration_seconds": 1.100062,
+          "labels": 27,
+          "labels_per_second": 24.544
+        },
+        {
+          "split": "train",
+          "utterance_id": "MILE_0000299_0000176",
+          "speaker_id": "0000299",
+          "duration_seconds": 2.000062,
+          "labels": 49,
+          "labels_per_second": 24.499
+        },
+        {
+          "split": "train",
+          "utterance_id": "MILE_0000133_0000075",
+          "speaker_id": "0000133",
+          "duration_seconds": 2.750062,
+          "labels": 67,
+          "labels_per_second": 24.363
+        },
+        {
+          "split": "train",
+          "utterance_id": "MILE_0000163_0000014",
+          "speaker_id": "0000163",
+          "duration_seconds": 1.480063,
+          "labels": 36,
+          "labels_per_second": 24.323
+        },
+        {
+          "split": "train",
+          "utterance_id": "MILE_0000260_0000232",
+          "speaker_id": "0000260",
+          "duration_seconds": 1.440063,
+          "labels": 35,
+          "labels_per_second": 24.304
+        }
+      ],
+      "speaker_concentration_in_worst_200": [
+        [
+          "0000137",
+          22
+        ],
+        [
+          "0000291",
+          20
+        ],
+        [
+          "0000133",
+          19
+        ],
+        [
+          "0000019",
+          15
+        ],
+        [
+          "0000260",
+          11
+        ],
+        [
+          "0000297",
+          10
+        ],
+        [
+          "0000167",
+          8
+        ],
+        [
+          "0000114",
+          7
+        ],
+        [
+          "0000289",
+          6
+        ],
+        [
+          "0000299",
+          6
+        ]
+      ]
+    },
+    "word": {
+      "unit": "whitespace words",
+      "per_split": {
+        "train": {
+          "utterances": 80304,
+          "labels_per_second_p50": 1.459,
+          "labels_per_second_p95": 2.174,
+          "labels_per_second_p99": 2.521,
+          "labels_per_second_max": 12.369,
+          "above_15_per_second": 0,
+          "above_20_per_second": 0,
+          "above_25_per_second": 0,
+          "above_30_per_second": 0,
+          "speakers": 476
+        },
+        "dev": {
+          "utterances": 4526,
+          "labels_per_second_p50": 1.467,
+          "labels_per_second_p95": 2.353,
+          "labels_per_second_p99": 2.704,
+          "labels_per_second_max": 3.39,
+          "above_15_per_second": 0,
+          "above_20_per_second": 0,
+          "above_25_per_second": 0,
+          "above_30_per_second": 0,
+          "speakers": 26
+        },
+        "test": {
+          "utterances": 4571,
+          "labels_per_second_p50": 1.493,
+          "labels_per_second_p95": 2.088,
+          "labels_per_second_p99": 2.394,
+          "labels_per_second_max": 3.105,
+          "above_15_per_second": 0,
+          "above_20_per_second": 0,
+          "above_25_per_second": 0,
+          "above_30_per_second": 0,
+          "speakers": 29
+        }
+      },
+      "worst_20": [
+        {
+          "split": "train",
+          "utterance_id": "MILE_0000289_0000067",
+          "speaker_id": "0000289",
+          "duration_seconds": 0.40425,
+          "labels": 5,
+          "labels_per_second": 12.369
+        },
+        {
+          "split": "train",
+          "utterance_id": "MILE_0000289_0000070",
+          "speaker_id": "0000289",
+          "duration_seconds": 0.242688,
+          "labels": 3,
+          "labels_per_second": 12.362
+        },
+        {
+          "split": "train",
+          "utterance_id": "MILE_0000289_0000071",
+          "speaker_id": "0000289",
+          "duration_seconds": 0.454813,
+          "labels": 5,
+          "labels_per_second": 10.994
+        },
+        {
+          "split": "train",
+          "utterance_id": "MILE_0000289_0000069",
+          "speaker_id": "0000289",
+          "duration_seconds": 0.44475,
+          "labels": 4,
+          "labels_per_second": 8.994
+        },
+        {
+          "split": "train",
+          "utterance_id": "MILE_0000289_0000068",
+          "speaker_id": "0000289",
+          "duration_seconds": 0.353812,
+          "labels": 3,
+          "labels_per_second": 8.479
+        },
+        {
+          "split": "train",
+          "utterance_id": "MILE_0000232_0000013",
+          "speaker_id": "0000232",
+          "duration_seconds": 3.980062,
+          "labels": 26,
+          "labels_per_second": 6.533
+        },
+        {
+          "split": "train",
+          "utterance_id": "MILE_0000291_0000271",
+          "speaker_id": "0000291",
+          "duration_seconds": 1.680063,
+          "labels": 7,
+          "labels_per_second": 4.167
+        },
+        {
+          "split": "train",
+          "utterance_id": "MILE_0000297_0000022",
+          "speaker_id": "0000297",
+          "duration_seconds": 1.030063,
+          "labels": 4,
+          "labels_per_second": 3.883
+        },
+        {
+          "split": "train",
+          "utterance_id": "MILE_0000297_0000028",
+          "speaker_id": "0000297",
+          "duration_seconds": 1.61325,
+          "labels": 6,
+          "labels_per_second": 3.719
+        },
+        {
+          "split": "train",
+          "utterance_id": "MILE_0000297_0000027",
+          "speaker_id": "0000297",
+          "duration_seconds": 2.189625,
+          "labels": 8,
+          "labels_per_second": 3.654
+        },
+        {
+          "split": "train",
+          "utterance_id": "ISTL_0000551_0000056",
+          "speaker_id": "0000551",
+          "duration_seconds": 2.5625,
+          "labels": 9,
+          "labels_per_second": 3.512
+        },
+        {
+          "split": "train",
+          "utterance_id": "MILE_0000137_0000085",
+          "speaker_id": "0000137",
+          "duration_seconds": 2.600062,
+          "labels": 9,
+          "labels_per_second": 3.461
+        },
+        {
+          "split": "train",
+          "utterance_id": "MILE_0000163_0000117",
+          "speaker_id": "0000163",
+          "duration_seconds": 0.870062,
+          "labels": 3,
+          "labels_per_second": 3.448
+        },
+        {
+          "split": "train",
+          "utterance_id": "MILE_0000260_0000023",
+          "speaker_id": "0000260",
+          "duration_seconds": 1.760063,
+          "labels": 6,
+          "labels_per_second": 3.409
+        },
+        {
+          "split": "train",
+          "utterance_id": "MILE_0000027_0000185",
+          "speaker_id": "0000027",
+          "duration_seconds": 1.180063,
+          "labels": 4,
+          "labels_per_second": 3.39
+        },
+        {
+          "split": "dev",
+          "utterance_id": "MILE_0000127_0000076",
+          "speaker_id": "0000127",
+          "duration_seconds": 1.77,
+          "labels": 6,
+          "labels_per_second": 3.39
+        },
+        {
+          "split": "train",
+          "utterance_id": "MILE_0000030_0000145",
+          "speaker_id": "0000030",
+          "duration_seconds": 0.890062,
+          "labels": 3,
+          "labels_per_second": 3.371
+        },
+        {
+          "split": "train",
+          "utterance_id": "MILE_0000291_0000034",
+          "speaker_id": "0000291",
+          "duration_seconds": 1.780063,
+          "labels": 6,
+          "labels_per_second": 3.371
+        },
+        {
+          "split": "train",
+          "utterance_id": "MILE_0000263_0000104",
+          "speaker_id": "0000263",
+          "duration_seconds": 1.500063,
+          "labels": 5,
+          "labels_per_second": 3.333
+        },
+        {
+          "split": "train",
+          "utterance_id": "MILE_0000023_0000109",
+          "speaker_id": "0000023",
+          "duration_seconds": 1.810062,
+          "labels": 6,
+          "labels_per_second": 3.315
+        }
+      ],
+      "speaker_concentration_in_worst_200": [
+        [
+          "0000019",
+          18
+        ],
+        [
+          "0000291",
+          13
+        ],
+        [
+          "0000260",
+          13
+        ],
+        [
+          "0000137",
+          11
+        ],
+        [
+          "0000133",
+          11
+        ],
+        [
+          "0000289",
+          8
+        ],
+        [
+          "0000299",
+          7
+        ],
+        [
+          "0000194",
+          6
+        ],
+        [
+          "0000297",
+          5
+        ],
+        [
+          "0000255",
+          5
+        ]
+      ]
+    }
+  },
+  "ctc_violations_stride4_char": [
+    {
+      "utterance_id": "MILE_0000289_0000068",
+      "speaker_id": "0000289",
+      "shipped_split": "train",
+      "duration_seconds": 0.353812,
+      "characters": 38,
+      "encoder_frames_at_stride_4": 9,
+      "characters_per_second": 107.402,
+      "in_fastest_200": true
+    },
+    {
+      "utterance_id": "MILE_0000289_0000070",
+      "speaker_id": "0000289",
+      "shipped_split": "train",
+      "duration_seconds": 0.242688,
+      "characters": 26,
+      "encoder_frames_at_stride_4": 7,
+      "characters_per_second": 107.133,
+      "in_fastest_200": true
+    },
+    {
+      "utterance_id": "MILE_0000289_0000067",
+      "speaker_id": "0000289",
+      "shipped_split": "train",
+      "duration_seconds": 0.40425,
+      "characters": 43,
+      "encoder_frames_at_stride_4": 11,
+      "characters_per_second": 106.37,
+      "in_fastest_200": true
+    },
+    {
+      "utterance_id": "MILE_0000289_0000069",
+      "speaker_id": "0000289",
+      "shipped_split": "train",
+      "duration_seconds": 0.44475,
+      "characters": 47,
+      "encoder_frames_at_stride_4": 12,
+      "characters_per_second": 105.677,
+      "in_fastest_200": true
+    },
+    {
+      "utterance_id": "MILE_0000289_0000071",
+      "speaker_id": "0000289",
+      "shipped_split": "train",
+      "duration_seconds": 0.454813,
+      "characters": 45,
+      "encoder_frames_at_stride_4": 12,
+      "characters_per_second": 98.942,
+      "in_fastest_200": true
+    },
+    {
+      "utterance_id": "MILE_0000232_0000013",
+      "speaker_id": "0000232",
+      "shipped_split": "train",
+      "duration_seconds": 3.980062,
+      "characters": 196,
+      "encoder_frames_at_stride_4": 100,
+      "characters_per_second": 49.245,
+      "in_fastest_200": true
+    },
+    {
+      "utterance_id": "MILE_0000137_0000011",
+      "speaker_id": "0000137",
+      "shipped_split": "test",
+      "duration_seconds": 2.140062,
+      "characters": 57,
+      "encoder_frames_at_stride_4": 54,
+      "characters_per_second": 26.635,
+      "in_fastest_200": true
+    },
+    {
+      "utterance_id": "MILE_0000167_0000024",
+      "speaker_id": "0000167",
+      "shipped_split": "train",
+      "duration_seconds": 1.020063,
+      "characters": 27,
+      "encoder_frames_at_stride_4": 26,
+      "characters_per_second": 26.469,
+      "in_fastest_200": true
+    },
+    {
+      "utterance_id": "MILE_0000133_0000144",
+      "speaker_id": "0000133",
+      "shipped_split": "train",
+      "duration_seconds": 2.910062,
+      "characters": 76,
+      "encoder_frames_at_stride_4": 73,
+      "characters_per_second": 26.116,
+      "in_fastest_200": true
+    }
+  ],
+  "sequence_lengths": {
+    "word": {
+      "train_labels_total": 676524,
+      "train_utterances": 80304,
+      "mean_labels_per_utterance": 8.424536760310819,
+      "median_labels_per_utterance": 8,
+      "max_labels_per_utterance": 61
+    },
+    "char_no_space": {
+      "train_labels_total": 5465563,
+      "train_utterances": 80304,
+      "mean_labels_per_utterance": 68.06090605698347,
+      "median_labels_per_utterance": 61,
+      "max_labels_per_utterance": 517
+    },
+    "char_with_space": {
+      "train_labels_total": 6061783,
+      "train_utterances": 80304,
+      "mean_labels_per_utterance": 75.48544281729428,
+      "median_labels_per_utterance": 68,
+      "max_labels_per_utterance": 577
+    }
+  },
+  "notes": [
+    "Encoder frames are computed with ceil applied once per stride-2 conv, which is the arithmetic verified against nn.Conv1d in EXP-003 step 2. floor(T/stride) would understate them and is not used.",
+    "Word-level OOV rates here are recomputed from the manifests rather than copied from EXP-003, so this experiment can be checked on its own."
+  ]
+}

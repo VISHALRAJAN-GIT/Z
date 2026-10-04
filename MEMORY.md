@@ -126,6 +126,44 @@ No new `src/` module was added this session. The CTC decoder and the token error
 rate function live in `experiments/` and graduate to `src/` when a real baseline
 needs them.
 
+### EXP-004, in detail — the tokenizer scheme is decided
+
+**The vocabulary question is closed: character-level**, chosen from measurement in
+`experiments/004_character_tokenizer/measure_vocabulary.py`.
+
+| Option | Vocab | dev OOV | test OOV | fc params | fc MB fp32 |
+|---|---:|---:|---:|---:|---:|
+| **character** | **48** | **0.000000** | **0.000000** | **12 593** | **0.05** |
+| word top 10 000 | 10 000 | 0.3000 | 0.3058 | 2 570 257 | 10.28 |
+| word full | 138 047 | 0.1378 | 0.1438 | 35 478 336 | 141.91 |
+
+Three findings that were not predictable in advance:
+
+1. **Restricting the word vocabulary does not fix OOV.** The dev OOV curve against
+   most-frequent-N is nearly flat at the top: N=100 000 still gives 0.1570, barely
+   better than the full vocabulary's 0.1378. There is no cheap operating point.
+   The top-N strategy is refuted by measurement.
+2. **The character inventory is 48 codepoints and closed** — 47 in the Tamil
+   block plus the space. Unseen characters on dev and test: **0** each.
+3. **Encoder stride 4 is now a hard architectural constraint.** CTC needs encoder
+   frames >= labels. Utterances violating that, out of 89 401: stride 4 → **9**,
+   stride 8 → **35 148**, stride 16 → 88 458. Stride 8, the usual conv CTC choice,
+   breaks 39 % of the corpus. Mean utterance is 69.41 characters over 6.07 s =
+   11.9 characters per second. **Do not deepen the conv subsampling in the real
+   baseline.** A deeper encoder requires a subword or phoneme unit, not a deeper
+   stack.
+
+Also measured: NFC changes **0 of 89 401** transcripts, so the corpus is already
+NFC (normalize anyway — that is a property of this corpus, not of Tamil). Speaking
+rate p50 11.9 / p99 19.1 / max 107.4 characters per second, and only **6**
+utterances corpus-wide exceed 30/s.
+
+**Constraint discovered for later phases:** `dataset_v001` contains **no ASCII
+digits and no Latin letters at all** — numbers are written in Tamil script. GUIDE
+section 28 requires English, digit and punctuation support in the tokenizer, and
+this corpus cannot exercise any of it. That must be validated against the Phase 06
+corpora, and a tokenizer that hardcodes 48 symbols would be a bug.
+
 ## 2. The project
 
 Offline, low-latency, CPU-first Tamil voice intelligence foundation. Handles
@@ -307,6 +345,22 @@ warning and does not prevent loading, while the rest are errors.
 - **The overfit subset stays the shortest-first subset from step 1.** Changing the
   selection rule in step 2 alone would silently decouple the two steps'
   measurements. Its unrepresentativeness is recorded as a limitation instead.
+- **The tokenizer is character-level, decided by measurement, not preference.**
+  EXP-004 measured the alternative before choosing: word top-N across 11 sizes
+  (which refutes the truncation strategy, since the OOV curve is nearly flat at
+  the top), the character inventory and its OOV, and the output-layer cost of each
+  option. GUIDE section 28 also specifies character-level as the starting point,
+  and the measurements do not contradict it.
+- **Encoder stride 4 is a measured constraint, not a default.** Character-level
+  CTC on this corpus is invalid at stride 8 for 35148 of 89401 utterances. Any
+  proposal to deepen the conv subsampling must be measured against that table
+  first. This is the finding most likely to be rediscovered the hard way.
+- **The character vocabulary is measured, not hardcoded.** 48 codepoints is what
+  `dataset_v001` contains. The implementation must derive its inventory from
+  whichever manifest is current, because `dataset_v001` exercises neither Latin
+  letters nor ASCII digits and GUIDE section 28 requires both.
+- **BPE stays open and unmeasured.** GUIDE says benchmark it, and EXP-004 does
+  not. No claim is made in either direction.
 
 ## 6. Open questions
 
@@ -314,13 +368,12 @@ warning and does not prevent loading, while the rest are errors.
    corpus. Every number in this file is a data, signal or memorisation
    measurement, not a generalisation result. The first real WER will come from
    the baseline evaluated on `dev.jsonl`.
-2. **The vocabulary scheme is undecided, and this is now the blocking question.**
-   Question 2 of the previous revision — "is word-level adequate?" — is
-   **answered: no, not as-is.** Dev OOV 13.78 % and test OOV 14.38 % mean a
-   seventh of the words do not exist in the vocabulary. What is *not* answered is
-   what to do instead: restrict to the most frequent N words and measure the
-   OOV-versus-N curve, or move to a character-level Tamil vocabulary, which is
-   small and closed. Measure the curve, then choose. Do not choose by preference.
+2. **BPE is unmeasured, and that is deliberate.** GUIDE section 28 says not to
+   assume BPE is better, only to benchmark it. EXP-004 did not benchmark it, and
+   makes no claim either way. Character-level is the specified *starting point*,
+   so this does not block. If a later experiment asserts BPE is worse, that
+   assertion needs its own measurements. BPE is also the one option that could
+   justify a deeper encoder, since subword targets are shorter than characters.
 3. **Corpus coverage is narrow.** IISc-MILE is read, studio-clean, single-condition
    speech. It cannot cover colloquial, code-switched, regional or noisy audio.
    AI4Bharat IndicVoices (Tamil, CC BY 4.0) and Kathbath (Tamil, conversational)
@@ -335,7 +388,15 @@ warning and does not prevent loading, while the rest are errors.
    0.243 s to 1.59 s against a corpus maximum of 38.85 s. It proves the pipeline
    is internally consistent; it says nothing about long or fast speech. A
    duration-representative overfit run is still wanted.
-7. **`.session/AGENTS.md` and `.session/START-HERE.md` are always one commit
+7. **Six corpus rows are corrupt and are not yet dispositioned.** Speaker
+   `0000289` rows `_0000067` to `_0000071` carry 26–47 characters in
+   0.24–0.45 s, which is 57–107 characters per second and physically impossible;
+   the transcripts cannot belong to that audio. Three further rows violate CTC's
+   frames >= labels at 26–27 characters per second, which is fast but human and
+   therefore a legitimate hard case, not a defect. All 9 are among the 200 fastest
+   utterances in the corpus. **No row has been removed.** Dispositioning them, and
+   creating `dataset_v002` if any are dropped, is the next decision.
+8. **`.session/AGENTS.md` and `.session/START-HERE.md` are always one commit
    stale, and this cannot be fixed by committing.** The auto-status block reports
    the last commit's hash, and the post-commit hook rewrites the workspace entry
    files immediately after a commit lands. Mirroring them into `.session/` then
@@ -350,31 +411,35 @@ warning and does not prevent loading, while the rest are errors.
 ## 7. Next actions
 
 EXP-002 is **complete and verified** (14 pass, 0 fail). EXP-003 is **complete**:
-step 1 measured the tokenizer, step 2's overfit test is accepted. The GPU is
-installed and working. The next work is the first model trained on the full
-train split, and one decision blocks it.
+step 1 measured the tokenizer, step 2's overfit test is accepted. EXP-004 is
+**complete**: the tokenizer scheme is decided — character-level, from measurement.
+The GPU is installed and working. The next work is the character tokenizer itself,
+then the first model trained on the full train split.
 
-1. **Decide the vocabulary scheme from measurement.** This is now the blocking
-   item. Measured: word-level gives dev OOV 13.78 % / test OOV 14.38 % on a
-   138047-word train vocabulary, and a full-vocab output layer is 35478593
-   parameters at hidden 256, which does not fit the < 100 MB target. Next action:
-   write `measure_vocab_size.py` to sweep the most-frequent-N restriction and
-   plot OOV rate against N on dev and test, and separately count the distinct
-   Tamil characters in the corpus to size a character-level vocabulary. Then
-   choose from the two measured curves. Do not pick a scheme from preference, and
-   do not adopt subword (BPE/SentencePiece) without measuring it too — GUIDE
-   section 31 wants a reasoned choice, and the reason has to be a number.
-2. **Then** the real CTC baseline on `train.jsonl` with the chosen vocabulary,
-   evaluated on `dev.jsonl`. `test.jsonl` stays untouched until the baseline is
-   fixed. This produces the first genuine WER in the project.
-3. **Also worth doing before step 2**, because it is cheap and it closes open
-   question 6: re-run the overfit test on a duration-representative subset, so
-   the pipeline check covers long utterances instead of only the 0.243–1.59 s
-   tail.
+1. **Build the character tokenizer as a `src/tamil_voice/text/` module with tests.**
+   Required by GUIDE section 28 and 29: NFC normalisation, a script-aware
+   inventory, `<blank>` and `<unk>` handling, and a decode path that re-joins
+   words. **The inventory must be data-driven, not the 48 symbols measured in
+   EXP-004** — that count is a property of `dataset_v001`, which contains no Latin
+   letters and no ASCII digits, and it will change when the Phase 06 corpora
+   arrive. Tests: valid input, unseen characters, empty text, mixed script,
+   round-trip encode/decode, and determinism of the vocabulary ordering.
+2. **Disposition the 9 CTC-invalid rows** (open question 7). Six are corrupt
+   speaker-`0000289` rows at 57–107 characters per second; three are legitimate
+   fast speech and should be kept. If anything is dropped, that creates
+   `dataset_v002` with the reason and the utterance ids recorded, per the rule
+   against silent dataset changes.
+3. **Re-run the overfit test with character targets before the full baseline.**
+   Cheap, and it exercises the new tokenizer end to end. Keep encoder stride 4.
+4. **Then** the real CTC baseline on `train.jsonl`, evaluated on `dev.jsonl`, for
+   the first genuine WER in this project. `test.jsonl` stays untouched until the
+   baseline is fixed. Do not deepen the conv subsampling: stride 8 invalidates
+   39 % of the corpus.
 
 If a session ends before step 1 finishes, the exact starting point is: `dataset_v001`
-is built and verified, EXP-003 is complete and accepted, torch 2.6.0+cu124 has CUDA
-available, and no model has ever been trained on the full corpus.
+is built and verified, EXP-003 and EXP-004 are complete, torch 2.6.0+cu124 has CUDA
+available, the tokenizer decision is character-level, and no model has ever been
+trained on the full corpus.
 
 **Uncommitted state at the end of this session:** only `.session/AGENTS.md` and
 `.session/START-HERE.md`, which the post-commit hook rewrites after every commit.

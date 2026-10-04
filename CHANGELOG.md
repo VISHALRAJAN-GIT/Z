@@ -9,6 +9,60 @@ what changed.
 
 ## [Unreleased]
 
+### Research - EXP-004 complete: the tokenizer scheme is decided from measurement
+
+Character-level, chosen by measuring the alternatives rather than by preference.
+`experiments/004_character_tokenizer/` produces every number below.
+
+| Option | Vocab | dev OOV | test OOV | fc params | fc MB fp32 |
+|---|---:|---:|---:|---:|---:|
+| **character** | **48** | **0.000000** | **0.000000** | **12 593** | **0.05** |
+| word top 10 000 | 10 000 | 0.3000 | 0.3058 | 2 570 257 | 10.28 |
+| word full | 138 047 | 0.1378 | 0.1438 | 35 478 336 | 141.91 |
+
+Three findings that were not predictable in advance:
+
+- **Restricting the word vocabulary does not fix OOV.** The dev OOV curve against
+  most-frequent-N is nearly flat at the top: N=100 000 gives 0.1570, barely
+  better than the full vocabulary's 0.1378. The top-N strategy is refuted.
+- **The character inventory is 48 codepoints and closed** - 47 in the Tamil block
+  plus the space - with 0 unseen characters on dev and 0 on test.
+- **Encoder stride 4 is now a hard architectural constraint.** Utterances where
+  encoder frames fall below the character label count, out of 89 401: stride 4
+  gives 9, stride 8 gives **35 148**, stride 16 gives 88 458. Stride 8 is the
+  usual conv CTC choice and it invalidates 39 % of this corpus. Mean utterance is
+  69.41 characters over 6.07 s, i.e. 11.9 characters per second.
+
+Also measured: NFC changes 0 of 89 401 transcripts, so the corpus is already NFC;
+normalization is still required, since that is a property of this corpus and not
+of Tamil.
+
+### Added
+
+- `experiments/004_character_tokenizer/measure_vocabulary.py`,
+  `vocabulary_measurements.json`, `README.md`, `notes.md`. The script decides
+  nothing and asserts no verdict; it emits the numbers the decision rests on.
+- A speaking-rate audit that separates two populations hiding in the 9 CTC
+  violations: **6 rows are corrupt** (speaker `0000289`, 26–47 characters in
+  0.24–0.45 s, i.e. 57–107 characters per second, which no human can produce),
+  while **3 are legitimate fast speech** at 26–27 characters per second and must
+  be kept. All 9 are among the 200 fastest utterances in the corpus; only 6
+  utterances corpus-wide exceed 30 characters per second against a median of
+  11.9.
+
+### Known gaps
+
+- **Six corrupt rows are identified but not dispositioned.** No row was removed.
+  If any are dropped that creates `dataset_v002`, with the reason and utterance
+  ids recorded.
+- **BPE is unmeasured.** GUIDE section 28 says to benchmark it rather than assume
+  it, and EXP-004 does neither. Character-level is the specified starting point,
+  so this does not block, and no claim is made about BPE in either direction.
+- **`dataset_v001` contains no ASCII digits and no Latin letters.** Numbers are
+  written in Tamil script. GUIDE section 28 requires English, digit and
+  punctuation support in the tokenizer and this corpus exercises none of it, so
+  the 48-symbol inventory must not be hardcoded.
+
 ### Model - EXP-003 complete: tokenizer measured and tiny CTC overfit test accepted
 
 Both steps of Phase 02's first experiment are done. The overfit test is the
