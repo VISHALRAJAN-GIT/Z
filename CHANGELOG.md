@@ -9,6 +9,32 @@ what changed.
 
 ## [Unreleased]
 
+### Refactor - the CTC model moves into `src/tamil_voice/asr/model.py`
+
+`TinyCTC` existed as two copies, in EXP-003 and EXP-005, because a committed
+experiment has to stay runnable on its own. The baseline was about to become a third
+copy. `src/tamil_voice/asr/model.py` is now the single implementation:
+`TinyCTC`, `subsampled_length`, `subsample_factor`, `output_lengths`,
+`verify_length_math` and `LengthMathError`. 19 tests; total 324.
+
+- A line-by-line comparison of the two existing copies found **no architectural
+  divergence** - only a docstring, a diagnostic message that had lost its numbers,
+  and a widened type hint. This is deduplication, not reconciliation, and the module
+  takes the better version of each difference.
+- The 668818-parameter count EXP-005 measured for its configuration is asserted as a
+  regression test, so the move provably changed nothing about the model.
+- The experiment copies stay. Deleting them would rewrite the research record and
+  make EXP-003 and EXP-005 unrunnable.
+- Architecture claims are tested rather than asserted in prose: a test perturbs the
+  padded tail and asserts untouched frames are bit-identical, which is the property
+  that makes a unidirectional, BatchNorm-free stack correct over padded batches. It
+  compares only frames whose receptive field ends before the padding, derived from the
+  conv arithmetic, because the stack emits fewer frames than it consumes and most of
+  the output genuinely is derived from the padding.
+- `zip(..., strict=True)` in the conv stack: a conv config with mismatched channel,
+  stride and padding lengths would otherwise be silently truncated into a different
+  model than the config describes.
+
 ### Data - EXP-006 complete: `dataset_v002` removes the 5 corrupt rows, keeps the 28 fast-but-valid ones
 
 `experiments/006_dataset_v002/` dispositions every row in `dataset_v001` where

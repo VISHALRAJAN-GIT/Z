@@ -22,7 +22,9 @@ computed (0.001647, training data only), whitespace default confirmed by
 measurement.
 Phase 02 / EXP-006 — complete. The 5 corrupt rows removed and the 28 fast-but-valid
 rows kept, as `dataset_v002`, with the CTC-ineligible set published for training-time
-filtering.**
+filtering.
+Phase 02 — the CTC model now lives in `src/tamil_voice/asr/model.py` with 19 tests,
+instead of existing as two copies inside experiments.**
 
 Implemented in Phase 01: `audio/io.py` (loading, canonical conversion, real
 validation), `audio/resampling.py` (8/22.05/44.1/48 kHz -> 16 kHz, with a
@@ -84,9 +86,9 @@ Gates, run in `.venv` on Python 3.11.9 and recorded by `scripts/run-gates.ps1` i
 `.session/gates/`:
 
 ```text
-pytest   305 passed
+pytest   324 passed
 ruff     All checks passed!
-mypy     Success: no issues found in 28 source files
+mypy     Success: no issues found in 29 source files
 ```
 
 The exact wall time of the pytest run varies between roughly 10 and 60 s depending
@@ -343,12 +345,14 @@ Empty directories are preserved with `.gitkeep`. `.venv`, caches, `checkpoints/`
 | `data/splits.py` | `SplitRatios`, `SplitConfig`, `plan_speaker_split`, `SpeakerSplitPlan`, `check_speaker_disjoint`, `SplitError` — speaker-disjoint split planning with a disjointness assertion |
 | `text/unicode.py` | `NormalizationForm`, `SUPPORTED_FORMS`, `normalize_text`, `is_normalized`, `Script`, `script_of`, `scripts_in`, `script_histogram`, `UnicodeError` — NFC normalization and script classification |
 | `text/tokenizer.py` | `TokenizerConfig`, `CharacterTokenizer` (build / encode / encode_with_report / decode / decode_words / unknown_rate / save / load), `EncodingReport`, `build_from_jsonl`, `sequence_length_report`, `prepare_text`, `TokenizerError` |
+| `asr/model.py` | `TinyCTC` (conv subsampling + GRU + linear classifier, unidirectional, no BatchNorm), `subsampled_length`, `subsample_factor`, `output_lengths`, `verify_length_math`, `LengthMathError`, `DEFAULT_CONV_STRIDES`. The single shared implementation, lifted verbatim in architecture from the EXP-003 and EXP-005 copies |
 
 Tests: `tests/unit/test_config.py`, `test_common.py`, `test_package.py`,
 `test_audio_io.py`, `test_audio_resampling.py`, `test_audio_normalization.py`,
 `test_audio_features.py`, `test_audio_quality.py`, `test_vad_detector.py`,
 `test_vad_postprocess.py`, `test_data_corpus.py`, `test_data_manifest.py`,
-`test_data_splits.py`, `test_text_unicode.py`, `test_text_tokenizer.py`.
+`test_data_splits.py`, `test_text_unicode.py`, `test_text_tokenizer.py`,
+`test_asr_model.py`.
 
 The `text` package has held a tracked empty `__init__.py` placeholder since the
 Phase 00 skeleton (`35765c4`). Every subpackage does; there are no PEP 420
@@ -530,6 +534,28 @@ warning and does not prevent loading, while the rest are errors.
 - **Dataset changes are verified against git, not against a fresh copy.** A copy
   taken after the fact proves nothing. `dataset_v001` being untouched is asserted
   with `git status --porcelain -- data/manifests/dataset_v001`.
+- **The model has one implementation, but the experiments keep theirs.** The EXP-003
+  and EXP-005 copies stay runnable on their own, because deleting them would rewrite
+  the research record and make those experiments unreproducible. What the move into
+  `src` removes is the need for a *third* copy, which is what the baseline would
+  otherwise have become. A line-by-line comparison showed the two copies never
+  diverged in architecture — only in a docstring, a diagnostic message and a type hint
+  — so this was deduplication, not reconciliation.
+- **Architecture claims live in tests, not only in prose.** The docstring says a
+  unidirectional stack with no BatchNorm means padded frames cannot influence valid
+  output, so `test_padded_frames_cannot_influence_valid_frames` perturbs the padded
+  tail and asserts the untouched frames are bit-identical. The comparison covers only
+  frames whose receptive field ends before the padding, derived from the conv
+  arithmetic rather than assumed, because the stack emits fewer frames than it
+  consumes and most of the output *is* derived from the padding.
+- **`subsampled_length` is a method, not a helper, and it is checked against
+  `nn.Conv1d` at runtime.** CTC's `frames >= labels` constraint makes a plausible-
+  looking length function the exact thing that silently invalidates real speech, so
+  `verify_length_math` measures it on the running machine and the error message
+  reports both the predicted and the observed length.
+- **`zip(..., strict=True)` in the conv stack.** A conv config with mismatched
+  channel, stride and padding lengths would otherwise be silently truncated into a
+  model with a different architecture than the config describes.
 
 ## 6. Open questions
 
@@ -588,11 +614,12 @@ step 1 measured the tokenizer, step 2's overfit test is accepted. EXP-004 is
 EXP-005 is **complete**: the character targets overfit, the tokenizer is proven
 inside a training loop, and the whitespace default is settled by measurement.
 EXP-006 is **complete**: `dataset_v002` exists, 5 corrupt rows removed, 28
-fast-but-valid rows kept and published (31 pass, 0 fail). The GPU is installed and
+fast-but-valid rows kept and published (31 pass, 0 fail). The CTC model has been
+moved into `src/tamil_voice/asr/model.py` with 19 tests. The GPU is installed and
 working.
 
-Items 1, 2 and 3 below are **done** and are kept as the record of what was decided,
-not as work to do.
+Items 1 to 4 below are **done** and are kept as the record of what was decided, not
+as work to do.
 
 1. ~~**Build the character tokenizer as a `src/tamil_voice/text/` module with
    tests.**~~ **Done** in `80fc716`: `text/unicode.py` and `text/tokenizer.py`, 85
@@ -603,24 +630,29 @@ not as work to do.
    byte-identical across three builds.
 3. ~~**Re-run the overfit test with character targets.**~~ **Done** in EXP-005.
    Both whitespace variants trained; acceptance passed for both.
-4. **Move the CTC model into `src/tamil_voice/asr/`.** The model currently exists
-   twice, as a copy in EXP-003 and in EXP-005, because a committed experiment must
-   stay runnable on its own. The baseline is the first thing that needs a model for
-   a reason other than a test, and it should import one implementation.
-5. **Then** the real CTC baseline on `train.jsonl`, evaluated on `dev.jsonl`, for
-   the first genuine WER in this project. `test.jsonl` stays untouched until the
-   baseline is fixed. Keep encoder stride 4: do not deepen the conv subsampling,
-   because stride 8 invalidates 39 % of the corpus. The baseline must **filter the
-   28 published ineligible ids** rather than skipping them silently, and must report
-   how many rows it actually trained on, so the manifest and the training set cannot
-   quietly disagree.
+4. ~~**Move the CTC model into `src/tamil_voice/asr/`.**~~ **Done.**
+   `src/tamil_voice/asr/model.py` holds `TinyCTC`, `subsampled_length`,
+   `subsample_factor`, `output_lengths` and `verify_length_math`, with 19 tests.
+   The EXP-003 and EXP-005 copies were left in place deliberately. The architecture
+   was byte-identical between them, and the 668 818-parameter count for the EXP-005
+   configuration is asserted as a regression test, so the move provably changed
+   nothing about the model.
+5. **Now: the real CTC baseline** on `dataset_v002/train.jsonl`, evaluated on
+   `dev.jsonl`, for the first genuine WER in this project. It must import
+   `src/tamil_voice/asr/model.py` rather than defining a third copy.
+   `test.jsonl` stays untouched until the baseline is fixed. Keep encoder stride 4: do
+   not deepen the conv subsampling, because stride 8 invalidates 39 % of the corpus.
+   The baseline must **filter the 28 published ineligible ids** rather than skipping
+   them silently, and must report how many rows it actually trained on, so the
+   manifest and the training set cannot quietly disagree.
 
-If a session ends before step 4 finishes, the exact starting point is:
+If a session ends before step 5 starts, the exact starting point is:
 `dataset_v002` is built, verified (31 pass, 0 fail) and deterministic,
 `data/manifests/dataset_v002/metadata.json` holds the removed and the
-CTC-ineligible id lists, EXP-003 through EXP-006 are complete, torch 2.6.0+cu124 has
-CUDA available, the tokenizer decision is character-level with `include_space=True`,
-and no model has ever been trained on the full corpus.
+CTC-ineligible id lists, `TinyCTC` is in `src/tamil_voice/asr/model.py` with tests,
+EXP-003 through EXP-006 are complete, torch 2.6.0+cu124 has CUDA available, the
+tokenizer decision is character-level with `include_space=True`, and no model has
+ever been trained on the full corpus.
 
 **Uncommitted state at the end of this session:** only `.session/AGENTS.md` and
 `.session/START-HERE.md`, which the post-commit hook rewrites after every commit.
