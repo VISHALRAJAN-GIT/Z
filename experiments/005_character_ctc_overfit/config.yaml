@@ -1,0 +1,90 @@
+# EXP-005: character-level CTC overfit, using the tokenizer EXP-004 decided on.
+#
+# This step exists to prove that src/tamil_voice/text/tokenizer.py works inside a
+# real CTC training loop, and to compare the two whitespace variants on identical
+# data instead of assuming one.
+#
+# The architecture, features, subset rule and hyperparameters are held identical to
+# EXP-003 step 2 on purpose. The only things that change are the targets
+# (characters instead of words) and the vocabulary source. Anything else moving
+# would make the two experiments incomparable, and comparability is the reason to
+# run this at all.
+
+experiment_id: "005_character_ctc_overfit"
+step: "overfit_character_ctc"
+
+model:
+  # Identical to EXP-003. Conv front-end subsamples time by product(conv_strides)=4,
+  # so the GRU runs at 25 Hz.
+  #
+  # Stride 4 is a measured constraint, not a default: at stride 8 character-level
+  # CTC is invalid for 35148 of 89401 utterances. See EXP-004 ctc_feasibility.
+  conv_channels: [32, 64]
+  conv_kernel: 3
+  conv_strides: [2, 2]
+  conv_padding: [1, 1]
+  gru_hidden: 256
+  gru_layers: 2
+  # Unidirectional: Phase 07 needs streaming. Same reasoning as EXP-003.
+  gru_bidirectional: false
+  # 0 on purpose. This step measures memorisation; dropout only makes that harder.
+  dropout: 0.0
+  # No BatchNorm. Over a padded (B, C, T) tensor it averages the zero-padded tail
+  # into the statistics of the real frames.
+
+features:
+  n_fft: 512
+  win_length: 400
+  hop_length: 160
+  n_mels: 80
+
+data:
+  manifest_dir: data/manifests/dataset_v001
+  # train.jsonl only. dev and test are never opened by this script.
+  splits: ["train"]
+  subset_minutes: 15.0
+  # Shortest utterances first until the budget is met. Must stay identical to
+  # EXP-003 so that "the subset" means the same 661 utterances in both experiments.
+  subset_rule: "shortest_first_until_budget"
+
+tokenizer:
+  # The inventory is built from the FULL train manifest, not from the subset.
+  #
+  # EXP-003 rebuilt its word vocabulary from the subset because 138049-way
+  # softmax is not a tiny model. That pressure does not exist here: the measured
+  # character inventory is 48 symbols, 50 classes including blank and unk. Using
+  # the full train manifest therefore produces the tokenizer the baseline will
+  # actually use, at no parameter cost, instead of a subset-only toy.
+  source: "train_manifest"
+  form: "NFC"
+  min_frequency: 1
+  max_symbols: null
+  # The two variants, run on identical data with identical hyperparameters.
+  #
+  # EXP-004 recorded whitespace-excluded as the decision on CTC arithmetic (9
+  # invalid utterances against 33). src/tamil_voice/text/tokenizer.py defaults to
+  # including whitespace instead, because a target with no space symbol decodes
+  # with no word boundaries and word error rate becomes undefined. Which one
+  # actually trains better is exactly what this experiment measures.
+  variants:
+    - name: "with_space"
+      include_space: true
+    - name: "without_space"
+      include_space: false
+
+training:
+  batch_size: 8
+  epochs: 200
+  lr: 0.001
+  weight_decay: 0.0
+  grad_clip: 5.0
+  seed: 20261003
+  device: "auto"
+  num_workers: 0
+  log_interval: 20
+  eval_every: 1
+  save_every: 10
+  # Acceptance thresholds. An overfit test that cannot fail is not a test, so both
+  # variants are checked explicitly and the run exits non-zero if either misses.
+  accept_max_token_error_rate: 0.10
+  accept_max_loss: 1.0

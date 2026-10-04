@@ -1,0 +1,4223 @@
+{
+  "experiment_id": "005_character_ctc_overfit",
+  "step": "overfit_character_ctc",
+  "device": "cuda",
+  "torch_version": "2.6.0+cu124",
+  "cuda_available": true,
+  "seed": {
+    "seed": 20261003,
+    "python_hash_seed": true,
+    "numpy": true,
+    "torch": true,
+    "cuda_deterministic": true
+  },
+  "dataset_version": "dataset_v001",
+  "subset": {
+    "utterances": 661,
+    "duration_seconds": 900.7,
+    "minutes": 15.01,
+    "selection_rule": "shortest_first_until_budget",
+    "identical_to_exp003_subset": true,
+    "speakers": 148,
+    "min_duration_seconds": 0.243,
+    "max_duration_seconds": 1.59
+  },
+  "features": {
+    "n_fft": 512,
+    "win_length": 400,
+    "hop_length": 160,
+    "n_mels": 80,
+    "extract_seconds": 11.71,
+    "length_math_verified_against_conv1d": true
+  },
+  "variants": [
+    {
+      "name": "with_space",
+      "tokenizer": {
+        "include_space": true,
+        "form": "NFC",
+        "real_symbols": 48,
+        "num_classes": 50,
+        "blank_id": 0,
+        "unk_id": 1
+      },
+      "subset": {
+        "rows_before_filtering": 661,
+        "rows_violating_frames_ge_labels": 12,
+        "rows_trained": 649,
+        "violations": [
+          {
+            "utterance_id": "MILE_0000289_0000070",
+            "encoder_frames": 7,
+            "labels": 28
+          },
+          {
+            "utterance_id": "MILE_0000289_0000068",
+            "encoder_frames": 9,
+            "labels": 40
+          },
+          {
+            "utterance_id": "MILE_0000289_0000067",
+            "encoder_frames": 11,
+            "labels": 47
+          },
+          {
+            "utterance_id": "MILE_0000289_0000069",
+            "encoder_frames": 12,
+            "labels": 50
+          },
+          {
+            "utterance_id": "MILE_0000289_0000071",
+            "encoder_frames": 12,
+            "labels": 49
+          },
+          {
+            "utterance_id": "MILE_0000167_0000024",
+            "encoder_frames": 26,
+            "labels": 28
+          },
+          {
+            "utterance_id": "MILE_0000152_0000135",
+            "encoder_frames": 27,
+            "labels": 28
+          },
+          {
+            "utterance_id": "MILE_0000291_0000093",
+            "encoder_frames": 28,
+            "labels": 29
+          },
+          {
+            "utterance_id": "MILE_0000137_0000022",
+            "encoder_frames": 29,
+            "labels": 31
+          },
+          {
+            "utterance_id": "MILE_0000137_0000025",
+            "encoder_frames": 33,
+            "labels": 34
+          },
+          {
+            "utterance_id": "MILE_0000260_0000217",
+            "encoder_frames": 33,
+            "labels": 35
+          },
+          {
+            "utterance_id": "MILE_0000260_0000232",
+            "encoder_frames": 37,
+            "labels": 38
+          }
+        ],
+        "total_labels": 15822,
+        "max_labels": 38
+      },
+      "model": {
+        "architecture": "Conv1d x2 (no BatchNorm) -> GRU -> Linear",
+        "parameters": 668818,
+        "parameters_millions": 0.6688,
+        "encoder_stride": 4
+      },
+      "training": {
+        "epochs": 200,
+        "elapsed_seconds": 288.4,
+        "seconds_per_epoch": 1.44
+      },
+      "final": {
+        "train_loss": 0.0027653291614203736,
+        "token_error_rate": 0.00018960940462646946,
+        "exact_match_rate": 0.9953775038520801,
+        "word_error_rate": 0.0016474464579901153
+      },
+      "acceptance": {
+        "accept_max_token_error_rate": 0.1,
+        "accept_max_loss": 1.0,
+        "token_error_rate_pass": true,
+        "loss_pass": true,
+        "passed": true
+      },
+      "history": [
+        {
+          "epoch": 1,
+          "train_loss": 3.2617249517906,
+          "token_error_rate": 0.9867273416761472,
+          "exact_match_rate": 0.0,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 649.0,
+          "word_error_rate": 1.0,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 2,
+          "train_loss": 3.081874882302633,
+          "token_error_rate": 0.8705599797749969,
+          "exact_match_rate": 0.0,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 2652.0,
+          "word_error_rate": 1.0,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 3,
+          "train_loss": 2.883006180204996,
+          "token_error_rate": 0.7683605106813298,
+          "exact_match_rate": 0.0,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 5546.0,
+          "word_error_rate": 1.0,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 4,
+          "train_loss": 2.666489659286127,
+          "token_error_rate": 0.7489571482745544,
+          "exact_match_rate": 0.0,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 6437.0,
+          "word_error_rate": 1.0,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 5,
+          "train_loss": 2.482061383200855,
+          "token_error_rate": 0.6446719757299962,
+          "exact_match_rate": 0.0,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 10399.0,
+          "word_error_rate": 1.0411861614497528,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 6,
+          "train_loss": 2.3314708907429766,
+          "token_error_rate": 0.6227404879282012,
+          "exact_match_rate": 0.0,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 10021.0,
+          "word_error_rate": 1.0323997803404723,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 7,
+          "train_loss": 2.2015375218740325,
+          "token_error_rate": 0.5745164960182025,
+          "exact_match_rate": 0.0,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 10976.0,
+          "word_error_rate": 1.028006589785832,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 8,
+          "train_loss": 2.0490373474795645,
+          "token_error_rate": 0.5260396915687018,
+          "exact_match_rate": 0.0,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 12747.0,
+          "word_error_rate": 1.0658978583196046,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 9,
+          "train_loss": 1.9182196782856453,
+          "token_error_rate": 0.4931740614334471,
+          "exact_match_rate": 0.0,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 13547.0,
+          "word_error_rate": 1.0082372322899507,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 10,
+          "train_loss": 1.7782194905164765,
+          "token_error_rate": 0.4309821767159651,
+          "exact_match_rate": 0.0030816640986132513,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 14261.0,
+          "word_error_rate": 1.057660626029654,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 11,
+          "train_loss": 1.6289920952261947,
+          "token_error_rate": 0.40576412590064465,
+          "exact_match_rate": 0.0015408320493066256,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 13960.0,
+          "word_error_rate": 0.9934102141680395,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 12,
+          "train_loss": 1.4926173556141737,
+          "token_error_rate": 0.37416255846289975,
+          "exact_match_rate": 0.0030816640986132513,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 14493.0,
+          "word_error_rate": 1.0323997803404723,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 13,
+          "train_loss": 1.3530051693683718,
+          "token_error_rate": 0.3278346605991657,
+          "exact_match_rate": 0.01078582434514638,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 14696.0,
+          "word_error_rate": 0.942339373970346,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 14,
+          "train_loss": 1.2027368320197593,
+          "token_error_rate": 0.2761976994058905,
+          "exact_match_rate": 0.015408320493066256,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 14793.0,
+          "word_error_rate": 0.9456342668863262,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 15,
+          "train_loss": 1.036610788688427,
+          "token_error_rate": 0.23005941094678295,
+          "exact_match_rate": 0.029275808936825885,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 14850.0,
+          "word_error_rate": 0.8605161998901703,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 16,
+          "train_loss": 0.8800307018000905,
+          "token_error_rate": 0.19637214005814688,
+          "exact_match_rate": 0.05855161787365177,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15091.0,
+          "word_error_rate": 0.7786930258099946,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 17,
+          "train_loss": 0.7524166376125522,
+          "token_error_rate": 0.16293768170901277,
+          "exact_match_rate": 0.08012326656394453,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15161.0,
+          "word_error_rate": 0.7051070840197694,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 18,
+          "train_loss": 0.6226654808695723,
+          "token_error_rate": 0.13683478700543547,
+          "exact_match_rate": 0.12172573189522343,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15133.0,
+          "word_error_rate": 0.6068094453596925,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 19,
+          "train_loss": 0.5308702875201295,
+          "token_error_rate": 0.1018202502844141,
+          "exact_match_rate": 0.1987673343605547,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15493.0,
+          "word_error_rate": 0.5057660626029654,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 20,
+          "train_loss": 0.43529921552030054,
+          "token_error_rate": 0.07704462141322209,
+          "exact_match_rate": 0.2773497688751926,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15459.0,
+          "word_error_rate": 0.400329489291598,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 21,
+          "train_loss": 0.35156640265046096,
+          "token_error_rate": 0.0577676652761977,
+          "exact_match_rate": 0.3605546995377504,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15614.0,
+          "word_error_rate": 0.328390993959363,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 22,
+          "train_loss": 0.2783997273299752,
+          "token_error_rate": 0.04714953861711541,
+          "exact_match_rate": 0.39907550077041604,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15621.0,
+          "word_error_rate": 0.2899505766062603,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 23,
+          "train_loss": 0.22185054884814634,
+          "token_error_rate": 0.0335608646188851,
+          "exact_match_rate": 0.5069337442218799,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15721.0,
+          "word_error_rate": 0.22405271828665568,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 24,
+          "train_loss": 0.17624275549882795,
+          "token_error_rate": 0.02471242573631652,
+          "exact_match_rate": 0.551617873651772,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15746.0,
+          "word_error_rate": 0.17792421746293247,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 25,
+          "train_loss": 0.1457921291996793,
+          "token_error_rate": 0.019719378081152827,
+          "exact_match_rate": 0.6086286594761171,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15771.0,
+          "word_error_rate": 0.14827018121911037,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 26,
+          "train_loss": 0.12450081918661188,
+          "token_error_rate": 0.020288206295032234,
+          "exact_match_rate": 0.5870570107858244,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15777.0,
+          "word_error_rate": 0.15650741350906094,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 27,
+          "train_loss": 0.10485594937714135,
+          "token_error_rate": 0.015990393123498925,
+          "exact_match_rate": 0.650231124807396,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15802.0,
+          "word_error_rate": 0.12959912136188906,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 28,
+          "train_loss": 0.09169147590675004,
+          "token_error_rate": 0.014031095942358742,
+          "exact_match_rate": 0.6764252696456087,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15809.0,
+          "word_error_rate": 0.1186161449752883,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 29,
+          "train_loss": 0.08170497921727053,
+          "token_error_rate": 0.013841486537732272,
+          "exact_match_rate": 0.6671802773497689,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15816.0,
+          "word_error_rate": 0.12026359143327842,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 30,
+          "train_loss": 0.07412789216855677,
+          "token_error_rate": 0.011566173682214638,
+          "exact_match_rate": 0.7195685670261941,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15814.0,
+          "word_error_rate": 0.09994508511806699,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 31,
+          "train_loss": 0.06532873354125314,
+          "token_error_rate": 0.011186954872961698,
+          "exact_match_rate": 0.7318952234206472,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15819.0,
+          "word_error_rate": 0.09610104338275673,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 32,
+          "train_loss": 0.0594295982907458,
+          "token_error_rate": 0.012387814435596006,
+          "exact_match_rate": 0.7026194144838213,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15817.0,
+          "word_error_rate": 0.10598572213069742,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 33,
+          "train_loss": 0.05709434764050856,
+          "token_error_rate": 0.0105549235242068,
+          "exact_match_rate": 0.7457627118644068,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15818.0,
+          "word_error_rate": 0.09115870400878638,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 34,
+          "train_loss": 0.052156750930518636,
+          "token_error_rate": 0.010238907849829351,
+          "exact_match_rate": 0.7503852080123267,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15821.0,
+          "word_error_rate": 0.08896210873146623,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 35,
+          "train_loss": 0.04787991688836638,
+          "token_error_rate": 0.010112501580078372,
+          "exact_match_rate": 0.7550077041602465,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15822.0,
+          "word_error_rate": 0.08731466227347612,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 36,
+          "train_loss": 0.04593961186161855,
+          "token_error_rate": 0.011882189356592087,
+          "exact_match_rate": 0.7103235747303543,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15821.0,
+          "word_error_rate": 0.10323997803404723,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 37,
+          "train_loss": 0.045445735566318035,
+          "token_error_rate": 0.008785235747693085,
+          "exact_match_rate": 0.785824345146379,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15823.0,
+          "word_error_rate": 0.07633168588687535,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 38,
+          "train_loss": 0.040689183489941966,
+          "token_error_rate": 0.008026798129187208,
+          "exact_match_rate": 0.8043143297380585,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15823.0,
+          "word_error_rate": 0.06974190005491489,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 39,
+          "train_loss": 0.03929464115829366,
+          "token_error_rate": 0.01093414233345974,
+          "exact_match_rate": 0.7349768875192604,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15822.0,
+          "word_error_rate": 0.09500274574409664,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 40,
+          "train_loss": 0.04027248503322282,
+          "token_error_rate": 0.010428517254455821,
+          "exact_match_rate": 0.7457627118644068,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15821.0,
+          "word_error_rate": 0.09060955518945635,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 41,
+          "train_loss": 0.03650091404504165,
+          "token_error_rate": 0.008216407533813678,
+          "exact_match_rate": 0.802773497688752,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15821.0,
+          "word_error_rate": 0.07084019769357495,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 42,
+          "train_loss": 0.03692683668398276,
+          "token_error_rate": 0.008153204398938187,
+          "exact_match_rate": 0.802773497688752,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15822.0,
+          "word_error_rate": 0.07084019769357495,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 43,
+          "train_loss": 0.035907183274081565,
+          "token_error_rate": 0.009101251422070534,
+          "exact_match_rate": 0.7873651771956857,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15818.0,
+          "word_error_rate": 0.07688083470620538,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 44,
+          "train_loss": 0.19211527480312238,
+          "token_error_rate": 0.3024270003792188,
+          "exact_match_rate": 0.004622496147919877,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15556.0,
+          "word_error_rate": 0.9297089511257551,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 45,
+          "train_loss": 1.1604004044358323,
+          "token_error_rate": 0.28548856023258756,
+          "exact_match_rate": 0.0061633281972265025,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 14864.0,
+          "word_error_rate": 0.9401427786930258,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 46,
+          "train_loss": 0.747443667999128,
+          "token_error_rate": 0.1545948679054481,
+          "exact_match_rate": 0.06471494607087827,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15202.0,
+          "word_error_rate": 0.7254255903349808,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 47,
+          "train_loss": 0.4093220197572941,
+          "token_error_rate": 0.08033118442674757,
+          "exact_match_rate": 0.24036979969183359,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15641.0,
+          "word_error_rate": 0.49203734211971445,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 48,
+          "train_loss": 0.21901424419952603,
+          "token_error_rate": 0.03564656806977626,
+          "exact_match_rate": 0.47303543913713403,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15739.0,
+          "word_error_rate": 0.26359143327841844,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 49,
+          "train_loss": 0.11464928022426803,
+          "token_error_rate": 0.011755783086841108,
+          "exact_match_rate": 0.7473035439137135,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15810.0,
+          "word_error_rate": 0.10378912685337727,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 50,
+          "train_loss": 0.06398787513011839,
+          "token_error_rate": 0.006573126027050942,
+          "exact_match_rate": 0.8412942989214176,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15821.0,
+          "word_error_rate": 0.057111477210323995,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 51,
+          "train_loss": 0.03875700793251759,
+          "token_error_rate": 0.005751485273669574,
+          "exact_match_rate": 0.8597842835130971,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15820.0,
+          "word_error_rate": 0.049972542559033495,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 52,
+          "train_loss": 0.031956667557540466,
+          "token_error_rate": 0.006067500948047023,
+          "exact_match_rate": 0.8520801232665639,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15819.0,
+          "word_error_rate": 0.05271828665568369,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 53,
+          "train_loss": 0.03053861674739093,
+          "token_error_rate": 0.006889141701428391,
+          "exact_match_rate": 0.8320493066255779,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15821.0,
+          "word_error_rate": 0.05985722130697419,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 54,
+          "train_loss": 0.02718454431288126,
+          "token_error_rate": 0.005877891543420554,
+          "exact_match_rate": 0.8567026194144838,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15819.0,
+          "word_error_rate": 0.051070840197693576,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 55,
+          "train_loss": 0.025598389902947154,
+          "token_error_rate": 0.004108203766906839,
+          "exact_match_rate": 0.8998459167950693,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15820.0,
+          "word_error_rate": 0.0356946732564525,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 56,
+          "train_loss": 0.023075843888630227,
+          "token_error_rate": 0.0044874225761597775,
+          "exact_match_rate": 0.8906009244992296,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15819.0,
+          "word_error_rate": 0.03898956617243273,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 57,
+          "train_loss": 0.022810402371716207,
+          "token_error_rate": 0.004550625711035267,
+          "exact_match_rate": 0.889060092449923,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15820.0,
+          "word_error_rate": 0.039538714991762765,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 58,
+          "train_loss": 0.023791633398703684,
+          "token_error_rate": 0.004045000632031349,
+          "exact_match_rate": 0.901386748844376,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15819.0,
+          "word_error_rate": 0.03514552443712246,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 59,
+          "train_loss": 0.022123060552630483,
+          "token_error_rate": 0.004361016306408798,
+          "exact_match_rate": 0.8936825885978429,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15819.0,
+          "word_error_rate": 0.03789126853377265,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 60,
+          "train_loss": 0.022954452504608328,
+          "token_error_rate": 0.004171406901782328,
+          "exact_match_rate": 0.8983050847457628,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15819.0,
+          "word_error_rate": 0.036243822075782535,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 61,
+          "train_loss": 0.02168889048441154,
+          "token_error_rate": 0.0056250790039185945,
+          "exact_match_rate": 0.8628659476117103,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15820.0,
+          "word_error_rate": 0.04887424492037342,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 62,
+          "train_loss": 0.02160910810571073,
+          "token_error_rate": 0.003918594362280369,
+          "exact_match_rate": 0.9044684129429892,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15820.0,
+          "word_error_rate": 0.034047226798462386,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 63,
+          "train_loss": 0.017021985917647437,
+          "token_error_rate": 0.004677031980786247,
+          "exact_match_rate": 0.8859784283513097,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15820.0,
+          "word_error_rate": 0.040637012630422846,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 64,
+          "train_loss": 0.016959957883511557,
+          "token_error_rate": 0.005119453924914676,
+          "exact_match_rate": 0.8751926040061633,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15820.0,
+          "word_error_rate": 0.044481054365733116,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 65,
+          "train_loss": 0.022127648792797473,
+          "token_error_rate": 0.004993047655163696,
+          "exact_match_rate": 0.8782742681047766,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15821.0,
+          "word_error_rate": 0.043382756727073035,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 66,
+          "train_loss": 0.0171449075157686,
+          "token_error_rate": 0.0034129692832764505,
+          "exact_match_rate": 0.9167950693374423,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15820.0,
+          "word_error_rate": 0.029654036243822075,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 67,
+          "train_loss": 0.020447327414663825,
+          "token_error_rate": 0.0059410946782960435,
+          "exact_match_rate": 0.8551617873651772,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15822.0,
+          "word_error_rate": 0.05161998901702362,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 68,
+          "train_loss": 0.017263934016227722,
+          "token_error_rate": 0.004297813171533308,
+          "exact_match_rate": 0.8952234206471494,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15820.0,
+          "word_error_rate": 0.037342119714442616,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 69,
+          "train_loss": 0.01684600059454125,
+          "token_error_rate": 0.0035393755530274303,
+          "exact_match_rate": 0.9137134052388289,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15820.0,
+          "word_error_rate": 0.030752333882482153,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 70,
+          "train_loss": 0.015561254885297542,
+          "token_error_rate": 0.002085703450891164,
+          "exact_match_rate": 0.9491525423728814,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15820.0,
+          "word_error_rate": 0.018121911037891267,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 71,
+          "train_loss": 0.01541551490166656,
+          "token_error_rate": 0.00347617241815194,
+          "exact_match_rate": 0.9183359013867488,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15820.0,
+          "word_error_rate": 0.030203185063152116,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 72,
+          "train_loss": 0.021613495731044832,
+          "token_error_rate": 0.004929844520288207,
+          "exact_match_rate": 0.8813559322033898,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15821.0,
+          "word_error_rate": 0.042833607907743,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 73,
+          "train_loss": 0.02427458335509206,
+          "token_error_rate": 0.0033497661484009605,
+          "exact_match_rate": 0.9183359013867488,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15821.0,
+          "word_error_rate": 0.029654036243822075,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 74,
+          "train_loss": 0.018085454715552125,
+          "token_error_rate": 0.0044874225761597775,
+          "exact_match_rate": 0.8921417565485362,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15816.0,
+          "word_error_rate": 0.039538714991762765,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 75,
+          "train_loss": 0.0906111507949124,
+          "token_error_rate": 0.13354822399191,
+          "exact_match_rate": 0.12326656394453005,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15389.0,
+          "word_error_rate": 0.6814936847885777,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 76,
+          "train_loss": 0.8229958945658149,
+          "token_error_rate": 0.2379598028062192,
+          "exact_match_rate": 0.01848998459167951,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 14795.0,
+          "word_error_rate": 0.8731466227347611,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 77,
+          "train_loss": 0.6478467005782012,
+          "token_error_rate": 0.1323473644292757,
+          "exact_match_rate": 0.10477657935285054,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15744.0,
+          "word_error_rate": 0.657331136738056,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 78,
+          "train_loss": 0.39119093756123285,
+          "token_error_rate": 0.07988876248261914,
+          "exact_match_rate": 0.25577812018489987,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15684.0,
+          "word_error_rate": 0.4805052169137836,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 79,
+          "train_loss": 0.22624271581085717,
+          "token_error_rate": 0.03450891164201744,
+          "exact_match_rate": 0.5362095531587057,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15698.0,
+          "word_error_rate": 0.242723778143877,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 80,
+          "train_loss": 0.09985776995195121,
+          "token_error_rate": 0.01093414233345974,
+          "exact_match_rate": 0.7812018489984591,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15807.0,
+          "word_error_rate": 0.08951125755079627,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 81,
+          "train_loss": 0.04111568638827742,
+          "token_error_rate": 0.0024017191252686133,
+          "exact_match_rate": 0.9429892141756548,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15824.0,
+          "word_error_rate": 0.02086765513454146,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 82,
+          "train_loss": 0.023190866905923296,
+          "token_error_rate": 0.0024017191252686133,
+          "exact_match_rate": 0.9414483821263482,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15823.0,
+          "word_error_rate": 0.02086765513454146,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 83,
+          "train_loss": 0.01675876008812338,
+          "token_error_rate": 0.0019592971811401845,
+          "exact_match_rate": 0.9522342064714946,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15824.0,
+          "word_error_rate": 0.01757276221856123,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 84,
+          "train_loss": 0.01507374529567797,
+          "token_error_rate": 0.0018960940462646946,
+          "exact_match_rate": 0.9537750385208013,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15823.0,
+          "word_error_rate": 0.016474464579901153,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 85,
+          "train_loss": 0.017243002649260368,
+          "token_error_rate": 0.0018960940462646946,
+          "exact_match_rate": 0.9537750385208013,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15821.0,
+          "word_error_rate": 0.016474464579901153,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 86,
+          "train_loss": 0.012678199277327554,
+          "token_error_rate": 0.0015800783718872456,
+          "exact_match_rate": 0.9614791987673343,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15821.0,
+          "word_error_rate": 0.013728720483250962,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 87,
+          "train_loss": 0.010705175889065353,
+          "token_error_rate": 0.0017064846416382253,
+          "exact_match_rate": 0.9583975346687211,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15822.0,
+          "word_error_rate": 0.014827018121911038,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 88,
+          "train_loss": 0.01317752656958452,
+          "token_error_rate": 0.001832890911389205,
+          "exact_match_rate": 0.9553158705701078,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15822.0,
+          "word_error_rate": 0.015925315760571115,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 89,
+          "train_loss": 0.02139831596712877,
+          "token_error_rate": 0.0017696877765137151,
+          "exact_match_rate": 0.9568567026194145,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15822.0,
+          "word_error_rate": 0.015376166941241077,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 90,
+          "train_loss": 0.010746029075007976,
+          "token_error_rate": 0.0017064846416382253,
+          "exact_match_rate": 0.9583975346687211,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15823.0,
+          "word_error_rate": 0.014827018121911038,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 91,
+          "train_loss": 0.009739999065925254,
+          "token_error_rate": 0.0015168752370117557,
+          "exact_match_rate": 0.963020030816641,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15822.0,
+          "word_error_rate": 0.013179571663920923,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 92,
+          "train_loss": 0.00971620289109102,
+          "token_error_rate": 0.0022753128555176336,
+          "exact_match_rate": 0.9445300462249615,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15824.0,
+          "word_error_rate": 0.019769357495881382,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 93,
+          "train_loss": 0.010181375143186348,
+          "token_error_rate": 0.0015168752370117557,
+          "exact_match_rate": 0.963020030816641,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15824.0,
+          "word_error_rate": 0.013179571663920923,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 94,
+          "train_loss": 0.0077448398124699185,
+          "token_error_rate": 0.001453672102136266,
+          "exact_match_rate": 0.9661016949152542,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15823.0,
+          "word_error_rate": 0.012630422844590884,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 95,
+          "train_loss": 0.015835329362123115,
+          "token_error_rate": 0.004866641385412716,
+          "exact_match_rate": 0.8813559322033898,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15823.0,
+          "word_error_rate": 0.04228445908841296,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 96,
+          "train_loss": 0.01142284679567305,
+          "token_error_rate": 0.0029705473391480218,
+          "exact_match_rate": 0.9275808936825886,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15821.0,
+          "word_error_rate": 0.02580999450851181,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 97,
+          "train_loss": 0.010573366611469083,
+          "token_error_rate": 0.0027177347996460623,
+          "exact_match_rate": 0.9337442218798151,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15820.0,
+          "word_error_rate": 0.023613399231191653,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 98,
+          "train_loss": 0.012265630384407393,
+          "token_error_rate": 0.0023385159903931236,
+          "exact_match_rate": 0.9429892141756548,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15822.0,
+          "word_error_rate": 0.020318506315211423,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 99,
+          "train_loss": 0.021146453775056615,
+          "token_error_rate": 0.0019592971811401845,
+          "exact_match_rate": 0.9522342064714946,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15824.0,
+          "word_error_rate": 0.017023613399231193,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 100,
+          "train_loss": 0.046816102853726324,
+          "token_error_rate": 0.05359625837441537,
+          "exact_match_rate": 0.3189522342064715,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15851.0,
+          "word_error_rate": 0.36902800658978585,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 101,
+          "train_loss": 0.439354831489121,
+          "token_error_rate": 0.15080267981291873,
+          "exact_match_rate": 0.07395993836671803,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15648.0,
+          "word_error_rate": 0.7303679297089511,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 102,
+          "train_loss": 0.4407941764447747,
+          "token_error_rate": 0.11939072177980027,
+          "exact_match_rate": 0.11556240369799692,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15707.0,
+          "word_error_rate": 0.6221856123009335,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 103,
+          "train_loss": 0.30628883311661276,
+          "token_error_rate": 0.08159524712425736,
+          "exact_match_rate": 0.2295839753466872,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15823.0,
+          "word_error_rate": 0.4964305326743548,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 104,
+          "train_loss": 0.19707216667692837,
+          "token_error_rate": 0.04304133485020857,
+          "exact_match_rate": 0.4391371340523883,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15753.0,
+          "word_error_rate": 0.29873695771554093,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 105,
+          "train_loss": 0.1320350780719664,
+          "token_error_rate": 0.020477815699658702,
+          "exact_match_rate": 0.6332819722650231,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15765.0,
+          "word_error_rate": 0.1658429434376716,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 106,
+          "train_loss": 0.062459024418963165,
+          "token_error_rate": 0.006636329161926431,
+          "exact_match_rate": 0.8520801232665639,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15829.0,
+          "word_error_rate": 0.057660626029654036,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 107,
+          "train_loss": 0.027850991932720674,
+          "token_error_rate": 0.0020225003160156746,
+          "exact_match_rate": 0.9506933744221879,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15823.0,
+          "word_error_rate": 0.01757276221856123,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 108,
+          "train_loss": 0.013623976307671244,
+          "token_error_rate": 0.0012640626975097965,
+          "exact_match_rate": 0.9691833590138675,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15821.0,
+          "word_error_rate": 0.010982976386600769,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 109,
+          "train_loss": 0.009614001249712779,
+          "token_error_rate": 0.0015800783718872456,
+          "exact_match_rate": 0.9614791987673343,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15823.0,
+          "word_error_rate": 0.013728720483250962,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 110,
+          "train_loss": 0.008400080339392511,
+          "token_error_rate": 0.0013272658323852863,
+          "exact_match_rate": 0.9676425269645609,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15822.0,
+          "word_error_rate": 0.011532125205930808,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 111,
+          "train_loss": 0.007620931211177532,
+          "token_error_rate": 0.0008848438882568576,
+          "exact_match_rate": 0.9784283513097073,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15822.0,
+          "word_error_rate": 0.007688083470620538,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 112,
+          "train_loss": 0.007765129628795676,
+          "token_error_rate": 0.0006320313487548982,
+          "exact_match_rate": 0.9845916795069337,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15822.0,
+          "word_error_rate": 0.0054914881933003845,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 113,
+          "train_loss": 0.009931661654263735,
+          "token_error_rate": 0.001074453292883327,
+          "exact_match_rate": 0.975346687211094,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15821.0,
+          "word_error_rate": 0.008786381109280615,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 114,
+          "train_loss": 0.007147288764826953,
+          "token_error_rate": 0.0013904689672607762,
+          "exact_match_rate": 0.9661016949152542,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15821.0,
+          "word_error_rate": 0.012081274025260845,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 115,
+          "train_loss": 0.007662974598976534,
+          "token_error_rate": 0.0009480470231323473,
+          "exact_match_rate": 0.9768875192604006,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15822.0,
+          "word_error_rate": 0.008237232289950576,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 116,
+          "train_loss": 0.007526780728523324,
+          "token_error_rate": 0.0013272658323852863,
+          "exact_match_rate": 0.9676425269645609,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15821.0,
+          "word_error_rate": 0.011532125205930808,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 117,
+          "train_loss": 0.00593001811719704,
+          "token_error_rate": 0.001074453292883327,
+          "exact_match_rate": 0.9738058551617874,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15821.0,
+          "word_error_rate": 0.009335529928610654,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 118,
+          "train_loss": 0.005518322806271565,
+          "token_error_rate": 0.0010112501580078373,
+          "exact_match_rate": 0.975346687211094,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15821.0,
+          "word_error_rate": 0.008786381109280615,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 119,
+          "train_loss": 0.0048625944210670706,
+          "token_error_rate": 0.0012640626975097965,
+          "exact_match_rate": 0.9691833590138675,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15821.0,
+          "word_error_rate": 0.010982976386600769,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 120,
+          "train_loss": 0.020665832616320653,
+          "token_error_rate": 0.005688282138794084,
+          "exact_match_rate": 0.8628659476117103,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15818.0,
+          "word_error_rate": 0.04942339373970346,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 121,
+          "train_loss": 0.013109838237940537,
+          "token_error_rate": 0.0017696877765137151,
+          "exact_match_rate": 0.9568567026194145,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15821.0,
+          "word_error_rate": 0.015376166941241077,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 122,
+          "train_loss": 0.007970369909322116,
+          "token_error_rate": 0.0010112501580078373,
+          "exact_match_rate": 0.975346687211094,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15821.0,
+          "word_error_rate": 0.008786381109280615,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 123,
+          "train_loss": 0.006528499235240061,
+          "token_error_rate": 0.0006952344836303881,
+          "exact_match_rate": 0.9830508474576272,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15821.0,
+          "word_error_rate": 0.0060406370126304225,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 124,
+          "train_loss": 0.00607140686663958,
+          "token_error_rate": 0.0013904689672607762,
+          "exact_match_rate": 0.9661016949152542,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15821.0,
+          "word_error_rate": 0.012081274025260845,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 125,
+          "train_loss": 0.016346887994852916,
+          "token_error_rate": 0.0048034382505372265,
+          "exact_match_rate": 0.8875192604006163,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15815.0,
+          "word_error_rate": 0.040637012630422846,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 126,
+          "train_loss": 0.02869842968108814,
+          "token_error_rate": 0.012135001896094046,
+          "exact_match_rate": 0.7580893682588598,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15806.0,
+          "word_error_rate": 0.10104338275672707,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 127,
+          "train_loss": 0.21106020735985623,
+          "token_error_rate": 0.14871697636202755,
+          "exact_match_rate": 0.07395993836671803,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15711.0,
+          "word_error_rate": 0.7254255903349808,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 128,
+          "train_loss": 0.4933613042642431,
+          "token_error_rate": 0.11477689293388953,
+          "exact_match_rate": 0.10939907550077041,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15738.0,
+          "word_error_rate": 0.6199890170236134,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 129,
+          "train_loss": 0.3544953638097135,
+          "token_error_rate": 0.11193275186449247,
+          "exact_match_rate": 0.12172573189522343,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15621.0,
+          "word_error_rate": 0.6177924217462932,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 130,
+          "train_loss": 0.24318997307521542,
+          "token_error_rate": 0.052711414486158514,
+          "exact_match_rate": 0.36517719568567025,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15860.0,
+          "word_error_rate": 0.3624382207578254,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 131,
+          "train_loss": 0.1425573633211415,
+          "token_error_rate": 0.03128555176336746,
+          "exact_match_rate": 0.5315870570107858,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15769.0,
+          "word_error_rate": 0.23064250411861614,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 132,
+          "train_loss": 0.08463939031722342,
+          "token_error_rate": 0.010302110984704842,
+          "exact_match_rate": 0.8012326656394453,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15799.0,
+          "word_error_rate": 0.08182317408017573,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 133,
+          "train_loss": 0.03960807560148036,
+          "token_error_rate": 0.0035393755530274303,
+          "exact_match_rate": 0.9198767334360555,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15821.0,
+          "word_error_rate": 0.03130148270181219,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 134,
+          "train_loss": 0.018779614775600594,
+          "token_error_rate": 0.0010112501580078373,
+          "exact_match_rate": 0.975346687211094,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15820.0,
+          "word_error_rate": 0.009335529928610654,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 135,
+          "train_loss": 0.008702365624741084,
+          "token_error_rate": 0.001074453292883327,
+          "exact_match_rate": 0.9738058551617874,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15820.0,
+          "word_error_rate": 0.009335529928610654,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 136,
+          "train_loss": 0.0070638211256619995,
+          "token_error_rate": 0.0006952344836303881,
+          "exact_match_rate": 0.9830508474576272,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15820.0,
+          "word_error_rate": 0.0060406370126304225,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 137,
+          "train_loss": 0.006226376156186367,
+          "token_error_rate": 0.0005688282138794084,
+          "exact_match_rate": 0.9861325115562404,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15820.0,
+          "word_error_rate": 0.004942339373970346,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 138,
+          "train_loss": 0.005124984695235404,
+          "token_error_rate": 0.0005688282138794084,
+          "exact_match_rate": 0.9861325115562404,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15820.0,
+          "word_error_rate": 0.004942339373970346,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 139,
+          "train_loss": 0.004164703617656104,
+          "token_error_rate": 0.0003792188092529389,
+          "exact_match_rate": 0.9907550077041603,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15820.0,
+          "word_error_rate": 0.0032948929159802307,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 140,
+          "train_loss": 0.003895896762359615,
+          "token_error_rate": 0.0005688282138794084,
+          "exact_match_rate": 0.9861325115562404,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15820.0,
+          "word_error_rate": 0.004942339373970346,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 141,
+          "train_loss": 0.003438927170752389,
+          "token_error_rate": 0.0005056250790039186,
+          "exact_match_rate": 0.987673343605547,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15820.0,
+          "word_error_rate": 0.004393190554640308,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 142,
+          "train_loss": 0.0035189936951188962,
+          "token_error_rate": 0.0007584376185058779,
+          "exact_match_rate": 0.9815100154083205,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15820.0,
+          "word_error_rate": 0.006589785831960461,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 143,
+          "train_loss": 0.0044244215880497925,
+          "token_error_rate": 0.001074453292883327,
+          "exact_match_rate": 0.9738058551617874,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15821.0,
+          "word_error_rate": 0.009335529928610654,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 144,
+          "train_loss": 0.008127276596851737,
+          "token_error_rate": 0.002085703450891164,
+          "exact_match_rate": 0.9491525423728814,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15820.0,
+          "word_error_rate": 0.018121911037891267,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 145,
+          "train_loss": 0.005581459453579311,
+          "token_error_rate": 0.0006320313487548982,
+          "exact_match_rate": 0.9845916795069337,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15820.0,
+          "word_error_rate": 0.0054914881933003845,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 146,
+          "train_loss": 0.003720511798746884,
+          "token_error_rate": 0.0005688282138794084,
+          "exact_match_rate": 0.9861325115562404,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15820.0,
+          "word_error_rate": 0.004942339373970346,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 147,
+          "train_loss": 0.00460699351118287,
+          "token_error_rate": 0.0005056250790039186,
+          "exact_match_rate": 0.987673343605547,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15819.0,
+          "word_error_rate": 0.004393190554640308,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 148,
+          "train_loss": 0.003775521648604786,
+          "token_error_rate": 0.0009480470231323473,
+          "exact_match_rate": 0.9768875192604006,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15820.0,
+          "word_error_rate": 0.008237232289950576,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 149,
+          "train_loss": 0.007839174664340823,
+          "token_error_rate": 0.0017064846416382253,
+          "exact_match_rate": 0.9583975346687211,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15821.0,
+          "word_error_rate": 0.014827018121911038,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 150,
+          "train_loss": 0.015648873923232824,
+          "token_error_rate": 0.0037289849576538996,
+          "exact_match_rate": 0.9090909090909091,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15819.0,
+          "word_error_rate": 0.032399780340472265,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 151,
+          "train_loss": 0.010350436094307863,
+          "token_error_rate": 0.0022753128555176336,
+          "exact_match_rate": 0.9460708782742681,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15824.0,
+          "word_error_rate": 0.019220208676551345,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 152,
+          "train_loss": 0.009530552435757183,
+          "token_error_rate": 0.0017696877765137151,
+          "exact_match_rate": 0.9568567026194145,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15819.0,
+          "word_error_rate": 0.015376166941241077,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 153,
+          "train_loss": 0.00823138137745512,
+          "token_error_rate": 0.0012640626975097965,
+          "exact_match_rate": 0.9707241910631741,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15817.0,
+          "word_error_rate": 0.011532125205930808,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 154,
+          "train_loss": 0.007663523670422231,
+          "token_error_rate": 0.0017696877765137151,
+          "exact_match_rate": 0.9568567026194145,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15818.0,
+          "word_error_rate": 0.015376166941241077,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 155,
+          "train_loss": 0.005565529547222867,
+          "token_error_rate": 0.0006952344836303881,
+          "exact_match_rate": 0.9830508474576272,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15819.0,
+          "word_error_rate": 0.0060406370126304225,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 156,
+          "train_loss": 0.015509456530264466,
+          "token_error_rate": 0.005498672734167614,
+          "exact_match_rate": 0.8690292758089369,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15817.0,
+          "word_error_rate": 0.047226798462383306,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 157,
+          "train_loss": 0.032442829213900175,
+          "token_error_rate": 0.025913285298950827,
+          "exact_match_rate": 0.5793528505392912,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15762.0,
+          "word_error_rate": 0.20538165842943437,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 158,
+          "train_loss": 0.45126837462459396,
+          "token_error_rate": 0.1603463531791177,
+          "exact_match_rate": 0.06317411402157165,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15684.0,
+          "word_error_rate": 0.7408017572762219,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 159,
+          "train_loss": 0.643188558337165,
+          "token_error_rate": 0.149159398306156,
+          "exact_match_rate": 0.06317411402157165,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15481.0,
+          "word_error_rate": 0.7078528281164196,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 160,
+          "train_loss": 0.41739522792944095,
+          "token_error_rate": 0.10573884464669447,
+          "exact_match_rate": 0.1448382126348228,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15685.0,
+          "word_error_rate": 0.5837451949478308,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 161,
+          "train_loss": 0.2911062106126692,
+          "token_error_rate": 0.08715712299330047,
+          "exact_match_rate": 0.18335901386748846,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15655.0,
+          "word_error_rate": 0.5068643602416255,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 162,
+          "train_loss": 0.2178485533449708,
+          "token_error_rate": 0.04771836683099482,
+          "exact_match_rate": 0.3852080123266564,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15779.0,
+          "word_error_rate": 0.3316858868753432,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 163,
+          "train_loss": 0.13918106139796535,
+          "token_error_rate": 0.0353937555302743,
+          "exact_match_rate": 0.4699537750385208,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15792.0,
+          "word_error_rate": 0.25974739154310816,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 164,
+          "train_loss": 0.08304521768558316,
+          "token_error_rate": 0.012324611300720515,
+          "exact_match_rate": 0.765793528505393,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15798.0,
+          "word_error_rate": 0.09939593629873696,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 165,
+          "train_loss": 0.04190809749884576,
+          "token_error_rate": 0.00360257868790292,
+          "exact_match_rate": 0.9244992295839753,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15803.0,
+          "word_error_rate": 0.029104887424492038,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 166,
+          "train_loss": 0.019873705806165206,
+          "token_error_rate": 0.0010112501580078373,
+          "exact_match_rate": 0.9768875192604006,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15816.0,
+          "word_error_rate": 0.008786381109280615,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 167,
+          "train_loss": 0.011012315182242452,
+          "token_error_rate": 0.001074453292883327,
+          "exact_match_rate": 0.975346687211094,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15819.0,
+          "word_error_rate": 0.008786381109280615,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 168,
+          "train_loss": 0.006063636480376306,
+          "token_error_rate": 0.00018960940462646946,
+          "exact_match_rate": 0.9953775038520801,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15820.0,
+          "word_error_rate": 0.0016474464579901153,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 169,
+          "train_loss": 0.004367593062541834,
+          "token_error_rate": 0.0003160156743774491,
+          "exact_match_rate": 0.9922958397534669,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15820.0,
+          "word_error_rate": 0.0027457440966501922,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 170,
+          "train_loss": 0.0037067986104819105,
+          "token_error_rate": 0.00018960940462646946,
+          "exact_match_rate": 0.9953775038520801,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15820.0,
+          "word_error_rate": 0.0016474464579901153,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 171,
+          "train_loss": 0.0033057923797836027,
+          "token_error_rate": 0.00018960940462646946,
+          "exact_match_rate": 0.9953775038520801,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15820.0,
+          "word_error_rate": 0.0016474464579901153,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 172,
+          "train_loss": 0.003336414581210148,
+          "token_error_rate": 0.00018960940462646946,
+          "exact_match_rate": 0.9953775038520801,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15820.0,
+          "word_error_rate": 0.0016474464579901153,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 173,
+          "train_loss": 0.0027620116129472125,
+          "token_error_rate": 0.0003160156743774491,
+          "exact_match_rate": 0.9922958397534669,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15821.0,
+          "word_error_rate": 0.0027457440966501922,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 174,
+          "train_loss": 0.0028403948867557253,
+          "token_error_rate": 0.00018960940462646946,
+          "exact_match_rate": 0.9953775038520801,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15820.0,
+          "word_error_rate": 0.0016474464579901153,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 175,
+          "train_loss": 0.002713585804818516,
+          "token_error_rate": 0.00018960940462646946,
+          "exact_match_rate": 0.9953775038520801,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15820.0,
+          "word_error_rate": 0.0016474464579901153,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 176,
+          "train_loss": 0.0023586098104715347,
+          "token_error_rate": 0.00018960940462646946,
+          "exact_match_rate": 0.9953775038520801,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15820.0,
+          "word_error_rate": 0.0016474464579901153,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 177,
+          "train_loss": 0.002107062230806616,
+          "token_error_rate": 0.00018960940462646946,
+          "exact_match_rate": 0.9953775038520801,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15820.0,
+          "word_error_rate": 0.0016474464579901153,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 178,
+          "train_loss": 0.0034224875966972876,
+          "token_error_rate": 0.0008216407533813677,
+          "exact_match_rate": 0.9799691833590138,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15821.0,
+          "word_error_rate": 0.007138934651290499,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 179,
+          "train_loss": 0.005260759816936604,
+          "token_error_rate": 0.00018960940462646946,
+          "exact_match_rate": 0.9953775038520801,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15820.0,
+          "word_error_rate": 0.0016474464579901153,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 180,
+          "train_loss": 0.0023407726420839204,
+          "token_error_rate": 0.0002528125395019593,
+          "exact_match_rate": 0.9938366718027735,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15820.0,
+          "word_error_rate": 0.002196595277320154,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 181,
+          "train_loss": 0.0019594763551850055,
+          "token_error_rate": 0.0003160156743774491,
+          "exact_match_rate": 0.9922958397534669,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15820.0,
+          "word_error_rate": 0.0027457440966501922,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 182,
+          "train_loss": 0.0017599685482465003,
+          "token_error_rate": 0.00018960940462646946,
+          "exact_match_rate": 0.9953775038520801,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15820.0,
+          "word_error_rate": 0.0016474464579901153,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 183,
+          "train_loss": 0.002409223070305704,
+          "token_error_rate": 0.0008848438882568576,
+          "exact_match_rate": 0.9784283513097073,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15821.0,
+          "word_error_rate": 0.007688083470620538,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 184,
+          "train_loss": 0.018686277473845134,
+          "token_error_rate": 0.005372266464416635,
+          "exact_match_rate": 0.8751926040061633,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15821.0,
+          "word_error_rate": 0.04557935200439319,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 185,
+          "train_loss": 0.056338104294476714,
+          "token_error_rate": 0.029958285930982178,
+          "exact_match_rate": 0.5346687211093991,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15839.0,
+          "word_error_rate": 0.2300933552992861,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 186,
+          "train_loss": 0.35570943973413327,
+          "token_error_rate": 0.12387814435596005,
+          "exact_match_rate": 0.09553158705701079,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15651.0,
+          "word_error_rate": 0.6359143327841845,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 187,
+          "train_loss": 0.38731605741308955,
+          "token_error_rate": 0.16363291619264317,
+          "exact_match_rate": 0.05546995377503852,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15451.0,
+          "word_error_rate": 0.7594728171334432,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 188,
+          "train_loss": 0.32953469400725716,
+          "token_error_rate": 0.08197446593351031,
+          "exact_match_rate": 0.2049306625577812,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15683.0,
+          "word_error_rate": 0.4903898956617243,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 189,
+          "train_loss": 0.2433010548716638,
+          "token_error_rate": 0.05707243079256731,
+          "exact_match_rate": 0.30970724191063176,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15694.0,
+          "word_error_rate": 0.38989566172432727,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 190,
+          "train_loss": 0.17982521707691798,
+          "token_error_rate": 0.06332954114524081,
+          "exact_match_rate": 0.3035439137134052,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15755.0,
+          "word_error_rate": 0.41186161449752884,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 191,
+          "train_loss": 0.13573444416610206,
+          "token_error_rate": 0.037985084060169386,
+          "exact_match_rate": 0.46533127889060094,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15707.0,
+          "word_error_rate": 0.2729269632070291,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 192,
+          "train_loss": 0.08725148505281384,
+          "token_error_rate": 0.012640626975097964,
+          "exact_match_rate": 0.7519260400616333,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15828.0,
+          "word_error_rate": 0.10543657331136738,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 193,
+          "train_loss": 0.05629099828259247,
+          "token_error_rate": 0.009922892175451902,
+          "exact_match_rate": 0.8058551617873652,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15809.0,
+          "word_error_rate": 0.08237232289950576,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 194,
+          "train_loss": 0.0356167310099231,
+          "token_error_rate": 0.0038553912274048793,
+          "exact_match_rate": 0.9152542372881356,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15810.0,
+          "word_error_rate": 0.032948929159802305,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 195,
+          "train_loss": 0.019145428759568348,
+          "token_error_rate": 0.001453672102136266,
+          "exact_match_rate": 0.9645608628659477,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15820.0,
+          "word_error_rate": 0.013179571663920923,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 196,
+          "train_loss": 0.008131278383477433,
+          "token_error_rate": 0.0005056250790039186,
+          "exact_match_rate": 0.987673343605547,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15821.0,
+          "word_error_rate": 0.004393190554640308,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 197,
+          "train_loss": 0.004613002469740444,
+          "token_error_rate": 0.00012640626975097966,
+          "exact_match_rate": 0.9969183359013868,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15820.0,
+          "word_error_rate": 0.001098297638660077,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 198,
+          "train_loss": 0.0035198558655726475,
+          "token_error_rate": 0.00012640626975097966,
+          "exact_match_rate": 0.9969183359013868,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15820.0,
+          "word_error_rate": 0.001098297638660077,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 199,
+          "train_loss": 0.0030786553766896448,
+          "token_error_rate": 0.00012640626975097966,
+          "exact_match_rate": 0.9969183359013868,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15820.0,
+          "word_error_rate": 0.001098297638660077,
+          "reference_words": 1821.0
+        },
+        {
+          "epoch": 200,
+          "train_loss": 0.0027653291614203736,
+          "token_error_rate": 0.00018960940462646946,
+          "exact_match_rate": 0.9953775038520801,
+          "reference_tokens": 15822.0,
+          "hypothesis_tokens": 15820.0,
+          "word_error_rate": 0.0016474464579901153,
+          "reference_words": 1821.0
+        }
+      ]
+    },
+    {
+      "name": "without_space",
+      "tokenizer": {
+        "include_space": false,
+        "form": "NFC",
+        "real_symbols": 47,
+        "num_classes": 49,
+        "blank_id": 0,
+        "unk_id": 1
+      },
+      "subset": {
+        "rows_before_filtering": 661,
+        "rows_violating_frames_ge_labels": 6,
+        "rows_trained": 655,
+        "violations": [
+          {
+            "utterance_id": "MILE_0000289_0000070",
+            "encoder_frames": 7,
+            "labels": 26
+          },
+          {
+            "utterance_id": "MILE_0000289_0000068",
+            "encoder_frames": 9,
+            "labels": 38
+          },
+          {
+            "utterance_id": "MILE_0000289_0000067",
+            "encoder_frames": 11,
+            "labels": 43
+          },
+          {
+            "utterance_id": "MILE_0000289_0000069",
+            "encoder_frames": 12,
+            "labels": 47
+          },
+          {
+            "utterance_id": "MILE_0000289_0000071",
+            "encoder_frames": 12,
+            "labels": 45
+          },
+          {
+            "utterance_id": "MILE_0000167_0000024",
+            "encoder_frames": 26,
+            "labels": 27
+          }
+        ],
+        "total_labels": 14831,
+        "max_labels": 36
+      },
+      "model": {
+        "architecture": "Conv1d x2 (no BatchNorm) -> GRU -> Linear",
+        "parameters": 668561,
+        "parameters_millions": 0.6686,
+        "encoder_stride": 4
+      },
+      "training": {
+        "epochs": 200,
+        "elapsed_seconds": 280.4,
+        "seconds_per_epoch": 1.4
+      },
+      "final": {
+        "train_loss": 0.0006904102724880298,
+        "token_error_rate": 6.742633672712562e-05,
+        "exact_match_rate": 0.9984732824427481,
+        "word_error_rate": null
+      },
+      "acceptance": {
+        "accept_max_token_error_rate": 0.1,
+        "accept_max_loss": 1.0,
+        "token_error_rate_pass": true,
+        "loss_pass": true,
+        "passed": true
+      },
+      "history": [
+        {
+          "epoch": 1,
+          "train_loss": 3.26261941107308,
+          "token_error_rate": 1.0,
+          "exact_match_rate": 0.0,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 0.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 2,
+          "train_loss": 3.0999823895896355,
+          "token_error_rate": 0.9000067426336728,
+          "exact_match_rate": 0.0,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 2001.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 3,
+          "train_loss": 2.9174644772599385,
+          "token_error_rate": 0.8613040253523027,
+          "exact_match_rate": 0.0,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 2647.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 4,
+          "train_loss": 2.661633619448034,
+          "token_error_rate": 0.6839727597599622,
+          "exact_match_rate": 0.0,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 7980.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 5,
+          "train_loss": 2.418671000294569,
+          "token_error_rate": 0.62585125750118,
+          "exact_match_rate": 0.0,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 10250.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 6,
+          "train_loss": 2.2382666773912385,
+          "token_error_rate": 0.5753489312925629,
+          "exact_match_rate": 0.0,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 11401.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 7,
+          "train_loss": 2.0563068099138215,
+          "token_error_rate": 0.5484458229384398,
+          "exact_match_rate": 0.0,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 11493.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 8,
+          "train_loss": 1.8893610849613096,
+          "token_error_rate": 0.4758950846200526,
+          "exact_match_rate": 0.0,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 12289.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 9,
+          "train_loss": 1.7193069763299895,
+          "token_error_rate": 0.4380689097161351,
+          "exact_match_rate": 0.0,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 12620.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 10,
+          "train_loss": 1.5458157484124346,
+          "token_error_rate": 0.38068909716135124,
+          "exact_match_rate": 0.0015267175572519084,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 13669.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 11,
+          "train_loss": 1.3786745783759327,
+          "token_error_rate": 0.33686197828871955,
+          "exact_match_rate": 0.0,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 13407.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 12,
+          "train_loss": 1.21770298044856,
+          "token_error_rate": 0.32654574876946935,
+          "exact_match_rate": 0.0015267175572519084,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14234.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 13,
+          "train_loss": 1.0594194364256975,
+          "token_error_rate": 0.24657811341109837,
+          "exact_match_rate": 0.013740458015267175,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 13966.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 14,
+          "train_loss": 0.8924223213661008,
+          "token_error_rate": 0.19722203492684243,
+          "exact_match_rate": 0.044274809160305344,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14341.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 15,
+          "train_loss": 0.736708394274479,
+          "token_error_rate": 0.16627334636909177,
+          "exact_match_rate": 0.07633587786259542,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14070.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 16,
+          "train_loss": 0.6044555608092285,
+          "token_error_rate": 0.12811003978153868,
+          "exact_match_rate": 0.1435114503816794,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14355.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 17,
+          "train_loss": 0.4835264551930311,
+          "token_error_rate": 0.09365518171397748,
+          "exact_match_rate": 0.22900763358778625,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14459.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 18,
+          "train_loss": 0.3859121572317147,
+          "token_error_rate": 0.06209965612568269,
+          "exact_match_rate": 0.35572519083969467,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14611.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 19,
+          "train_loss": 0.2957341392956129,
+          "token_error_rate": 0.046726451351898055,
+          "exact_match_rate": 0.4488549618320611,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14700.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 20,
+          "train_loss": 0.23557555829969848,
+          "token_error_rate": 0.03600566381228508,
+          "exact_match_rate": 0.48396946564885496,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14704.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 21,
+          "train_loss": 0.18672429661198361,
+          "token_error_rate": 0.023936349538129592,
+          "exact_match_rate": 0.5893129770992367,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14779.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 22,
+          "train_loss": 0.1493931956952665,
+          "token_error_rate": 0.021711280426134447,
+          "exact_match_rate": 0.6,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14776.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 23,
+          "train_loss": 0.12016166128763338,
+          "token_error_rate": 0.01692401051850853,
+          "exact_match_rate": 0.6442748091603053,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14808.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 24,
+          "train_loss": 0.09860550721244114,
+          "token_error_rate": 0.01584518913087452,
+          "exact_match_rate": 0.6580152671755726,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14815.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 25,
+          "train_loss": 0.08557557060224254,
+          "token_error_rate": 0.015575483783966016,
+          "exact_match_rate": 0.6580152671755726,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14826.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 26,
+          "train_loss": 0.07833772357098939,
+          "token_error_rate": 0.01476636774324051,
+          "exact_match_rate": 0.6717557251908397,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14826.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 27,
+          "train_loss": 0.07005113240603994,
+          "token_error_rate": 0.012271593284336862,
+          "exact_match_rate": 0.7282442748091603,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14826.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 28,
+          "train_loss": 0.06508159482987916,
+          "token_error_rate": 0.01200188793742836,
+          "exact_match_rate": 0.7312977099236642,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14826.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 29,
+          "train_loss": 0.06076237634278652,
+          "token_error_rate": 0.0136875463556065,
+          "exact_match_rate": 0.6931297709923664,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14827.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 30,
+          "train_loss": 0.057493497685688295,
+          "token_error_rate": 0.013889825365787877,
+          "exact_match_rate": 0.6916030534351145,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14823.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 31,
+          "train_loss": 0.053348355585845504,
+          "token_error_rate": 0.012204166947609736,
+          "exact_match_rate": 0.7236641221374046,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14830.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 32,
+          "train_loss": 0.04964267364816695,
+          "token_error_rate": 0.01092306654979435,
+          "exact_match_rate": 0.7526717557251908,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14831.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 33,
+          "train_loss": 0.04767668408500712,
+          "token_error_rate": 0.010113950509068843,
+          "exact_match_rate": 0.7725190839694657,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14829.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 34,
+          "train_loss": 0.04698907011529294,
+          "token_error_rate": 0.01092306654979435,
+          "exact_match_rate": 0.7557251908396947,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14828.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 35,
+          "train_loss": 0.04647393660937867,
+          "token_error_rate": 0.009035129121434832,
+          "exact_match_rate": 0.7954198473282442,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14830.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 36,
+          "train_loss": 0.04294839846651729,
+          "token_error_rate": 0.01139505090688423,
+          "exact_match_rate": 0.7465648854961832,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14831.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 37,
+          "train_loss": 0.050211914315274574,
+          "token_error_rate": 0.011867035263974108,
+          "exact_match_rate": 0.7419847328244275,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14823.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 38,
+          "train_loss": 0.2987562165618306,
+          "token_error_rate": 0.25048884094127166,
+          "exact_match_rate": 0.025954198473282442,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14036.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 39,
+          "train_loss": 0.7970491985722286,
+          "token_error_rate": 0.1565639538803857,
+          "exact_match_rate": 0.08091603053435115,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14337.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 40,
+          "train_loss": 0.4761868780705987,
+          "token_error_rate": 0.09250893398961635,
+          "exact_match_rate": 0.1984732824427481,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14751.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 41,
+          "train_loss": 0.24880867033469967,
+          "token_error_rate": 0.03533140044501382,
+          "exact_match_rate": 0.48091603053435117,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14829.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 42,
+          "train_loss": 0.12152272367441072,
+          "token_error_rate": 0.015103499426876138,
+          "exact_match_rate": 0.6870229007633588,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14829.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 43,
+          "train_loss": 0.0680720203260823,
+          "token_error_rate": 0.009035129121434832,
+          "exact_match_rate": 0.8030534351145038,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14826.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 44,
+          "train_loss": 0.043775537005830104,
+          "token_error_rate": 0.006405501989076933,
+          "exact_match_rate": 0.8549618320610687,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14830.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 45,
+          "train_loss": 0.03592526252813092,
+          "token_error_rate": 0.007349470703256692,
+          "exact_match_rate": 0.833587786259542,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14831.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 46,
+          "train_loss": 0.03239621386704285,
+          "token_error_rate": 0.007484323376710943,
+          "exact_match_rate": 0.8305343511450382,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14831.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 47,
+          "train_loss": 0.02969477733415438,
+          "token_error_rate": 0.005798664958532803,
+          "exact_match_rate": 0.8687022900763359,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14831.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 48,
+          "train_loss": 0.029296333731220262,
+          "token_error_rate": 0.0066752073359854355,
+          "exact_match_rate": 0.8488549618320611,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14831.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 49,
+          "train_loss": 0.025989826768636703,
+          "token_error_rate": 0.006068370305441305,
+          "exact_match_rate": 0.8625954198473282,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14831.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 50,
+          "train_loss": 0.025854798908368115,
+          "token_error_rate": 0.005866091295259929,
+          "exact_match_rate": 0.867175572519084,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14831.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 51,
+          "train_loss": 0.025548619695189522,
+          "token_error_rate": 0.006338075652349808,
+          "exact_match_rate": 0.8564885496183207,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14831.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 52,
+          "train_loss": 0.02674260549247265,
+          "token_error_rate": 0.006203222978895556,
+          "exact_match_rate": 0.8595419847328244,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14831.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 53,
+          "train_loss": 0.024708713461622234,
+          "token_error_rate": 0.005528959611624301,
+          "exact_match_rate": 0.8748091603053435,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14831.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 54,
+          "train_loss": 0.0254237790557942,
+          "token_error_rate": 0.004989548917807295,
+          "exact_match_rate": 0.8870229007633588,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14831.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 55,
+          "train_loss": 0.022330708983467847,
+          "token_error_rate": 0.004719843570898793,
+          "exact_match_rate": 0.8931297709923665,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14831.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 56,
+          "train_loss": 0.02107292757278717,
+          "token_error_rate": 0.004180432877081788,
+          "exact_match_rate": 0.9068702290076336,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14830.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 57,
+          "train_loss": 0.021678809337772248,
+          "token_error_rate": 0.004989548917807295,
+          "exact_match_rate": 0.8870229007633588,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14831.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 58,
+          "train_loss": 0.023251151552469266,
+          "token_error_rate": 0.0066752073359854355,
+          "exact_match_rate": 0.8488549618320611,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14830.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 59,
+          "train_loss": 0.026438047973121086,
+          "token_error_rate": 0.006203222978895556,
+          "exact_match_rate": 0.8595419847328244,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14831.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 60,
+          "train_loss": 0.02297274576977077,
+          "token_error_rate": 0.007282044366529567,
+          "exact_match_rate": 0.8351145038167939,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14831.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 61,
+          "train_loss": 0.031514484707902114,
+          "token_error_rate": 0.004517564560717416,
+          "exact_match_rate": 0.9022900763358779,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14829.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 62,
+          "train_loss": 0.04506029417488452,
+          "token_error_rate": 0.030881262221023532,
+          "exact_match_rate": 0.583206106870229,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14739.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 63,
+          "train_loss": 0.5135082285396937,
+          "token_error_rate": 0.17490391747016384,
+          "exact_match_rate": 0.04732824427480916,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14569.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 64,
+          "train_loss": 0.5085469462522646,
+          "token_error_rate": 0.11442249342593216,
+          "exact_match_rate": 0.1251908396946565,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14496.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 65,
+          "train_loss": 0.2885272650093567,
+          "token_error_rate": 0.061762524442047065,
+          "exact_match_rate": 0.3190839694656489,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14830.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 66,
+          "train_loss": 0.1546797904117805,
+          "token_error_rate": 0.019014226957049424,
+          "exact_match_rate": 0.667175572519084,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14833.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 67,
+          "train_loss": 0.06883793955714237,
+          "token_error_rate": 0.00876542377452633,
+          "exact_match_rate": 0.8198473282442749,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14832.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 68,
+          "train_loss": 0.03396290622469855,
+          "token_error_rate": 0.003978153866900412,
+          "exact_match_rate": 0.9099236641221374,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14832.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 69,
+          "train_loss": 0.020879102450591033,
+          "token_error_rate": 0.0023599217854493966,
+          "exact_match_rate": 0.9465648854961832,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14831.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 70,
+          "train_loss": 0.017037798798211466,
+          "token_error_rate": 0.0024947744589036477,
+          "exact_match_rate": 0.9435114503816794,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14831.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 71,
+          "train_loss": 0.016536041861400008,
+          "token_error_rate": 0.003169037826174904,
+          "exact_match_rate": 0.9282442748091603,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14831.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 72,
+          "train_loss": 0.015226328416114173,
+          "token_error_rate": 0.0035735958465376574,
+          "exact_match_rate": 0.9190839694656489,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14831.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 73,
+          "train_loss": 0.014404463507916505,
+          "token_error_rate": 0.0024947744589036477,
+          "exact_match_rate": 0.9435114503816794,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14832.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 74,
+          "train_loss": 0.014252194317012298,
+          "token_error_rate": 0.00492212258108017,
+          "exact_match_rate": 0.8885496183206106,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14830.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 75,
+          "train_loss": 0.019026726336650004,
+          "token_error_rate": 0.004517564560717416,
+          "exact_match_rate": 0.8977099236641222,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14831.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 76,
+          "train_loss": 0.015631191517657985,
+          "token_error_rate": 0.0024947744589036477,
+          "exact_match_rate": 0.9435114503816794,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14831.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 77,
+          "train_loss": 0.013925228901093871,
+          "token_error_rate": 0.0027644798058121503,
+          "exact_match_rate": 0.9374045801526718,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14832.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 78,
+          "train_loss": 0.014343652303512321,
+          "token_error_rate": 0.00384330119344616,
+          "exact_match_rate": 0.9129770992366413,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14833.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 79,
+          "train_loss": 0.022557909129096602,
+          "token_error_rate": 0.00600094396871418,
+          "exact_match_rate": 0.8656488549618321,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14830.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 80,
+          "train_loss": 0.01436097532079169,
+          "token_error_rate": 0.0028993324792664014,
+          "exact_match_rate": 0.934351145038168,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14831.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 81,
+          "train_loss": 0.012074573996204247,
+          "token_error_rate": 0.0018879374283595173,
+          "exact_match_rate": 0.9572519083969465,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14831.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 82,
+          "train_loss": 0.01167931908275932,
+          "token_error_rate": 0.0068100600094396875,
+          "exact_match_rate": 0.8458015267175573,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14832.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 83,
+          "train_loss": 0.014495972700121745,
+          "token_error_rate": 0.0022250691119951455,
+          "exact_match_rate": 0.9496183206106871,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14832.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 84,
+          "train_loss": 0.013006910017305395,
+          "token_error_rate": 0.004584990897444542,
+          "exact_match_rate": 0.8961832061068702,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14831.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 85,
+          "train_loss": 0.014162731953192412,
+          "token_error_rate": 0.0025622007956307732,
+          "exact_match_rate": 0.9419847328244275,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14831.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 86,
+          "train_loss": 0.01660071099006639,
+          "token_error_rate": 0.00492212258108017,
+          "exact_match_rate": 0.8885496183206106,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14830.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 87,
+          "train_loss": 0.016880271544611854,
+          "token_error_rate": 0.0028993324792664014,
+          "exact_match_rate": 0.934351145038168,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14830.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 88,
+          "train_loss": 0.010589006987241347,
+          "token_error_rate": 0.002292495448722271,
+          "exact_match_rate": 0.9480916030534351,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14830.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 89,
+          "train_loss": 0.0138485944807166,
+          "token_error_rate": 0.0028993324792664014,
+          "exact_match_rate": 0.934351145038168,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14832.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 90,
+          "train_loss": 0.017132304302166876,
+          "token_error_rate": 0.005056975254534421,
+          "exact_match_rate": 0.8854961832061069,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14831.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 91,
+          "train_loss": 0.245007059071213,
+          "token_error_rate": 0.15878902299238082,
+          "exact_match_rate": 0.07938931297709924,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14893.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 92,
+          "train_loss": 0.6091652338097735,
+          "token_error_rate": 0.13458296810734272,
+          "exact_match_rate": 0.10229007633587786,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14543.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 93,
+          "train_loss": 0.39849861783952245,
+          "token_error_rate": 0.08563144764344953,
+          "exact_match_rate": 0.22748091603053436,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14748.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 94,
+          "train_loss": 0.22716849842449513,
+          "token_error_rate": 0.03519654777155957,
+          "exact_match_rate": 0.48244274809160304,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14805.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 95,
+          "train_loss": 0.11128801520822978,
+          "token_error_rate": 0.01860966893668667,
+          "exact_match_rate": 0.6793893129770993,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14832.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 96,
+          "train_loss": 0.06039601805188307,
+          "token_error_rate": 0.006135796642168431,
+          "exact_match_rate": 0.8687022900763359,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14832.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 97,
+          "train_loss": 0.024796520689184347,
+          "token_error_rate": 0.0028993324792664014,
+          "exact_match_rate": 0.9358778625954198,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14826.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 98,
+          "train_loss": 0.014561283152277877,
+          "token_error_rate": 0.002427348122176522,
+          "exact_match_rate": 0.9450381679389313,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14830.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 99,
+          "train_loss": 0.010876126678251639,
+          "token_error_rate": 0.000876542377452633,
+          "exact_match_rate": 0.9801526717557252,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14830.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 100,
+          "train_loss": 0.008679532403376227,
+          "token_error_rate": 0.00107882138763401,
+          "exact_match_rate": 0.9755725190839695,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14831.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 101,
+          "train_loss": 0.008190695136762792,
+          "token_error_rate": 0.0013485267345425124,
+          "exact_match_rate": 0.9694656488549618,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14831.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 102,
+          "train_loss": 0.010756588660226,
+          "token_error_rate": 0.000876542377452633,
+          "exact_match_rate": 0.9801526717557252,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14830.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 103,
+          "train_loss": 0.008100043053784204,
+          "token_error_rate": 0.0023599217854493966,
+          "exact_match_rate": 0.9465648854961832,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14830.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 104,
+          "train_loss": 0.010256818331005732,
+          "token_error_rate": 0.00215764277526802,
+          "exact_match_rate": 0.9511450381679389,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14831.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 105,
+          "train_loss": 0.008684677301860618,
+          "token_error_rate": 0.0020227901018137684,
+          "exact_match_rate": 0.9541984732824428,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14830.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 106,
+          "train_loss": 0.009918470216756006,
+          "token_error_rate": 0.0018879374283595173,
+          "exact_match_rate": 0.9572519083969465,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14831.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 107,
+          "train_loss": 0.007296256292270633,
+          "token_error_rate": 0.0007416897039983817,
+          "exact_match_rate": 0.983206106870229,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14830.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 108,
+          "train_loss": 0.006510834249372526,
+          "token_error_rate": 0.0009439687141797586,
+          "exact_match_rate": 0.9786259541984733,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14830.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 109,
+          "train_loss": 0.005801842420180215,
+          "token_error_rate": 0.0012811003978153866,
+          "exact_match_rate": 0.9709923664122138,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14831.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 110,
+          "train_loss": 0.012269391834440573,
+          "token_error_rate": 0.0032364641629020296,
+          "exact_match_rate": 0.9282442748091603,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14831.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 111,
+          "train_loss": 0.02003172328468503,
+          "token_error_rate": 0.003910727530173286,
+          "exact_match_rate": 0.917557251908397,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14831.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 112,
+          "train_loss": 0.018901454648230134,
+          "token_error_rate": 0.004584990897444542,
+          "exact_match_rate": 0.9068702290076336,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14829.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 113,
+          "train_loss": 0.018657147202913355,
+          "token_error_rate": 0.0033713168363562807,
+          "exact_match_rate": 0.9297709923664123,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14824.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 114,
+          "train_loss": 0.01887023232581957,
+          "token_error_rate": 0.0037758748567190345,
+          "exact_match_rate": 0.916030534351145,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14828.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 115,
+          "train_loss": 0.021435992962612612,
+          "token_error_rate": 0.00660778099925831,
+          "exact_match_rate": 0.8580152671755725,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14829.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 116,
+          "train_loss": 0.027745648230448727,
+          "token_error_rate": 0.006338075652349808,
+          "exact_match_rate": 0.867175572519084,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14828.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 117,
+          "train_loss": 0.17544013936436031,
+          "token_error_rate": 0.10936551817139775,
+          "exact_match_rate": 0.13129770992366413,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14708.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 118,
+          "train_loss": 0.4480105425889899,
+          "token_error_rate": 0.13087451958735083,
+          "exact_match_rate": 0.0900763358778626,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14815.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 119,
+          "train_loss": 0.3650179914221531,
+          "token_error_rate": 0.08880048546962444,
+          "exact_match_rate": 0.1969465648854962,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14788.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 120,
+          "train_loss": 0.2088926544458401,
+          "token_error_rate": 0.03957925965882274,
+          "exact_match_rate": 0.46564885496183206,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14772.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 121,
+          "train_loss": 0.12275391853437191,
+          "token_error_rate": 0.022924954487222707,
+          "exact_match_rate": 0.6351145038167939,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14818.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 122,
+          "train_loss": 0.05958330544938401,
+          "token_error_rate": 0.005461533274897175,
+          "exact_match_rate": 0.8946564885496183,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14843.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 123,
+          "train_loss": 0.02489123122039728,
+          "token_error_rate": 0.0020227901018137684,
+          "exact_match_rate": 0.9572519083969465,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14827.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 124,
+          "train_loss": 0.012846383442193634,
+          "token_error_rate": 0.0006068370305441305,
+          "exact_match_rate": 0.9877862595419847,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14833.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 125,
+          "train_loss": 0.007181203941155861,
+          "token_error_rate": 0.0010113950509068842,
+          "exact_match_rate": 0.9770992366412213,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14831.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 126,
+          "train_loss": 0.0067207003239451385,
+          "token_error_rate": 0.0003371316836356281,
+          "exact_match_rate": 0.9923664122137404,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14831.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 127,
+          "train_loss": 0.008355426619101951,
+          "token_error_rate": 0.001415953071269638,
+          "exact_match_rate": 0.9679389312977099,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14831.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 128,
+          "train_loss": 0.005244007899153341,
+          "token_error_rate": 0.000539410693817005,
+          "exact_match_rate": 0.9877862595419847,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14831.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 129,
+          "train_loss": 0.00456110896718711,
+          "token_error_rate": 0.000539410693817005,
+          "exact_match_rate": 0.9877862595419847,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14831.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 130,
+          "train_loss": 0.005880170429363937,
+          "token_error_rate": 0.0006742633672712562,
+          "exact_match_rate": 0.9847328244274809,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14831.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 131,
+          "train_loss": 0.008250825173823481,
+          "token_error_rate": 0.0007416897039983817,
+          "exact_match_rate": 0.983206106870229,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14831.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 132,
+          "train_loss": 0.00613939889462483,
+          "token_error_rate": 0.0004045580203627537,
+          "exact_match_rate": 0.9908396946564886,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14831.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 133,
+          "train_loss": 0.003919228210068512,
+          "token_error_rate": 0.00020227901018137685,
+          "exact_match_rate": 0.9954198473282443,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14831.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 134,
+          "train_loss": 0.005324353791898253,
+          "token_error_rate": 0.002966758815993527,
+          "exact_match_rate": 0.932824427480916,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14831.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 135,
+          "train_loss": 0.005556505796692629,
+          "token_error_rate": 0.001753084754905266,
+          "exact_match_rate": 0.9603053435114504,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14831.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 136,
+          "train_loss": 0.006936653612306478,
+          "token_error_rate": 0.00215764277526802,
+          "exact_match_rate": 0.9511450381679389,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14831.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 137,
+          "train_loss": 0.007751841753971104,
+          "token_error_rate": 0.0014833794079967635,
+          "exact_match_rate": 0.966412213740458,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14831.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 138,
+          "train_loss": 0.009249501255420378,
+          "token_error_rate": 0.003910727530173286,
+          "exact_match_rate": 0.9114503816793893,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14831.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 139,
+          "train_loss": 0.009842185671270893,
+          "token_error_rate": 0.0012811003978153866,
+          "exact_match_rate": 0.9709923664122138,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14831.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 140,
+          "train_loss": 0.007955952352991827,
+          "token_error_rate": 0.0013485267345425124,
+          "exact_match_rate": 0.9694656488549618,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14830.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 141,
+          "train_loss": 0.008802977130782404,
+          "token_error_rate": 0.003506169509810532,
+          "exact_match_rate": 0.9206106870229007,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14831.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 142,
+          "train_loss": 0.01952724753333846,
+          "token_error_rate": 0.008428292090890702,
+          "exact_match_rate": 0.8351145038167939,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14827.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 143,
+          "train_loss": 0.025002094082216302,
+          "token_error_rate": 0.008563144764344954,
+          "exact_match_rate": 0.8320610687022901,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14837.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 144,
+          "train_loss": 0.11994915850823973,
+          "token_error_rate": 0.0984424516216034,
+          "exact_match_rate": 0.18778625954198475,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14899.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 145,
+          "train_loss": 0.4580837451830143,
+          "token_error_rate": 0.1123997033241184,
+          "exact_match_rate": 0.13893129770992366,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14899.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 146,
+          "train_loss": 0.376996223882931,
+          "token_error_rate": 0.08812622210235319,
+          "exact_match_rate": 0.19236641221374046,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14666.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 147,
+          "train_loss": 0.3090349495774362,
+          "token_error_rate": 0.0629087721664082,
+          "exact_match_rate": 0.300763358778626,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14861.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 148,
+          "train_loss": 0.17660932769862617,
+          "token_error_rate": 0.037893601240644594,
+          "exact_match_rate": 0.46412213740458014,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14806.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 149,
+          "train_loss": 0.0999911529716195,
+          "token_error_rate": 0.015103499426876138,
+          "exact_match_rate": 0.7374045801526717,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14826.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 150,
+          "train_loss": 0.04857713156720487,
+          "token_error_rate": 0.006135796642168431,
+          "exact_match_rate": 0.8839694656488549,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14828.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 151,
+          "train_loss": 0.026313850190490484,
+          "token_error_rate": 0.0026296271323578988,
+          "exact_match_rate": 0.9435114503816794,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14825.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 152,
+          "train_loss": 0.011589183994546169,
+          "token_error_rate": 0.001415953071269638,
+          "exact_match_rate": 0.9679389312977099,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14830.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 153,
+          "train_loss": 0.007017763655223861,
+          "token_error_rate": 0.0003371316836356281,
+          "exact_match_rate": 0.9923664122137404,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14831.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 154,
+          "train_loss": 0.006812178109568067,
+          "token_error_rate": 0.0011462477243611355,
+          "exact_match_rate": 0.9740458015267176,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14831.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 155,
+          "train_loss": 0.004491067759794887,
+          "token_error_rate": 0.0003371316836356281,
+          "exact_match_rate": 0.9923664122137404,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14831.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 156,
+          "train_loss": 0.0035659883642660045,
+          "token_error_rate": 0.0006068370305441305,
+          "exact_match_rate": 0.9862595419847329,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14831.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 157,
+          "train_loss": 0.00342339904348525,
+          "token_error_rate": 0.00013485267345425124,
+          "exact_match_rate": 0.9969465648854962,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14831.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 158,
+          "train_loss": 0.0036092242069837707,
+          "token_error_rate": 0.00020227901018137685,
+          "exact_match_rate": 0.9954198473282443,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14831.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 159,
+          "train_loss": 0.0024992593410765617,
+          "token_error_rate": 0.00020227901018137685,
+          "exact_match_rate": 0.9954198473282443,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14831.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 160,
+          "train_loss": 0.0020790811565636496,
+          "token_error_rate": 0.00013485267345425124,
+          "exact_match_rate": 0.9969465648854962,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14831.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 161,
+          "train_loss": 0.0031017278613545366,
+          "token_error_rate": 0.00020227901018137685,
+          "exact_match_rate": 0.9954198473282443,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14831.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 162,
+          "train_loss": 0.002914423807296993,
+          "token_error_rate": 0.0002697053469085025,
+          "exact_match_rate": 0.9938931297709923,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14831.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 163,
+          "train_loss": 0.0027039149029339416,
+          "token_error_rate": 0.0009439687141797586,
+          "exact_match_rate": 0.9786259541984733,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14831.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 164,
+          "train_loss": 0.003459488933269934,
+          "token_error_rate": 6.742633672712562e-05,
+          "exact_match_rate": 0.9984732824427481,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14831.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 165,
+          "train_loss": 0.006282045388105893,
+          "token_error_rate": 0.004517564560717416,
+          "exact_match_rate": 0.8977099236641222,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14831.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 166,
+          "train_loss": 0.029334480144515087,
+          "token_error_rate": 0.005528959611624301,
+          "exact_match_rate": 0.8809160305343512,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14834.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 167,
+          "train_loss": 0.04213610980318996,
+          "token_error_rate": 0.022048412109770075,
+          "exact_match_rate": 0.6305343511450382,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14791.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 168,
+          "train_loss": 0.15804492598172368,
+          "token_error_rate": 0.07956307733800823,
+          "exact_match_rate": 0.22748091603053436,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14650.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 169,
+          "train_loss": 0.3247683297206716,
+          "token_error_rate": 0.06675207335985436,
+          "exact_match_rate": 0.2870229007633588,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14802.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 170,
+          "train_loss": 0.27498142584794905,
+          "token_error_rate": 0.06735891039039849,
+          "exact_match_rate": 0.27022900763358776,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14797.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 171,
+          "train_loss": 0.2089012814004247,
+          "token_error_rate": 0.046793877688625175,
+          "exact_match_rate": 0.41068702290076337,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14819.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 172,
+          "train_loss": 0.14792285995875917,
+          "token_error_rate": 0.02548715528285348,
+          "exact_match_rate": 0.6045801526717557,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14817.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 173,
+          "train_loss": 0.07314690288792296,
+          "token_error_rate": 0.00923740813161621,
+          "exact_match_rate": 0.8442748091603054,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14824.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 174,
+          "train_loss": 0.043563831665712156,
+          "token_error_rate": 0.009709392488706088,
+          "exact_match_rate": 0.8229007633587786,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14829.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 175,
+          "train_loss": 0.02364382982572041,
+          "token_error_rate": 0.001213674061088261,
+          "exact_match_rate": 0.9725190839694656,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14833.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 176,
+          "train_loss": 0.00917222531137579,
+          "token_error_rate": 0.000539410693817005,
+          "exact_match_rate": 0.9877862595419847,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14832.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 177,
+          "train_loss": 0.004529081580297249,
+          "token_error_rate": 0.0004045580203627537,
+          "exact_match_rate": 0.9908396946564886,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14831.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 178,
+          "train_loss": 0.0035847609340235956,
+          "token_error_rate": 0.00013485267345425124,
+          "exact_match_rate": 0.9969465648854962,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14831.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 179,
+          "train_loss": 0.003060098023369636,
+          "token_error_rate": 0.00020227901018137685,
+          "exact_match_rate": 0.9954198473282443,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14831.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 180,
+          "train_loss": 0.002514080588830771,
+          "token_error_rate": 6.742633672712562e-05,
+          "exact_match_rate": 0.9984732824427481,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14831.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 181,
+          "train_loss": 0.0022266463407815047,
+          "token_error_rate": 6.742633672712562e-05,
+          "exact_match_rate": 0.9984732824427481,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14831.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 182,
+          "train_loss": 0.0025818792722619526,
+          "token_error_rate": 0.0002697053469085025,
+          "exact_match_rate": 0.9938931297709923,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14831.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 183,
+          "train_loss": 0.0023523182806945066,
+          "token_error_rate": 6.742633672712562e-05,
+          "exact_match_rate": 0.9984732824427481,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14831.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 184,
+          "train_loss": 0.001886491838376969,
+          "token_error_rate": 0.0,
+          "exact_match_rate": 1.0,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14831.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 185,
+          "train_loss": 0.0015243232575324706,
+          "token_error_rate": 0.0,
+          "exact_match_rate": 1.0,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14831.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 186,
+          "train_loss": 0.0013523996529373817,
+          "token_error_rate": 6.742633672712562e-05,
+          "exact_match_rate": 0.9984732824427481,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14832.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 187,
+          "train_loss": 0.0012804501627503735,
+          "token_error_rate": 0.00013485267345425124,
+          "exact_match_rate": 0.9969465648854962,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14831.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 188,
+          "train_loss": 0.0011754685099997625,
+          "token_error_rate": 0.0,
+          "exact_match_rate": 1.0,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14831.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 189,
+          "train_loss": 0.001107429937891117,
+          "token_error_rate": 0.0,
+          "exact_match_rate": 1.0,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14831.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 190,
+          "train_loss": 0.001061325596798802,
+          "token_error_rate": 0.0,
+          "exact_match_rate": 1.0,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14831.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 191,
+          "train_loss": 0.0009986539250637246,
+          "token_error_rate": 0.0,
+          "exact_match_rate": 1.0,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14831.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 192,
+          "train_loss": 0.000941923120280546,
+          "token_error_rate": 0.0,
+          "exact_match_rate": 1.0,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14831.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 193,
+          "train_loss": 0.0008972102794625865,
+          "token_error_rate": 0.0,
+          "exact_match_rate": 1.0,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14831.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 194,
+          "train_loss": 0.0008508581973373799,
+          "token_error_rate": 0.0,
+          "exact_match_rate": 1.0,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14831.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 195,
+          "train_loss": 0.0008058990280870803,
+          "token_error_rate": 6.742633672712562e-05,
+          "exact_match_rate": 0.9984732824427481,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14832.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 196,
+          "train_loss": 0.0008554578263301221,
+          "token_error_rate": 0.0,
+          "exact_match_rate": 1.0,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14831.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 197,
+          "train_loss": 0.0007689573437191273,
+          "token_error_rate": 0.0,
+          "exact_match_rate": 1.0,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14831.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 198,
+          "train_loss": 0.0007114474407522144,
+          "token_error_rate": 0.0,
+          "exact_match_rate": 1.0,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14831.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 199,
+          "train_loss": 0.0006991593172864579,
+          "token_error_rate": 0.0,
+          "exact_match_rate": 1.0,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14831.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        },
+        {
+          "epoch": 200,
+          "train_loss": 0.0006904102724880298,
+          "token_error_rate": 6.742633672712562e-05,
+          "exact_match_rate": 0.9984732824427481,
+          "reference_tokens": 14831.0,
+          "hypothesis_tokens": 14832.0,
+          "word_error_rate": null,
+          "reference_words": 0.0
+        }
+      ]
+    }
+  ],
+  "notes": [
+    "Both variants share one feature extraction and one seed, so any difference between them is the targets and not the audio or the order.",
+    "Metrics are on the training subset, which is memorisation, not generalisation. No WER is claimed as a generalisation result.",
+    "dev and test were never opened by this script.",
+    "Rows violating frames >= labels are excluded per variant and listed by utterance id. dataset_v001 is not modified and no manifest is rewritten; the permanent disposition of those rows is still an open decision."
+  ]
+}

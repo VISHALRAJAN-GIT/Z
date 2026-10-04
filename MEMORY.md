@@ -16,7 +16,10 @@ Phase 02 / EXP-002 — complete and verified. `dataset_v001` exists on disk.
 Phase 02 / EXP-003 — both steps complete. Tokenizer measured, tiny CTC overfit
 test accepted.
 Phase 02 / EXP-004 — complete. Character-level decided from measurement, and
-`text/unicode.py` + `text/tokenizer.py` now implement it.**
+`text/unicode.py` + `text/tokenizer.py` now implement it.
+Phase 02 / EXP-005 — complete. Character targets overfit to TER 0.000190, first WER
+computed (0.001647, training data only), whitespace default confirmed by
+measurement.**
 
 Implemented in Phase 01: `audio/io.py` (loading, canonical conversion, real
 validation), `audio/resampling.py` (8/22.05/44.1/48 kHz -> 16 kHz, with a
@@ -165,6 +168,52 @@ digits and no Latin letters at all** — numbers are written in Tamil script. GU
 section 28 requires English, digit and punctuation support in the tokenizer, and
 this corpus cannot exercise any of it. That must be validated against the Phase 06
 corpora, and a tokenizer that hardcodes 48 symbols would be a bug.
+
+### EXP-005, in detail — the tokenizer works, and the whitespace default is now measured
+
+`experiments/005_character_ctc_overfit/` trained the same tiny CTC model on
+character targets, using `src/tamil_voice/text/tokenizer.py`. Everything except the
+targets is identical to EXP-003 step 2: same architecture, same features, same
+shortest-first subset (661 utts, 900.7 s, 148 speakers), same hyperparameters, same
+seed, same device (cuda). So the two experiments are directly comparable.
+
+| | with_space | without_space | EXP-003 word |
+|---|---:|---:|---:|
+| real symbols | 48 | 47 | 1360 words |
+| num classes | 50 | 49 | 1362 |
+| parameters | 668 818 | 668 561 | 1 006 002 |
+| rows violating frames >= labels | **12** | **6** | 0 |
+| rows trained | 649 | 655 | 661 |
+| train loss | 0.002765 | 0.000690 | 0.094745 |
+| token error rate | 0.000190 | **0.0000674** | 0.038647 |
+| exact match rate | 0.995378 | 0.998473 | 0.895613 |
+| word error rate | **0.001647** | *not computable* | *not computable* |
+| acceptance | passed | passed | passed |
+
+Four things this settled:
+
+1. **The tokenizer works as CTC targets.** Character TER 0.000190 over 15 822 target
+   labels is about 3 wrong characters in the whole subset. That is all an overfit
+   test can establish, and it is established.
+2. **The project's first WER exists: 0.001647**, on training data. It is a
+   memorisation number and is not a generalisation result. `dev` and `test` were
+   never opened.
+3. **`include_space=True` is confirmed, on measurement.** Excluding whitespace gives
+   a lower token error rate (0.0000674 against 0.000190) and half the invalid rows
+   (6 against 12), and in exchange word error rate becomes *undefined* — confirmed
+   empirically, not argued. Since the next step exists to produce a WER, the spaces
+   stay. This closes the deviation recorded when the tokenizer was written.
+4. **The 5 corrupt `MILE_0000289` rows cannot be trained on at all**, at either
+   whitespace setting. They are not awkward examples, they are unusable ones.
+   Character targets made this visible for the first time; word targets were short
+   enough to fit inside 7–12 encoder frames, which is why EXP-003 consumed them
+   without ever being blocked. Because the subset is shortest-first, they are the
+   first rows selected.
+
+The comparison is **not** a clean A/B: the two variants train on different row sets
+(649 against 655) because CTC validity forces it. The token error rate gap is
+confounded by the row set and is not claimed as a controlled result. Holding the
+row set constant means dropping 6 rows from both, which means `dataset_v002`.
 
 ## 2. The project
 
@@ -369,17 +418,16 @@ warning and does not prevent loading, while the rest are errors.
   letters nor ASCII digits and GUIDE section 28 requires both.
 - **BPE stays open and unmeasured.** GUIDE says benchmark it, and EXP-004 does
   not. No claim is made in either direction.
-- **The tokenizer keeps whitespace by default, which is a deliberate deviation
-  from the EXP-004 headline.** EXP-004 recorded character-level *with whitespace
-  excluded* as the decision, and that variant has the marginally better CTC
-  arithmetic: 9 invalid utterances against 33. The implementation defaults
-  `include_space=True` instead, because a target sequence with no space symbol
-  decodes to a string with no word boundaries, which makes word error rate
-  undefined until a separate segmentation model exists — and the project's first
-  real WER is the entire point of the baseline step. The measured difference is
-  24 utterances out of 89401, so nothing is being traded away for it. The
-  space-free variant remains available through one flag, and the baseline step
-  should compare both once a WER exists.
+- **The tokenizer keeps whitespace, and EXP-005 settled it by measurement rather
+  than argument.** EXP-004 recorded character-level *with whitespace excluded* as
+  the decision, on the arithmetic that it leaves 9 invalid utterances against 33.
+  EXP-005 trained both: without spaces the token error rate is lower (0.0000674
+  against 0.000190) and half the rows are invalid (6 against 12), and word error
+  rate becomes undefined because there are no boundaries to recover. That last
+  point was confirmed empirically, not assumed — `decode_words` returns a single
+  token in that configuration. The next step exists to produce a WER, so the
+  spaces stay and the deviation from the EXP-004 headline stands. The space-free
+  variant remains available through one flag.
 - **Text preparation has exactly one definition.** `prepare_text` is shared by
   `CharacterTokenizer.prepare`, `CharacterTokenizer.build` and `build_from_jsonl`.
   A vocabulary counted over differently-prepared text than the text later encoded
@@ -415,17 +463,23 @@ warning and does not prevent loading, while the rest are errors.
    0.243 s to 1.59 s against a corpus maximum of 38.85 s. It proves the pipeline
    is internally consistent; it says nothing about long or fast speech. A
    duration-representative overfit run is still wanted.
-7. **Five corpus rows are corrupt and are not yet dispositioned.** Speaker
-   `0000289` rows `_0000067` to `_0000071` carry 26–47 characters in
-   0.24–0.45 s, which is 98.9–107.4 characters per second and physically
-   impossible; the transcripts cannot belong to that audio. Four further rows
-   violate CTC's frames >= labels while speaking fast but humanly, so they are
-   legitimate hard cases rather than defects: `MILE_0000232_0000013` at
+7. **Five corpus rows are corrupt, and EXP-005 upgraded this from observation to
+   blocker.** Speaker `0000289` rows `_0000067` to `_0000071` carry 26–47
+   characters in 0.24–0.45 s, which is 98.9–107.4 characters per second and
+   physically impossible; the transcripts cannot belong to that audio. EXP-005
+   showed that at character targets these rows **cannot be trained on at all**, at
+   either whitespace setting — they are unusable examples, not awkward ones.
+   Character targets are what exposed this: word targets fit inside 7–12 encoder
+   frames, which is why EXP-003 consumed them without ever being blocked. Four
+   further rows violate CTC's frames >= labels while speaking fast but humanly, so
+   they are legitimate hard cases rather than defects: `MILE_0000232_0000013` at
    49.2 characters per second over 3.98 s, and `MILE_0000133_0000144`,
    `MILE_0000137_0000011`, `MILE_0000167_0000024` at 26.1–26.6 characters per
    second over 1.0–2.9 s. All 9 are among the 200 fastest utterances in the
-   corpus. **No row has been removed.** Dispositioning them, and creating
-   `dataset_v002` if any are dropped, is the next decision.
+   corpus. **No row has been removed from `dataset_v001`.** EXP-005 excluded the
+   invalid rows per variant and listed them by id, but that is a filter on the
+   overfit subset, not a disposition. `dataset_v002` must happen before the full
+   baseline and must record which rows were removed and why.
 8. **`.session/AGENTS.md` and `.session/START-HERE.md` are always one commit
    stale, and this cannot be fixed by committing.** The auto-status block reports
    the last commit's hash, and the post-commit hook rewrites the workspace entry
@@ -443,31 +497,32 @@ warning and does not prevent loading, while the rest are errors.
 EXP-002 is **complete and verified** (14 pass, 0 fail). EXP-003 is **complete**:
 step 1 measured the tokenizer, step 2's overfit test is accepted. EXP-004 is
 **complete**: the tokenizer scheme is decided — character-level, from measurement.
-The GPU is installed and working. The next work is the character tokenizer itself,
-then the first model trained on the full train split.
+EXP-005 is **complete**: the character targets overfit, the tokenizer is proven
+inside a training loop, and the whitespace default is settled by measurement. The
+GPU is installed and working.
 
-1. **Build the character tokenizer as a `src/tamil_voice/text/` module with tests.**
-   Required by GUIDE section 28 and 29: NFC normalisation, a script-aware
-   inventory, `<blank>` and `<unk>` handling, and a decode path that re-joins
-   words. **The inventory must be data-driven, not the 48 symbols measured in
-   EXP-004** — that count is a property of `dataset_v001`, which contains no Latin
-   letters and no ASCII digits, and it will change when the Phase 06 corpora
-   arrive. Tests: valid input, unseen characters, empty text, mixed script,
-   round-trip encode/decode, and determinism of the vocabulary ordering.
-2. **Disposition the 9 CTC-invalid rows** (open question 7). Five are corrupt
-   speaker-`0000289` rows at 98.9–107.4 characters per second; four are
-   legitimate fast speech and should be kept. If anything is dropped, that creates
-   `dataset_v002` with the reason and the utterance ids recorded, per the rule
-   against silent dataset changes.
-3. **Re-run the overfit test with character targets before the full baseline.**
-   Cheap, and it exercises the new tokenizer end to end. Keep encoder stride 4.
-   Use `CharacterTokenizer` with its defaults, then repeat once with
-   `include_space=False` so the two variants are compared on the same data rather
-   than one being assumed.
-4. **Then** the real CTC baseline on `train.jsonl`, evaluated on `dev.jsonl`, for
+Items 1 and 3 below are **done** and are kept as the record of what was decided, not
+as work to do.
+
+1. ~~**Build the character tokenizer as a `src/tamil_voice/text/` module with
+   tests.**~~ **Done** in `80fc716`: `text/unicode.py` and `text/tokenizer.py`, 85
+   tests. The inventory is data-driven, as required.
+2. **Create `dataset_v002` by dispositioning the CTC-invalid rows.** This is now
+   **blocking the baseline**, not optional tidying. EXP-005 showed the 5 corrupt
+   rows cannot be trained on at all; the other 4 are legitimate fast speech and
+   should be kept. Record the reason and the utterance ids, per the rule against
+   silent dataset changes. EXP-005 found 12 rows invalid with whitespace and 6
+   without on the overfit subset; the corpus-wide counts are 33 and 9.
+3. ~~**Re-run the overfit test with character targets.**~~ **Done** in EXP-005.
+   Both whitespace variants trained; acceptance passed for both.
+4. **Move the CTC model into `src/tamil_voice/asr/`.** The model currently exists
+   twice, as a copy in EXP-003 and in EXP-005, because a committed experiment must
+   stay runnable on its own. The baseline is the first thing that needs a model for
+   a reason other than a test, and it should import one implementation.
+5. **Then** the real CTC baseline on `train.jsonl`, evaluated on `dev.jsonl`, for
    the first genuine WER in this project. `test.jsonl` stays untouched until the
-   baseline is fixed. Do not deepen the conv subsampling: stride 8 invalidates
-   39 % of the corpus.
+   baseline is fixed. Keep encoder stride 4: do not deepen the conv subsampling,
+   because stride 8 invalidates 39 % of the corpus.
 
 If a session ends before step 1 finishes, the exact starting point is: `dataset_v001`
 is built and verified, EXP-003 and EXP-004 are complete, torch 2.6.0+cu124 has CUDA

@@ -9,6 +9,41 @@ what changed.
 
 ## [Unreleased]
 
+### Research - EXP-005 complete: character targets overfit, and the whitespace default is settled
+
+`experiments/005_character_ctc_overfit/` trains the EXP-003 model on character
+targets from `src/tamil_voice/text/tokenizer.py`, with architecture, features,
+subset, hyperparameters, seed and device all held identical to EXP-003 so the two
+experiments are directly comparable. Both whitespace variants ran. cuda, 200 epochs.
+
+| | with_space | without_space | EXP-003 word |
+|---|---:|---:|---:|
+| real symbols | 48 | 47 | 1360 words |
+| parameters | 668818 | 668561 | 1006002 |
+| rows violating frames >= labels | 12 | 6 | 0 |
+| rows trained | 649 | 655 | 661 |
+| train loss | 0.002765 | 0.000690 | 0.094745 |
+| token error rate | 0.000190 | 0.0000674 | 0.038647 |
+| exact match rate | 0.995378 | 0.998473 | 0.895613 |
+| word error rate | 0.001647 | not computable | not computable |
+| acceptance | passed | passed | passed |
+
+- The tokenizer is proven usable as CTC targets end to end. Character TER 0.000190
+  over 15822 target labels is about 3 wrong characters in the whole subset.
+- **First WER in the project: 0.001647** — on the training subset, so it measures
+  memorisation, not generalisation. `dev` and `test` were never opened.
+- `include_space=True` is confirmed on measurement rather than argument. Excluding
+  whitespace gives a lower token error rate and half the invalid rows, and in
+  exchange word error rate becomes undefined, which EXP-005 verified empirically.
+- The 5 corrupt `MILE_0000289` rows **cannot be trained on at all** at character
+  targets. Character targets are what exposed this: word targets fit inside 7-12
+  encoder frames. This makes the `dataset_v002` disposition blocking, not tidying.
+- The comparison is not a clean A/B: the variants train on different row sets
+  (649 vs 655) because CTC validity forces it. The token error rate gap is
+  confounded and is not claimed as a controlled result.
+- Added `train_char_overfit.py`, `config.yaml`, `results.json`, `notes.md` and the
+  two saved tokenizer artifacts.
+
 ### Added - the character tokenizer that EXP-004 decided on
 
 The `text` package, which has been an empty placeholder since Phase 00, now holds

@@ -17,26 +17,21 @@ before it is claimed.
 ## Live status
 
 <!-- AUTO-STATUS:BEGIN -->
-_generated 2026-10-04 11:40 by scripts\update-status.ps1_
+_generated 2026-10-04 11:58 by scripts\update-status.ps1_
 
-**Last commit:** `930c7d2 feat: EXP-004 tokenizer scheme decided from measurement, character-level`
+**Last commit:** `80fc716 feat: character tokenizer in text/, and fix the EXP-004 violation miscount`
 **Branch:** `main`
-**Sync:** 7 commit(s) AHEAD of origin/main (not pushed)
-**Working tree:** 8 changed, 4 untracked
+**Sync:** 8 commit(s) AHEAD of origin/main (not pushed)
+**Working tree:** 5 changed, 1 untracked
 - `M .session/AGENTS.md`
 - `M .session/START-HERE.md`
-- `M .session/gates/mypy.txt`
 - `M .session/gates/pytest.txt`
 - `M CHANGELOG.md`
 - `M MEMORY.md`
-- `M experiments/004_character_tokenizer/README.md`
-- `M experiments/004_character_tokenizer/notes.md`
-- `?? src/tamil_voice/text/tokenizer.py`
-- `?? src/tamil_voice/text/unicode.py`
-- `?? tests/unit/test_text_tokenizer.py`
-- `?? tests/unit/test_text_unicode.py`
+- `?? experiments/005_character_ctc_overfit/`
 
 **Recent commits**
+- `80fc716 feat: character tokenizer in text/, and fix the EXP-004 violation miscount`
 - `930c7d2 feat: EXP-004 tokenizer scheme decided from measurement, character-level`
 - `fc7409e docs: record that the .session entry copies cannot converge after a commit`
 - `e3d56d3 feat: EXP-003 tiny CTC overfit test accepted, and the three bugs it caught`
@@ -44,10 +39,9 @@ _generated 2026-10-04 11:40 by scripts\update-status.ps1_
 - `4f9826c feat: EXP-002 speaker-disjoint manifests (dataset_v001) with independent verification`
 - `050b614 chore: durable session memory with an auto-refreshing status block`
 - `3988e32 feat: Phase 02 data layer for corpus discovery, manifests and speaker-disjoint splits`
-- `32db8ae docs: record IISc-MILE Tamil corpus license and source`
 
 **Gates, as last measured** (`tamil-voice-foundation\.session\gates\`)
-- pytest: exit=0 | 305 passed in 11.48s
+- pytest: exit=0 | 305 passed in 11.09s
 - ruff:   exit=0 | All checks passed!
 - mypy:   exit=0 | Success: no issues found in 28 source files
 
